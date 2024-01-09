@@ -35,6 +35,7 @@ const MainContainer = () => {
 
               return <Ionicons name={iconName} size={size} color={color} />;
             },
+            headerShown: false,
             tabBarActiveTintColor: 'tomato',
             tabBarInactiveTintColor: 'grey',
             tabBarLabelStyle: { paddingBottom: 10, fontSize: 10 },

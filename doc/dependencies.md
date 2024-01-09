@@ -1,0 +1,6 @@
+# Dependencies
+## Backend
+
+## Dashboard
+
+## Mobile

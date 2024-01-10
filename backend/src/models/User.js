@@ -30,6 +30,18 @@ class User {
         return this;
     }
 
+    static async login(email, password) {
+        const sql = 'SELECT * FROM User WHERE email = ?';
+        const [rows, _] = await conn.query(sql, [email]);
+        if(rows.length == 0)
+            return null;
+        const row = rows[0];
+        if(await bcrypt.compare(password, row.password))
+            return new User(row.id, row.name, row.surname, row.email, row.password, row.balance);
+        else
+            return null;
+    }
+
     static async getById(id) {
         const sql = 'SELECT * FROM User WHERE id = ?';
         const [rows, _] = await conn.query(sql, [id]);

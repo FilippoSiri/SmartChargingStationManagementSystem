@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const User = require('../models/User'); 
+const verifyToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -8,7 +9,7 @@ router.get('/', async (req, res) => {
     res.json(stations);
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/getById/:id', async (req, res) => {
     const user = await User.getById(req.params.id);
     if (user !== null) {
         res.json(user);
@@ -16,16 +17,7 @@ router.get('/:id', async (req, res) => {
         res.status(404).json({ message: 'User not found' });
     }
 });
-//TODO: Check status code
-router.post('/', async (req, res) => {
-    const newUser = new User(null, req.body.name, req.body.surname, req.body.email, req.body.passwordHash, req.body.balance);
-    const addedUser = await newUser.save();
-    if (addedUser !== null) {
-        res.status(201).json(addedUser);
-    } else {
-        res.status(500).json({ message: 'Error adding user' });
-    }
-});
+
 //TODO: Check status code
 router.patch('/', async (req, res) => {
     const user = await User.getById(req.body.id);
@@ -46,4 +38,11 @@ router.patch('/', async (req, res) => {
     }
 });
 
+
+// Protected route
+router.get('/testVerify', verifyToken, (req, res) => {
+    res.status(200).json({ message: 'Protected route accessed' });
+});
+
+// curl -X GET -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTcwNDkyMTU3OCwiZXhwIjoxNzA0OTI1MTc4fQ.e-TFOyyIrmbl-u2XvdwU4YalDi9u8LVwbJmyaPM5hGk" http://localhost:3000/user/testVerify 
 module.exports = router;

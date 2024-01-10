@@ -2,6 +2,7 @@
 const express = require('express');
 const stationRouter = require('./routes/station');
 const userRouter = require('./routes/user');
+const authRouter = require('./routes/auth');
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.use(express.json());
 
 app.use('/station', stationRouter);
 app.use('/user', userRouter);
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

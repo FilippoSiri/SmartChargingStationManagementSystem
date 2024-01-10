@@ -11,6 +11,28 @@ CREATE TABLE Station (
     status int
 );
 
+CREATE TABLE User (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    surname VARCHAR(255),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    balance int
+);
+
+CREATE TABLE StationUsage (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    user_id int,
+    station_id int,
+    start_time DATETIME,
+    end_time DATETIME,
+    reservation_time DATETIME,
+    kw DECIMAL(11, 8),
+    price int,
+    FOREIGN KEY (user_id) REFERENCES User(id),
+    FOREIGN KEY (station_id) REFERENCES Station(id)
+);
+
 INSERT INTO Station (name, lat, lon, price, power, status) 
 VALUES ('Station 1', 37.7749, -122.4194, 100, 2.5, 1);
 

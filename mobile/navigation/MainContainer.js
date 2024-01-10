@@ -5,7 +5,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import HomeScreen from './screens/HomeScreen';
-import SearchScreen from './screens/SearchScreen';
 import UserScreen from './screens/UserScreen';
 
 // Screens name
@@ -42,7 +41,6 @@ const MainContainer = () => {
             tabBarStyle: { padding: 10, height: 60 },
           })}>
           <Tab.Screen name={homeName} component={HomeScreen} />
-          <Tab.Screen name={searchName} component={SearchScreen} />
           <Tab.Screen name={userName} component={UserScreen} />
         </Tab.Navigator>
       </NavigationContainer>

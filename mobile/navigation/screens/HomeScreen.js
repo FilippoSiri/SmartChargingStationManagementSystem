@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
 
@@ -48,12 +54,14 @@ const HomeScreen = () => {
           style={style.textInput}
           onChangeText={setMapCenter}
           value={mapCenter}></TextInput>
-        <Button title="Set Center" onPress={onButtonPress}></Button>
+        <TouchableOpacity style={style.searchBtn} onPress={onButtonPress}>
+          <Text style={{ color: gloabl_style.text_color_in_btn }}>Search</Text>
+        </TouchableOpacity>
       </View>
       {/* <WebView
         ref={r => (webRef = r)}
         onMessage={handleMapEvent}
-        style={styles.map}
+        style={style.map}
         originWhitelist={['*']}
         source={{ html: mapTemplate }}></WebView> */}
     </View>
@@ -64,11 +72,11 @@ const style = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
+    backgroundColor: '#fff',
   },
   buttons: {
     flexDirection: 'row',
     height: '15%',
-    backgroundColor: '#fff',
     color: '#000',
     alignItems: 'center',
     justifyContent: 'center',
@@ -80,12 +88,19 @@ const style = StyleSheet.create({
     margin: 16,
     padding: 10,
     borderWidth: 1,
+    borderRadius: 5,
   },
   map: {
     width: '100%',
     height: '85%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  searchBtn: {
+    backgroundColor: gloabl_style.main_color,
+    padding: 10,
+    borderRadius: 5,
+    elevation: 5,
   },
 });
 

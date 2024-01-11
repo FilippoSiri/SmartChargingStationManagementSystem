@@ -10,7 +10,7 @@ import {
 
 import gloabl_style from '../../style';
 
-const RegistrationScreen = ({ navigator }) => {
+const RegistrationScreen = ({ navigation }) => {
   return (
     <View style={gloabl_style.main_view}>
       <View style={style.form_container}>
@@ -31,7 +31,17 @@ const RegistrationScreen = ({ navigator }) => {
           <TextInput secureTextEntry={true} style={style.text_input} />
         </View>
 
-        <TouchableOpacity onPress={() => Alert.alert('Ciao')} style={style.btn}>
+        <View style={style.texts_container}>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{ color: gloabl_style.main_color }}>
+              I have already an account
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => Alert.alert('Registration')}
+          style={style.btn}>
           <Text style={{ color: 'black' }}>Register now</Text>
         </TouchableOpacity>
       </View>

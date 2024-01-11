@@ -4,7 +4,7 @@ import { StyleSheet, View, Button, TextInput } from 'react-native';
 import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
 
-import style from '../../style';
+import gloabl_style from '../../style';
 
 const HomeScreen = () => {
   let webRef = undefined;
@@ -59,5 +59,34 @@ const HomeScreen = () => {
     </View>
   );
 };
+
+const style = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    flex: 1,
+  },
+  buttons: {
+    flexDirection: 'row',
+    height: '15%',
+    backgroundColor: '#fff',
+    color: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  textInput: {
+    height: 40,
+    width: '60%',
+    margin: 16,
+    padding: 10,
+    borderWidth: 1,
+  },
+  map: {
+    width: '100%',
+    height: '85%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default HomeScreen;

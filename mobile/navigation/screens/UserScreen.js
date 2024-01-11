@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 
-import style from '../../style';
-
-const UserScreen = ({ navigation }) => {
+const UserScreen = () => {
   return (
-    <View style={style.main_view}>
-      <Text onPress={() => navigation.navigate('Home')}>User Screen</Text>
+    <View>
+      <Text>User Screen</Text>
     </View>
   );
 };

@@ -1,4 +1,5 @@
 'use strict';
+require('dotenv').config();
 const express = require('express');
 const stationRouter = require('./routes/station');
 const userRouter = require('./routes/user');

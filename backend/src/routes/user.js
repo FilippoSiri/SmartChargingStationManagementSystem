@@ -41,8 +41,7 @@ router.patch('/', async (req, res) => {
 
 // Protected route
 router.get('/testVerify', verifyToken, (req, res) => {
-    res.status(200).json({ message: 'Protected route accessed' });
+    res.status(200).json({ message: 'Protected route accessed ' + req.userId });
 });
 
-// curl -X GET -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTcwNDkyMTU3OCwiZXhwIjoxNzA0OTI1MTc4fQ.e-TFOyyIrmbl-u2XvdwU4YalDi9u8LVwbJmyaPM5hGk" http://localhost:3000/user/testVerify 
 module.exports = router;

@@ -37,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
 
         <TouchableOpacity onPress={() => Alert.alert('Ciao')} style={style.btn}>
-          <Text style={{ color: 'black' }}>Login</Text>
+          <Text style={{ color: gloabl_style.text_color_in_btn }}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>

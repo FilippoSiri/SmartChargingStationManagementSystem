@@ -5,4 +5,5 @@ export default gloabl_style = StyleSheet.create({
     margin: 16,
   },
   main_color: 'tomato',
+  text_color_in_btn: 'white',
 });

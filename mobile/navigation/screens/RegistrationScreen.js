@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import gloabl_style from '../../style';
+import global_style from '../../style';
 
 const RegistrationScreen = ({ navigation }) => {
   return (
@@ -33,7 +33,7 @@ const RegistrationScreen = ({ navigation }) => {
 
         <View style={style.texts_container}>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={{ color: gloabl_style.main_color }}>
+            <Text style={{ color: global_style.main_color }}>
               I have already an account
             </Text>
           </TouchableOpacity>
@@ -42,7 +42,9 @@ const RegistrationScreen = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => Alert.alert('Registration')}
           style={style.btn}>
-          <Text style={{ color: 'black' }}>Register now</Text>
+          <Text style={{ color: global_style.text_color_in_btn }}>
+            Register now
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

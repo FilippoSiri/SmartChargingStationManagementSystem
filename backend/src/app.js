@@ -10,7 +10,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: `http://localhost:${process.env.FE_PORT}`}`,
+    origin: `http://localhost:${process.env.FE_PORT}`,
   })
 );
 

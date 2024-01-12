@@ -1,6 +1,8 @@
 'use strict';
 const express = require('express');
 const Station = require('../models/station');
+const StationUsage = require('../models/StationUsage');
+const verifyToken = require('../middleware/authMiddleware');
 const router = express.Router();
   
 router.get('/', async (req, res) => {
@@ -18,7 +20,7 @@ router.get('/:id', async (req, res) => {
 });
 //TODO: Check status code
 router.post('/', async (req, res) => {
-    const newStation = new Station(null, req.body.name, req.body.lat, req.body.lon, req.body.price, req.body.power, req.body.status);
+    const newStation = new Station(null, req.body.name, req.body.lat, req.body.lon, req.body.price, req.body.power, req.body.status, Station.SECONDARY_STATUS.FREE);
     const addedStation = await newStation.save();
     if (addedStation !== null) {
         res.status(201).json(addedStation);
@@ -46,6 +48,31 @@ router.patch('/', async (req, res) => {
         res.status(404).json({ message: 'Station not found' });
     }
 });
+// curl -X POST -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTcwNTAwNzcxMX0.VUEZkPQtan9fbcwvhrHGftOKWlQSyyvnn1poCZYlx3I" -d '{"id":1}' http://localhost:3000/station/reserve
+router.post('/reserve/', verifyToken, async (req, res) => {
+    const stationId = req.body.id;
+    const userId = req.userId;
 
+    const station = await Station.getById(stationId);
+    if(station === null)
+        return res.status(404).json({ message: 'Station not found' });
+    
+    if(station.status !== Station.STATUS.AVAILABLE || station.secondary_status !== Station.SECONDARY_STATUS.FREE)
+        return res.status(409).json({ message: 'Station is currently not available for reservation' });
+
+    const stationUsage = new StationUsage();
+    stationUsage.station_id = stationId;
+    stationUsage.user_id = userId;
+    stationUsage.reservation_time = new Date();
+    stationUsage.price = station.price;
+
+    const savedStationUsage = await stationUsage.save();
+
+    if (savedStationUsage !== null) {
+        res.status(201).json(savedStationUsage);
+    } else {
+        res.status(500).json({ message: 'Error reserving station' });
+    }
+});
 
 module.exports = router;

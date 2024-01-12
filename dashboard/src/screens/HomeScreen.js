@@ -39,10 +39,18 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const fetchStations = async () => {
-      const { data } = await axios.get(
+      let { data } = await axios.get(
         `http://localhost:${process.env.REACT_APP_API_PORT}/station`
       );
-      console.log(data);
+      data = data.map((station) => {
+        return {
+          id: station.id,
+          name: station.name,
+          power: Math.round(station.power * 10).toFixed(2),
+          price: station.price / 100,
+          status: station.status,
+        };
+      });
       setStations(data);
     };
 

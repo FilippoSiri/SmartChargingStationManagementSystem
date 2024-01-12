@@ -19,14 +19,14 @@ const HomeScreen = () => {
   const onButtonPress = () => {
     const [lng, lat] = mapCenter.split(',');
     webRef.injectJavaScript(
-      `map.setCenter([${parseFloat(lng)}, ${parseFloat(lat)}])`,
+      `map.setCenter([${parseFloat(lng)}, ${parseFloat(lat)}]); void(0);`,
     );
   };
 
   const addMarker = (lng, lat, txt) => {
     webRef.injectJavaScript(
       `
-      addMarker(${lng}, ${lat}, '${txt}');
+      addMarker(${lng}, ${lat}, '${txt}'); void(0);
       `,
     );
   };
@@ -63,7 +63,7 @@ const HomeScreen = () => {
         onMessage={handleMapEvent}
         style={style.map}
         originWhitelist={['*']}
-        source={{ html: mapTemplate }}></WebView> */}
+        source={{ html: mapTemplate }}></WebView> */} 
     </View>
   );
 };

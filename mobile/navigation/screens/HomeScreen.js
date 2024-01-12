@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -11,6 +10,7 @@ import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
 
 import gloabl_style from '../../style';
+import * as Keychain from 'react-native-keychain';
 
 const HomeScreen = () => {
   let webRef = undefined;
@@ -46,6 +46,18 @@ const HomeScreen = () => {
     // addMarker(8.93, 44.404, '<h1>Hello</h1>');
     // addMarker(8.935, 44.405, '<h1>Pippo</h1>');
   }, []);
+
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials) {  
+        setToken(credentials.password);
+      }
+    };
+    fetchToken();
+  }, [token, setToken]);
 
   return (
     <View style={style.container}>

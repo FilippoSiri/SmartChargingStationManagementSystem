@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -7,20 +7,52 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import * as Keychain from 'react-native-keychain';
+import { AuthContext } from '../AuthContext';
 
 import gloabl_style from '../../style';
 
 const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const {setAuthToken} = useContext(AuthContext);
+
+
+  const login = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+  
+      const data = await response.json();
+      // Store the JWT Authentication token
+      await Keychain.setGenericPassword('jwtToken', data);
+      setAuthToken(data);
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
   return (
     <View style={gloabl_style.main_view}>
       <View style={style.form_container}>
         <View style={style.field_container}>
           <Text>Email</Text>
-          <TextInput style={style.text_input} />
+          <TextInput style={style.text_input} onChangeText={text => setEmail(text)} value={email} />
         </View>
         <View style={style.field_container}>
           <Text>Password</Text>
-          <TextInput secureTextEntry={true} style={style.text_input} />
+          <TextInput secureTextEntry={true} style={style.text_input} onChangeText={text => setPassword(text)} value={password} />
         </View>
 
         <View style={style.texts_container}>
@@ -36,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => Alert.alert('Ciao')} style={style.btn}>
+        <TouchableOpacity onPress={() => (login())} style={style.btn}>
           <Text style={{ color: gloabl_style.text_color_in_btn }}>Login</Text>
         </TouchableOpacity>
       </View>

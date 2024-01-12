@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext, useEffect} from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,6 +9,8 @@ import HomeScreen from './screens/HomeScreen';
 import UserScreen from './screens/UserScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
+import * as Keychain from 'react-native-keychain';
+import { AuthContext } from './AuthContext';
 
 // Screens name
 const homeName = 'Home';
@@ -34,6 +36,17 @@ const AuthNavigator = () => (
 );
 
 const MainContainer = () => {
+  const {authToken, setAuthToken} = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials) {  
+        setAuthToken(credentials.password);
+      }
+    };
+    fetchToken();
+  }, [authToken, setAuthToken]);
   return (
     <>
       <NavigationContainer>
@@ -60,7 +73,7 @@ const MainContainer = () => {
             tabBarStyle: { padding: 10, height: 60 },
           })}>
           <Tab.Screen name={homeName} component={HomeScreen} />
-          <Tab.Screen name={profileName} component={AuthNavigator} />
+          <Tab.Screen name={profileName} component={authToken === null ? AuthNavigator : UserScreen}/> 
         </Tab.Navigator>
       </NavigationContainer>
     </>

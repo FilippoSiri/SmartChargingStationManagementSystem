@@ -39,7 +39,9 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const fetchStations = async () => {
-      const { data } = await axios.get("http://localhost:4000/station");
+      const { data } = await axios.get(
+        `http://localhost:${process.env.REACT_APP_API_PORT}/station`
+      );
       console.log(data);
       setStations(data);
     };

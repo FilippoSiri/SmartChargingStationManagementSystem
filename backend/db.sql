@@ -35,11 +35,11 @@ CREATE TABLE StationUsage (
     FOREIGN KEY (station_id) REFERENCES Station(id)
 );
 
-INSERT INTO Station (name, lat, lon, price, power, status) 
-VALUES ('Station 1', 37.7749, -122.4194, 100, 2.5, 1);
+INSERT INTO Station (name, lat, lon, price, power, last_heartbeath, note)) 
+VALUES ('Station 1', 37.7749, -122.4194, 100, 2.5, NOW(), 'This is a note');
 
-INSERT INTO Station (name, lat, lon, price, power, status) 
-VALUES ('Station 2', 34.0522, -118.2437, 200, 3.5, 0);
+INSERT INTO Station (name, lat, lon, price, power, last_heartbeath, note)) 
+VALUES ('Station 2', 34.0522, -118.2437, 200, 3.5, NOW(), 'This is a note');
 
-INSERT INTO Station (name, lat, lon, price, power, status) 
-VALUES ('Station 3', 40.7128, -74.0060, 150, 2.8, 1);
+INSERT INTO Station (name, lat, lon, price, power, last_heartbeath, note)) 
+VALUES ('Station 3', 40.7128, -74.0060, 150, 2.8, NOW(), 'This is a note');

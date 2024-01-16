@@ -18,7 +18,6 @@ const UserScreen = ({ navigation }) => {
     const logout = async () => {
         await Keychain.resetGenericPassword();
         setAuthToken(null);
-        navigation.navigate('Home');
     };
 
     return (

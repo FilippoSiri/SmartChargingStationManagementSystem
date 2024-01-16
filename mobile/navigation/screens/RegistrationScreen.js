@@ -46,8 +46,7 @@ const RegistrationScreen = ({ navigation }) => {
                     const data = response.data;
                     // Store the JWT Authentication token
                     await Keychain.setGenericPassword('jwtToken', data.token);
-                    setAuthToken(data).token;
-                    navigation.navigate('Home');
+                    setAuthToken(data.token);
                 })
                 .catch(error => {
                     throw new Error('Registration failed');

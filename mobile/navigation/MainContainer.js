@@ -11,6 +11,8 @@ import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from './AuthContext';
+import axios from 'axios';
+import { API_URL, API_PORT } from '../config';
 
 // Screens name
 const homeName = 'Home';
@@ -42,39 +44,56 @@ const MainContainer = () => {
         const fetchToken = async () => {
             const credentials = await Keychain.getGenericPassword();
             if (credentials) {
-                setAuthToken(credentials.password);
+                axios
+                    .get(`http://${API_URL}:${API_PORT}/auth/validateToken`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `${credentials.password}`,
+                        },
+                    })
+                    .then(response => {
+                        setAuthToken(credentials.password);
+                    })
+                    .catch(async error => {
+                        await Keychain.resetGenericPassword();
+                        setAuthToken(null);
+                    });
             }
         };
         fetchToken();
     }, [authToken, setAuthToken]);
+
     return (
-        <>
+        <>          
             <NavigationContainer>
-                <Tab.Navigator
-                    initialRouteName={homeName}
-                    screenOptions={({ route }) => ({
-                        tabBarIcon: ({ focused, color, size }) => {
-                            let iconName;
-                            let routeName = route.name;
+                {
+                    authToken === null ? <AuthNavigator/> : 
+                    <Tab.Navigator
+                        initialRouteName={homeName}
+                        screenOptions={({ route }) => ({
+                            tabBarIcon: ({ focused, color, size }) => {
+                                let iconName;
+                                let routeName = route.name;
 
-                            if (routeName === homeName)
-                                iconName = focused ? 'home' : 'home-outline';
-                            else if (routeName === searchName)
-                                iconName = focused ? 'search' : 'search-outline';
-                            else if (routeName === userName || routeName === profileName)
-                                iconName = focused ? 'person' : 'person-outline';
+                                if (routeName === homeName)
+                                    iconName = focused ? 'home' : 'home-outline';
+                                else if (routeName === searchName)
+                                    iconName = focused ? 'search' : 'search-outline';
+                                else if (routeName === userName || routeName === profileName)
+                                    iconName = focused ? 'person' : 'person-outline';
 
-                            return <Ionicons name={iconName} size={size} color={color} />;
-                        },
-                        headerShown: false,
-                        tabBarActiveTintColor: global_style.main_color,
-                        tabBarInactiveTintColor: 'grey',
-                        tabBarLabelStyle: { paddingBottom: 10, fontSize: 10 },
-                        tabBarStyle: { padding: 10, height: 60 },
-                    })}>
-                    <Tab.Screen name={homeName} component={HomeScreen} />
-                    <Tab.Screen name={profileName} component={authToken === null ? AuthNavigator : UserScreen}/>
-                </Tab.Navigator>
+                                return <Ionicons name={iconName} size={size} color={color} />;
+                            },
+                            headerShown: false,
+                            tabBarActiveTintColor: global_style.main_color,
+                            tabBarInactiveTintColor: 'grey',
+                            tabBarLabelStyle: { paddingBottom: 10, fontSize: 10 },
+                            tabBarStyle: { padding: 10, height: 60 },
+                        })}>
+                        <Tab.Screen name={homeName} component={HomeScreen} />
+                        <Tab.Screen name={profileName} component={UserScreen}/>
+                    </Tab.Navigator>
+                }       
             </NavigationContainer>
         </>
     );

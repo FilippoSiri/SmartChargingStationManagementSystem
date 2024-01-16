@@ -32,7 +32,6 @@ const LoginScreen = ({ navigation }) => {
                     // Store the JWT Authentication token
                     await Keychain.setGenericPassword('jwtToken', data.token);
                     setAuthToken(data.token);
-                    navigation.navigate('Home');
                 })
                 .catch(error => {
                     throw new Error('Login failed');
@@ -67,7 +66,7 @@ const LoginScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => (login())} style={style.btn}>
+                <TouchableOpacity onPress={() => login()} style={style.btn}>
                     <Text style={{ color: gloabl_style.text_color_in_btn }}>Login</Text>
                 </TouchableOpacity>
             </View>

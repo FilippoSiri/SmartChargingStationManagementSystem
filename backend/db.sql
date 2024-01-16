@@ -10,7 +10,7 @@ CREATE TABLE Station (
     power DECIMAL(11, 8),
     dismissed BOOLEAN,
     last_heartbeat DATETIME,
-    note TEXT
+    notes TEXT
 );
 
 CREATE TABLE User (

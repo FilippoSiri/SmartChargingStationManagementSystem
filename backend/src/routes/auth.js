@@ -6,21 +6,23 @@ const router = express.Router();
 const verifyToken = require('../middleware/authMiddleware');
 //TODO: Check status code
 router.post('/register', async (req, res) => {
+    console.log(req.body);
     const newUser = new User(null, req.body.name, req.body.surname, req.body.email, req.body.password, 0, new Date());
     const addedUser = await newUser.save();
     if (addedUser !== null) {
         const token = generateAccessToken({ userId: addedUser.id });
-        res.status(201).json(token);
+        res.status(201).json({token: token});
     } else {
         res.status(500).json({ message: 'Error adding user' });
     }
 });
 
 router.post('/login', async (req, res) => {
+    console.log(req.body);
     const user = await User.login(req.body.email, req.body.password);
     if (user !== null) {
         const token = generateAccessToken({ userId: user.id });
-        res.json(token);
+        res.json({token: token});
     } else {
         res.status(401).json({ message: 'Login failed' });
     }

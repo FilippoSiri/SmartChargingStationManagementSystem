@@ -26,7 +26,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const EditStation = () => {
   const { id } = useParams();
   const dismissedSelection = ["true", "false"];
-  const [open, setOpen] = useState(false);
+  const [openPostApi, setOpenPostApi] = useState(false);
+  const [openCancel, setOpenCancel] = useState(false);
   const [stationInfo, setStationinfo] = useState({});
   const [dialogMessage, setDialogMessage] = useState("");
 
@@ -40,6 +41,8 @@ const EditStation = () => {
       // need to be here, because if we do inside placeholder error occurs
       data.price = data.price / 100;
 
+      console.log(data);
+
       setStationinfo(data);
     };
 
@@ -52,7 +55,6 @@ const EditStation = () => {
 
     if (fieldToUpdate === "dismissed")
       newValue = newValue === "true" ? true : false;
-    if (fieldToUpdate === "price") newValue = newValue * 100;
 
     setStationinfo({ ...stationInfo, [fieldToUpdate]: newValue });
   };
@@ -65,7 +67,7 @@ const EditStation = () => {
         name: stationInfo.name,
         lat: stationInfo.lat,
         lon: stationInfo.lon,
-        price: stationInfo.price,
+        price: stationInfo.price * 100,
         power: stationInfo.power,
         dismissed: stationInfo.dismissed,
         last_heartbeat: stationInfo.last_heartbeat,
@@ -78,11 +80,19 @@ const EditStation = () => {
     } else {
       setDialogMessage("Error updating station");
     }
-    setOpen(true);
+    setOpenPostApi(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleClosePostAPI = () => {
+    setOpenPostApi(false);
+  };
+
+  const handleOpenCancel = () => {
+    setOpenCancel(true);
+  };
+
+  const handleCloseCancel = () => {
+    setOpenCancel(false);
   };
 
   return (
@@ -203,21 +213,23 @@ const EditStation = () => {
                 </Button>
               </Grid>
               <Grid item xs={1}>
-                <Link to="/">
-                  <Button variant="contained" color="error">
-                    Cancel
-                  </Button>
-                </Link>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleOpenCancel}
+                >
+                  Cancel
+                </Button>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
       </Box>
       <Dialog
-        open={open}
+        open={openPostApi}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleClose}
+        onClose={handleClosePostAPI}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{"Update request"}</DialogTitle>
@@ -228,8 +240,29 @@ const EditStation = () => {
         </DialogContent>
         <DialogActions>
           <Link to="/">
-            <Button onClick={handleClose}>OK</Button>
+            <Button onClick={handleClosePostAPI}>OK</Button>
           </Link>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openCancel}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClosePostAPI}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Confirm exit"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {"Are you sure you want to exit?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Link to="/">
+            <Button onClick={handleClosePostAPI}>YES</Button>
+          </Link>
+          <Button onClick={handleCloseCancel}>NO</Button>
         </DialogActions>
       </Dialog>
     </Container>

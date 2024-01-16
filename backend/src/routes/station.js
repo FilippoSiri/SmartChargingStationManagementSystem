@@ -27,7 +27,9 @@ router.post("/", async (req, res) => {
     req.body.lon,
     req.body.price,
     req.body.power,
-    req.body.status,
+    req.body.dismissed,
+    req.body.last_heartbeat,
+    req.body.notes,
     Station.SECONDARY_STATUS.FREE
   );
   const addedStation = await newStation.save();
@@ -46,7 +48,9 @@ router.patch("/", async (req, res) => {
     station.lon = req.body.lon;
     station.price = req.body.price;
     station.power = req.body.power;
-    station.status = req.body.status;
+    station.dismissed = req.body.dismissed;
+    station.last_heartbeat = req.body.last_heartbeat;
+    station.notes = req.body.notes;
     const updatedStation = await station.save();
     if (updatedStation !== null) {
       res.status(201).json(updatedStation);

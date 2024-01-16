@@ -8,6 +8,7 @@ CREATE TABLE Station (
     lon DECIMAL(11, 8),
     price int,
     power DECIMAL(11, 8),
+    dismissed BOOLEAN,
     last_heartbeath DATETIME,
     note TEXT
 );

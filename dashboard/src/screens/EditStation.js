@@ -52,6 +52,7 @@ const EditStation = () => {
 
     if (fieldToUpdate === "dismissed")
       newValue = newValue === "true" ? true : false;
+    if (fieldToUpdate === "price") newValue = newValue * 100;
 
     setStationinfo({ ...stationInfo, [fieldToUpdate]: newValue });
   };

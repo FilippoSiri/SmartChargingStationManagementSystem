@@ -36,11 +36,32 @@ CREATE TABLE StationUsage (
     FOREIGN KEY (station_id) REFERENCES Station(id)
 );
 
-INSERT INTO Station (name, lat, lon, price, power, last_heartbeath, note)
-VALUES ('Station 1', 37.7749, -122.4194, 100, 2.5, NOW(), 'This is a note');
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 1', 44.41225398745292, 8.943041803651521, 421, 3.4212377134862795, 0, NOW(), 'This is a note');
 
-INSERT INTO Station (name, lat, lon, price, power, last_heartbeath, note)
-VALUES ('Station 2', 34.0522, -118.2437, 200, 3.5, NOW(), 'This is a note');
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 2', 44.40973066556966, 8.937683635571881, 228, 3.6384354501274463, 0, NOW(), 'This is a note');
 
-INSERT INTO Station (name, lat, lon, price, power, last_heartbeath, note)
-VALUES ('Station 3', 40.7128, -74.0060, 150, 2.8, NOW(), 'This is a note');
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 3', 44.40959225369384, 8.938335670510613, 259, 4.732612399122979, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 4', 44.41490247844163, 8.948156087159589, 228, 3.952524392919057, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 5', 44.41668083596903, 8.945843180774654, 428, 2.9332294756920354, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 6', 44.41298340189158, 8.939498167023588, 341, 3.525655247462496, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 7', 44.410629875247835, 8.940450134372531, 167, 3.6201685757315314, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 8', 44.416008668901455, 8.94061536564911, 351, 3.7019193661509875, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 9', 44.41648755559513, 8.943489395794249, 320, 4.548326041075304, 0, NOW(), 'This is a note');
+
+INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeath, note)
+            VALUES ('Station 10', 44.413023902482834, 8.938031770503345, 175, 3.2172681666350913, 0, NOW(), 'This is a note');

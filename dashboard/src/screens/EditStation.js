@@ -14,14 +14,19 @@ import axios from "axios";
 
 const EditStation = () => {
   const { id } = useParams();
+  const dismissedSelection = ["true", "false"];
   const [stationInfo, setStationinfo] = useState({});
 
   useEffect(() => {
     const getStationInfo = async () => {
-      const { data } = await axios.get(
+      let { data } = await axios.get(
         `http://localhost:${process.env.REACT_APP_API_PORT}/station/${id}`
       );
-      console.log(data);
+
+      // Convert price from cents to euros
+      // need to be here, because if we do inside placeholder error occurs
+      data.price = data.price / 100;
+
       setStationinfo(data);
     };
 
@@ -62,16 +67,21 @@ const EditStation = () => {
           <Grid item xs={4}>
             <Typography variant="body1">Price (€/kWh)</Typography>
             <input
+              type="text"
               className="input-edit-station"
-              placeholder={stationInfo.price / 100}
+              placeholder={stationInfo.price}
             />
           </Grid>
 
           <Grid item xs={4}>
             <Typography variant="body1">Dismissed</Typography>
             <select className="input-edit-station">
-              <option value="true">True</option>
-              <option value="false">False</option>
+              <option value="true" selected={stationInfo.dismissed}>
+                True
+              </option>
+              <option value="false" selected={stationInfo.dismissed}>
+                False
+              </option>
             </select>
           </Grid>
 
@@ -95,7 +105,7 @@ const EditStation = () => {
             <Typography variant="body1">Note</Typography>
             <textarea
               className="input-edit-station"
-              placeholder={stationInfo.name}
+              placeholder={stationInfo.notes}
               style={{ height: "100px", width: "100%" }}
             />
           </Grid>
@@ -113,7 +123,7 @@ const EditStation = () => {
               </Grid>
               <Grid item xs={1}>
                 <Button variant="contained" color="error">
-                  Delete
+                  Cancel
                 </Button>
               </Grid>
             </Grid>

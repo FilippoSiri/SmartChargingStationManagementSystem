@@ -11,8 +11,7 @@ import mapTemplate from '../../components/map-template';
 import { AuthContext } from '../AuthContext';
 import gloabl_style from '../../style';
 import * as Keychain from 'react-native-keychain';
-import axios from 'axios';
-import { API_URL, API_PORT } from '../../config';
+
 
 const HomeScreen = () => {
     let webRef = undefined;
@@ -49,30 +48,6 @@ const HomeScreen = () => {
         // addMarker(8.93, 44.404, '<h1>Hello</h1>');
         // addMarker(8.935, 44.405, '<h1>Pippo</h1>');
     }, []);
-
-    useEffect(() => {
-        const fetchToken = async () => {
-            const credentials = await Keychain.getGenericPassword();
-            if (credentials) {
-                axios
-                    .get(`http://${API_URL}:${API_PORT}/auth/validateToken`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `${credentials.password}`,
-                        },
-                    })
-                    .then(response => {
-                        setAuthToken(credentials.password);
-                    })
-                    .catch(async error => {
-                        await Keychain.resetGenericPassword();
-                        setAuthToken(null);
-                        navigation.navigate('Home');
-                    });
-            }
-        };
-        fetchToken();
-    }, [setAuthToken]);
 
     return (
         <View style={style.container}>

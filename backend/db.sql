@@ -17,6 +17,7 @@ CREATE TABLE User (
     surname VARCHAR(255),
     email VARCHAR(255),
     password VARCHAR(255),
+    token_reset_time DATETIME,
     balance int
 );
 

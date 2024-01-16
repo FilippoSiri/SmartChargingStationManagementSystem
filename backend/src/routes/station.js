@@ -48,7 +48,7 @@ router.patch('/', async (req, res) => {
         res.status(404).json({ message: 'Station not found' });
     }
 });
-// curl -X POST -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTcwNTAwNzcxMX0.VUEZkPQtan9fbcwvhrHGftOKWlQSyyvnn1poCZYlx3I" -d '{"id":1}' http://localhost:3000/station/reserve
+
 router.post('/reserve/', verifyToken, async (req, res) => {
     const stationId = req.body.id;
     const userId = req.userId;

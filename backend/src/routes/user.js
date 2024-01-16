@@ -5,8 +5,8 @@ const verifyToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    const stations = await User.getAll();
-    res.json(stations);
+    const users = await User.getAll();
+    res.json(users);
 });
 
 router.get('/getById/:id', async (req, res) => {
@@ -19,14 +19,23 @@ router.get('/getById/:id', async (req, res) => {
 });
 
 //TODO: Check status code
-router.patch('/', async (req, res) => {
-    const user = await User.getById(req.body.id);
+router.patch('/', verifyToken, async (req, res) => {
+    const user = await User.getById(req.userId);
     if (user !== null) {
-        user.name = req.body.name;
-        user.surname = req.body.surname;
-        user.email = req.body.email;
-        user.password = req.body.password;
-        user.balance = req.body.balance;
+        if(req.body.name !== undefined)
+            user.name = req.body.name;
+        
+        if(req.body.surname !== undefined)
+            user.surname = req.body.surname;
+        
+        if(req.body.email !== undefined)
+            user.email = req.body.email;
+        
+        if(req.body.password !== undefined){
+            user.password = req.body.password;
+            user.token_reset_time = new Date();
+        }
+
         const updatedUser = await user.save();
         if (updatedUser !== null) {
             res.status(201).json(updatedUser);
@@ -36,12 +45,6 @@ router.patch('/', async (req, res) => {
     } else {
         res.status(404).json({ message: 'User not found' });
     }
-});
-
-
-// Protected route
-router.get('/testVerify', verifyToken, (req, res) => {
-    res.status(200).json({ message: 'Protected route accessed ' + req.userId });
 });
 
 module.exports = router;

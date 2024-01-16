@@ -8,7 +8,8 @@ CREATE TABLE Station (
     lon DECIMAL(11, 8),
     price int,
     power DECIMAL(11, 8),
-    status int
+    last_heartbeath DATETIME,
+    note TEXT,
 );
 
 CREATE TABLE User (

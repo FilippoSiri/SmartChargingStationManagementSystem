@@ -3,7 +3,7 @@ import CustomNavbar from "./components/CustomNavbar";
 import { Routes, Route } from "react-router-dom";
 
 import HomeScreen from "./screens/HomeScreen";
-import ChargingStation from "./screens/ChargingStation";
+import EditStation from "./screens/EditStation";
 
 function App() {
   return (
@@ -11,7 +11,8 @@ function App() {
       <CustomNavbar />
       <Routes>
         <Route path="/" element={<HomeScreen />} />
-        <Route path="/charging" element={<ChargingStation />} />
+        <Route path="/station" element={<EditStation />} />
+        <Route path="/station/:id" element={<EditStation />} />
       </Routes>
     </div>
   );

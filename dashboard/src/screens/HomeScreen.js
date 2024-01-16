@@ -1,10 +1,14 @@
 "use strict";
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Grid, Typography, Box } from "@mui/material";
+import { Container, Grid, Typography, Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
-import "@tomtom-international/web-sdk-maps/dist/maps.css";
-import tt from "@tomtom-international/web-sdk-maps";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+
+// import "@tomtom-international/web-sdk-maps/dist/maps.css";
+// import tt from "@tomtom-international/web-sdk-maps";
 
 import axios from "axios";
 
@@ -25,16 +29,25 @@ const columns = [
   {
     field: "price",
     headerName: "Station Price",
-    type: "number",
-    width: 110,
+    width: 150,
     editable: false,
   },
   {
-    field: "status",
-    headerName: "Station Status",
-    type: "number",
+    field: "edit",
+    headerName: "Edit",
     width: 150,
-    editable: false,
+    renderCell: (params) => (
+      <Link
+        to={`/station/${params.id}`}
+        style={{ textDecoration: "none" }}
+        color="inherit"
+      >
+        <Button variant="contained">
+          <FontAwesomeIcon icon={faEdit} />
+          &nbsp;Edit
+        </Button>
+      </Link>
+    ),
   },
 ];
 
@@ -45,6 +58,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const fetchStations = async () => {
+      console.log(`http://localhost:${process.env.REACT_APP_API_PORT}/station`);
       let { data } = await axios.get(
         `http://localhost:${process.env.REACT_APP_API_PORT}/station`
       );
@@ -65,35 +79,35 @@ const HomeScreen = () => {
       setStations(data);
     };
 
-    let map = tt.map({
-      key: process.env.REACT_APP_TOMTOM_API_KEY,
-      container: mapElement.current,
-      center: [8.93413, 44.40757],
-      zoom: 15,
-    });
+    // let map = tt.map({
+    //   key: process.env.REACT_APP_TOMTOM_API_KEY,
+    //   container: mapElement.current,
+    //   center: [8.93413, 44.40757],
+    //   zoom: 15,
+    // });
 
-    setMap(map);
+    // setMap(map);
     fetchStations();
 
-    return () => map.remove();
+    // return () => map.remove();
   }, []);
 
-  useEffect(() => {
-    stations.forEach((station) => {
-      addMarker(station);
-    });
-  }, [stations]);
+  // useEffect(() => {
+  //   stations.forEach((station) => {
+  //     addMarker(station);
+  //   });
+  // }, [stations]);
 
-  const addMarker = (station) => {
-    let marker = new tt.Marker()
-      .setLngLat([station.lon, station.lat])
-      .addTo(map);
-    marker.setPopup(
-      new tt.Popup({ offset: 35 }).setHTML(
-        `<h3>${station.name}</h3><p>Power: ${station.power}</p><p>Price: ${station.price}</p>`
-      )
-    );
-  };
+  // const addMarker = (station) => {
+  //   let marker = new tt.Marker()
+  //     .setLngLat([station.lon, station.lat])
+  //     .addTo(map);
+  //   marker.setPopup(
+  //     new tt.Popup({ offset: 35 }).setHTML(
+  //       `<h3>${station.name}</h3><p>Power: ${station.power}</p><p>Price: ${station.price}</p>`
+  //     )
+  //   );
+  // };
 
   return (
     <Container maxWidth="xl" style={{ marginTop: "3em" }}>
@@ -112,7 +126,6 @@ const HomeScreen = () => {
                 },
               }}
               pageSizeOptions={[10]}
-              checkboxSelection
               disableRowSelectionOnClick
             />
           </Box>

@@ -11,7 +11,6 @@ function App() {
       <CustomNavbar />
       <Routes>
         <Route path="/" element={<HomeScreen />} />
-        <Route path="/station" element={<EditStation />} />
         <Route path="/station/:id" element={<EditStation />} />
       </Routes>
     </div>

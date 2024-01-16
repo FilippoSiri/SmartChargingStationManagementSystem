@@ -14,10 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 
 import { useNavigate } from "react-router-dom";
 
-const pages = [
-  { name: "Home", link: "/" },
-  { name: "Edit Charging Station", link: "/charging" },
-];
+const pages = [{ name: "Home", link: "/" }];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const CustomNavbar = () => {

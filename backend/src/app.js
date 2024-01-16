@@ -5,6 +5,7 @@ const stationRouter = require("./routes/station");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 const cors = require("cors");
+const {RPCServer, RPCClient} = require('ocpp-rpc');
 
 const app = express();
 
@@ -13,6 +14,14 @@ app.use(
     origin: `http://localhost:${process.env.FE_PORT}`,
   })
 );
+
+const httpServer = app.listen(process.env.FE_PORT, 'localhost');
+const rpcServer = new RPCServer();
+httpServer.on('upgrade', rpcServer.handleUpgrade);
+
+rpcServer.on('client', client => {
+  client.call('Say', `Hello, ${client.identity}!`);
+});
 
 app.use(express.json());
 

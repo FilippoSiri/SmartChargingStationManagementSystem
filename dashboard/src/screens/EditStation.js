@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import axios from "axios";
 
@@ -86,7 +86,7 @@ const EditStation = () => {
   };
 
   return (
-    <Container xs={"xl"}>
+    <Container xs={"xl"} style={{ marginTop: "3em" }}>
       <Box
         boxShadow={3}
         style={{ marginTop: "1em", borderRadius: "5px", padding: "1em" }}
@@ -203,9 +203,11 @@ const EditStation = () => {
                 </Button>
               </Grid>
               <Grid item xs={1}>
-                <Button variant="contained" color="error">
-                  Cancel
-                </Button>
+                <Link to="/">
+                  <Button variant="contained" color="error">
+                    Cancel
+                  </Button>
+                </Link>
               </Grid>
             </Grid>
           </Grid>
@@ -225,7 +227,9 @@ const EditStation = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>OK</Button>
+          <Link to="/">
+            <Button onClick={handleClose}>OK</Button>
+          </Link>
         </DialogActions>
       </Dialog>
     </Container>

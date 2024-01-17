@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
     StyleSheet,
     View,
@@ -11,10 +11,14 @@ import mapTemplate from '../../components/map-template';
 import gloabl_style from '../../style';
 import axios from 'axios';
 import { API_URL, API_PORT } from '../../config';
+import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const HomeScreen = () => {
     const webRef = useRef();
     const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
+    const [stationId, setStationId] = useState(null);
+    const snapPoints = useMemo(() => ['50%', '25%'], []);
+	const bottomSheetRef = useRef(null);
 
     const onButtonPress = () => {
         const [lng, lat] = mapCenter.split(',');
@@ -33,20 +37,28 @@ const HomeScreen = () => {
         );
     };
 
-    const handleDragMap = (data) => {
+    const handleDragEndMap = (data) => {
         setMapCenter(`${data.lon}, ${data.lat}`);
     }
 
+    const handleDragStartMap = (data) => {
+        bottomSheetRef.current.snapToIndex(1);
+    }
+
     const handleClickMarker = (data) => {
-        console.log(data);
+        setStationId(data.id);
+        bottomSheetRef.current?.present();
+        bottomSheetRef.current.snapToIndex(0);
     }
 
     const handleMapEvent = event => {
         const data = JSON.parse(event.nativeEvent.data);
         if(data.type === 'drag_map'){
-            handleDragMap(data);
+            handleDragEndMap(data);
         }else if(data.type === 'marker_click'){
             handleClickMarker(data);
+        }else if(data.type === 'drag_start'){
+            handleDragStartMap(data);
         }
     };
 
@@ -88,6 +100,18 @@ const HomeScreen = () => {
                 originWhitelist={['*']}
                 onLoadEnd={loadStations}
                 source={{ html: mapTemplate }}/> 
+            
+            <BottomSheetModal
+				ref={bottomSheetRef}
+				index={0}
+                initialSnap={1}
+				snapPoints={snapPoints}
+				enablePanDownToClose={true}>
+
+                <Text>{stationId}</Text>
+            
+            </BottomSheetModal>
+                
         </View>
     );
 };

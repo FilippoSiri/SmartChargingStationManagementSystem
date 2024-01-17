@@ -54,7 +54,11 @@ export default `
             let center = map.getCenter();
             let msg = JSON.stringify({type: "drag_map", lon: center.lng.toFixed(3), lat: center.lat.toFixed(3)});
             window.ReactNativeWebView.postMessage(msg);
-        })
+        });
+
+        map.on('dragstart', function() {
+            window.ReactNativeWebView.postMessage(JSON.stringify({type: "drag_start"}));
+        });
     </script>
 </div>
 `;

@@ -13,15 +13,15 @@ import * as Keychain from 'react-native-keychain';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
 import { API_URL, API_PORT } from '../config';
+import global_style from '../style';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 // Screens name
 const homeName = 'Home';
 const searchName = 'Search';
 const userName = 'User';
 const profileName = 'Profile';
-
-import global_style from '../style';
-
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
 
@@ -64,37 +64,41 @@ const MainContainer = () => {
     }, [authToken, setAuthToken]);
 
     return (
-        <>          
-            <NavigationContainer>
-                {
-                    authToken === null ? <AuthNavigator/> : 
-                    <Tab.Navigator
-                        initialRouteName={homeName}
-                        screenOptions={({ route }) => ({
-                            tabBarIcon: ({ focused, color, size }) => {
-                                let iconName;
-                                let routeName = route.name;
+        <>    
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>    
+                <NavigationContainer>
+                    {
+                        authToken === null ? <AuthNavigator/> : 
+                        <Tab.Navigator
+                            initialRouteName={homeName}
+                            screenOptions={({ route }) => ({
+                                tabBarIcon: ({ focused, color, size }) => {
+                                    let iconName;
+                                    let routeName = route.name;
 
-                                if (routeName === homeName)
-                                    iconName = focused ? 'home' : 'home-outline';
-                                else if (routeName === searchName)
-                                    iconName = focused ? 'search' : 'search-outline';
-                                else if (routeName === userName || routeName === profileName)
-                                    iconName = focused ? 'person' : 'person-outline';
+                                    if (routeName === homeName)
+                                        iconName = focused ? 'home' : 'home-outline';
+                                    else if (routeName === searchName)
+                                        iconName = focused ? 'search' : 'search-outline';
+                                    else if (routeName === userName || routeName === profileName)
+                                        iconName = focused ? 'person' : 'person-outline';
 
-                                return <Ionicons name={iconName} size={size} color={color} />;
-                            },
-                            headerShown: false,
-                            tabBarActiveTintColor: global_style.main_color,
-                            tabBarInactiveTintColor: 'grey',
-                            tabBarLabelStyle: { paddingBottom: 10, fontSize: 10 },
-                            tabBarStyle: { padding: 10, height: 60 },
-                        })}>
-                        <Tab.Screen name={homeName} component={HomeScreen} />
-                        <Tab.Screen name={profileName} component={UserScreen}/>
-                    </Tab.Navigator>
-                }       
-            </NavigationContainer>
+                                    return <Ionicons name={iconName} size={size} color={color} />;
+                                },
+                                headerShown: false,
+                                tabBarActiveTintColor: global_style.main_color,
+                                tabBarInactiveTintColor: 'grey',
+                                tabBarLabelStyle: { paddingBottom: 10, fontSize: 10 },
+                                tabBarStyle: { padding: 10, height: 60 },
+                            })}>
+                            <Tab.Screen name={homeName} component={HomeScreen} />
+                            <Tab.Screen name={profileName} component={UserScreen}/>
+                        </Tab.Navigator>
+                    }       
+                </NavigationContainer>
+            </BottomSheetModalProvider>
+        </GestureHandlerRootView>
         </>
     );
 };

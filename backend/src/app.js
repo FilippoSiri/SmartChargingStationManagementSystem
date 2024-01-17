@@ -15,7 +15,7 @@ app.use(
     })
 );
 
-const httpServer = app.listen(process.env.RCP_PORT, "localhost");
+const httpServer = app.listen(process.env.RPC_PORT, "localhost");
 const rpcServer = new RPCServer();
 httpServer.on("upgrade", rpcServer.handleUpgrade);
 

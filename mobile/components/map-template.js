@@ -19,7 +19,7 @@ export default `
     <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.13.0/maps/maps-web.min.js'></script>
 
     <script>
-        function addMarker(lng, lat, customElem) {
+        function addMarker(lng, lat, id, customElem) {
             let popupOffsets = {
                 top: [0, 0],
                 bottom: [0, -70],
@@ -34,6 +34,11 @@ export default `
             let marker = new tt.Marker().setLngLat([lng, lat]).addTo(map);
             let popup = new tt.Popup({ offset: popupOffsets }).setHTML(customElem);
             marker.setPopup(popup);
+ 
+            marker.getElement().addEventListener('click', function (e) {
+                let msg = JSON.stringify({type: "marker_click", id: id});
+                window.ReactNativeWebView.postMessage(msg);
+            });
         }
 
         // create the map
@@ -47,7 +52,8 @@ export default `
         
         map.on('dragend', function() {
             let center = map.getCenter();
-            window.ReactNativeWebView.postMessage(center.lng.toFixed(3) + ", " + center.lat.toFixed(3));
+            let msg = JSON.stringify({type: "drag_map", lon: center.lng.toFixed(3), lat: center.lat.toFixed(3)});
+            window.ReactNativeWebView.postMessage(msg);
         })
     </script>
 </div>

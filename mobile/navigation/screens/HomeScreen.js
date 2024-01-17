@@ -25,16 +25,29 @@ const HomeScreen = () => {
         );
     };
 
-    const addMarker = (lng, lat, txt) => {
+    const addMarker = (lng, lat, id, txt) => {
         webRef.current.injectJavaScript(
             `
-                addMarker(${lng}, ${lat}, '${txt}');                
+                addMarker(${lng}, ${lat}, ${id}, '${txt}');                
             `,
         );
     };
 
+    const handleDragMap = (data) => {
+        setMapCenter(`${data.lon}, ${data.lat}`);
+    }
+
+    const handleClickMarker = (data) => {
+        console.log(data);
+    }
+
     const handleMapEvent = event => {
-        setMapCenter(event.nativeEvent.data);
+        const data = JSON.parse(event.nativeEvent.data);
+        if(data.type === 'drag_map'){
+            handleDragMap(data);
+        }else if(data.type === 'marker_click'){
+            handleClickMarker(data);
+        }
     };
 
     const loadStations = async () => {
@@ -46,7 +59,7 @@ const HomeScreen = () => {
                 )
                 .then(async response => {
                     response.data.forEach(station => {
-                        addMarker(station.lon, station.lat, `<h1>${station.name}</h1>`);
+                        addMarker(station.lon, station.lat, station.id, `<h1>${station.name}</h1>`);
                     });
                 })
                 .catch(error => {

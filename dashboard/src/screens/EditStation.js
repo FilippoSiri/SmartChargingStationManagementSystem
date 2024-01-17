@@ -42,7 +42,7 @@ const EditStation = () => {
             setStationinfo(data);
         };
 
-        getStationInfo();
+        if (id) getStationInfo();
     }, [id]);
 
     const handleChangeStationInfo = (e) => {
@@ -55,8 +55,12 @@ const EditStation = () => {
         setStationinfo({ ...stationInfo, [fieldToUpdate]: newValue });
     };
 
-    const handleSaveClick = async () => {
-        const res = await axios.patch(
+    const handleSubmitClick = async (e) => {
+        e.preventDefault();
+
+        const reqType = id ? axios.patch : axios.post;
+
+        const res = await reqType(
             `http://localhost:${process.env.REACT_APP_API_PORT}/station`,
             {
                 id: stationInfo.id,
@@ -101,133 +105,162 @@ const EditStation = () => {
                     padding: "1em",
                 }}
             >
-                <Grid
-                    container
-                    spacing={{ xs: 2, md: 3 }}
-                    columns={{ xs: 4, sm: 8, md: 12 }}
-                >
-                    <Grid item xs={12}>
-                        <Typography variant="h5">
-                            Edit Charging Station {id}
-                        </Typography>
-                    </Grid>
+                <form onSubmit={handleSubmitClick}>
+                    <Grid
+                        container
+                        spacing={{ xs: 2, md: 3 }}
+                        columns={{ xs: 4, sm: 8, md: 12 }}
+                    >
+                        <Grid item xs={12}>
+                            {id ? (
+                                <Typography variant="h5">
+                                    Edit Charging Station {id}
+                                </Typography>
+                            ) : (
+                                <Typography variant="h5">
+                                    Add Charging Station
+                                </Typography>
+                            )}
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Name</Typography>
-                        <input
-                            className="input-edit-station"
-                            placeholder={stationInfo.name}
-                            field="name"
-                            onChange={handleChangeStationInfo}
-                        />
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">Name</Typography>
+                            <input
+                                className="input-edit-station"
+                                placeholder={
+                                    stationInfo.name ?? "Insert station name"
+                                }
+                                field="name"
+                                onChange={handleChangeStationInfo}
+                                required={id ? false : true}
+                            />
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Power</Typography>
-                        <input
-                            type="text"
-                            field="power"
-                            className="input-edit-station"
-                            placeholder={stationInfo.power}
-                            onChange={handleChangeStationInfo}
-                        />
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">Power</Typography>
+                            <input
+                                type="text"
+                                field="power"
+                                className="input-edit-station"
+                                placeholder={
+                                    stationInfo.power ?? "Insert power"
+                                }
+                                onChange={handleChangeStationInfo}
+                                required={id ? false : true}
+                            />
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Price (€/kWh)</Typography>
-                        <input
-                            type="text"
-                            field="price"
-                            className="input-edit-station"
-                            placeholder={stationInfo.price}
-                            onChange={handleChangeStationInfo}
-                        />
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">
+                                Price (€/kWh)
+                            </Typography>
+                            <input
+                                type="text"
+                                field="price"
+                                className="input-edit-station"
+                                placeholder={
+                                    stationInfo.price ?? "Insert price"
+                                }
+                                onChange={handleChangeStationInfo}
+                                required={id ? false : true}
+                            />
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Dismissed</Typography>
-                        <select
-                            field="dismissed"
-                            className="input-edit-station"
-                            value={stationInfo.dismissed}
-                            onChange={handleChangeStationInfo}
-                        >
-                            <option value="true">True</option>
-                            <option value="false">False</option>
-                        </select>
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">Dismissed</Typography>
+                            <select
+                                field="dismissed"
+                                className="input-edit-station"
+                                value={stationInfo.dismissed}
+                                onChange={handleChangeStationInfo}
+                                required={id ? false : true}
+                            >
+                                <option value="false">False</option>
+                                <option value="true">True</option>
+                            </select>
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Longitude</Typography>
-                        <input
-                            className="input-edit-station"
-                            placeholder={stationInfo.lon}
-                            field="lon"
-                            onChange={handleChangeStationInfo}
-                        />
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">Longitude</Typography>
+                            <input
+                                className="input-edit-station"
+                                placeholder={
+                                    stationInfo.lon ?? "Insert longitude"
+                                }
+                                field="lon"
+                                onChange={handleChangeStationInfo}
+                                required={id ? false : true}
+                            />
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Latitude</Typography>
-                        <input
-                            className="input-edit-station"
-                            placeholder={stationInfo.lat}
-                            field="lat"
-                            onChange={handleChangeStationInfo}
-                        />
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">Latitude</Typography>
+                            <input
+                                className="input-edit-station"
+                                placeholder={
+                                    stationInfo.lat ?? "Insert latitude"
+                                }
+                                field="lat"
+                                onChange={handleChangeStationInfo}
+                                required={id ? false : true}
+                            />
+                        </Grid>
 
-                    <Grid item xs={4}>
-                        <Typography variant="body1">Last heartbeat</Typography>
-                        <input
-                            className="input-edit-station"
-                            type="text"
-                            value={new Date(
-                                stationInfo.last_heartbeat
-                            ).toLocaleString()}
-                            disabled
-                            style={{ cursor: "not-allowed" }}
-                        />
-                    </Grid>
+                        <Grid item xs={4}>
+                            <Typography variant="body1">
+                                Last heartbeat
+                            </Typography>
+                            <input
+                                className="input-edit-station"
+                                type="text"
+                                value={new Date(
+                                    stationInfo.last_heartbeat ??
+                                        new Date().toISOString()
+                                ).toLocaleString()}
+                                disabled
+                                style={{ cursor: "not-allowed" }}
+                            />
+                        </Grid>
 
-                    <Grid item xs={12}>
-                        <Typography variant="body1">Note</Typography>
-                        <textarea
-                            className="input-edit-station"
-                            placeholder={stationInfo.notes}
-                            style={{ height: "100px", width: "100%" }}
-                            field="notes"
-                            onChange={handleChangeStationInfo}
-                        />
-                    </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="body1">Note</Typography>
+                            <textarea
+                                className="input-edit-station"
+                                placeholder={stationInfo.notes ?? "Insert note"}
+                                style={{ height: "100px", width: "100%" }}
+                                field="notes"
+                                onChange={handleChangeStationInfo}
+                            />
+                        </Grid>
 
-                    <Grid item xs={12}>
-                        <Grid
-                            container
-                            spacing={{ xs: 2, md: 3 }}
-                            columns={{ xs: 4, sm: 8, md: 12 }}
-                        >
-                            <Grid item xs={1}>
-                                <Button
-                                    onClick={handleSaveClick}
-                                    variant="contained"
-                                    color="success"
-                                >
-                                    Save
-                                </Button>
-                            </Grid>
-                            <Grid item xs={1}>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={handleOpenCancel}
-                                >
-                                    Cancel
-                                </Button>
+                        <Grid item xs={12}>
+                            <Grid
+                                container
+                                spacing={{ xs: 2, md: 3 }}
+                                columns={{ xs: 4, sm: 8, md: 12 }}
+                            >
+                                <Grid item xs={1}>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        color="success"
+                                    >
+                                        Save
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={1}>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={handleOpenCancel}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                </form>
             </Box>
             <Dialog
                 open={openPostApi}

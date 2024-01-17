@@ -20,7 +20,8 @@ CREATE TABLE User (
     email VARCHAR(255),
     password VARCHAR(255),
     token_reset_time DATETIME,
-    balance int
+    balance int,
+    is_admin BOOLEAN
 );
 
 CREATE TABLE StationUsage (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,46 +8,44 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
-import { AuthContext } from '../AuthContext';
 import gloabl_style from '../../style';
-import * as Keychain from 'react-native-keychain';
-
 
 const HomeScreen = () => {
-    let webRef = undefined;
-    let [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
-    const { setAuthToken } = useContext(AuthContext);
+    const webRef = useRef();
+    const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
 
     const onButtonPress = () => {
         const [lng, lat] = mapCenter.split(',');
-        webRef.injectJavaScript(
-            `map.setCenter([${parseFloat(lng)}, ${parseFloat(lat)}]); void(0);`,
+        webRef.current.injectJavaScript(
+            `  
+                map.setCenter([${parseFloat(lng)}, ${parseFloat(lat)}]);
+            `,
         );
     };
 
     const addMarker = (lng, lat, txt) => {
-        webRef.injectJavaScript(
+        webRef.current.injectJavaScript(
             `
-      addMarker(${lng}, ${lat}, '${txt}'); void(0);
-      `,
+                addMarker(${lng}, ${lat}, '${txt}');                
+            `,
         );
     };
 
     const handleMapEvent = event => {
-        let data = event.nativeEvent.data.split(',');
+        /*let data = event.nativeEvent.data.split(',');
         addMarker(
             parseFloat(data[0]),
             parseFloat(data[1]),
             '<h1>Dopo Movimento</h1>',
-        );
+        );*/
         setMapCenter(event.nativeEvent.data);
     };
 
-    useEffect(() => {
-        // addMarker(8.93413, 44.40757, '<h1>Ciao</h1>');
-        // addMarker(8.93, 44.404, '<h1>Hello</h1>');
-        // addMarker(8.935, 44.405, '<h1>Pippo</h1>');
-    }, []);
+    const loadStations = async () => {
+        addMarker(8.93413, 44.40757, '<h1>Ciao</h1>');
+        addMarker(8.93, 44.404, '<h1>Hello</h1>');
+        addMarker(8.935, 44.405, '<h1>Pippo</h1>');
+    }
 
     return (
         <View style={style.container}>
@@ -60,12 +58,13 @@ const HomeScreen = () => {
                     <Text style={{ color: gloabl_style.text_color_in_btn }}>Search</Text>
                 </TouchableOpacity>
             </View>
-            {/* <WebView
-        ref={r => (webRef = r)}
-        onMessage={handleMapEvent}
-        style={style.map}
-        originWhitelist={['*']}
-        source={{ html: mapTemplate }}></WebView> */}
+            <WebView
+                ref={webRef}
+                onMessage={handleMapEvent}
+                style={style.map}
+                originWhitelist={['*']}
+                onLoadEnd={loadStations}
+                source={{ html: mapTemplate }}/> 
         </View>
     );
 };

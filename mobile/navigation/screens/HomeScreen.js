@@ -9,6 +9,8 @@ import {
 import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
 import gloabl_style from '../../style';
+import axios from 'axios';
+import { API_URL, API_PORT } from '../../config';
 
 const HomeScreen = () => {
     const webRef = useRef();
@@ -32,19 +34,27 @@ const HomeScreen = () => {
     };
 
     const handleMapEvent = event => {
-        /*let data = event.nativeEvent.data.split(',');
-        addMarker(
-            parseFloat(data[0]),
-            parseFloat(data[1]),
-            '<h1>Dopo Movimento</h1>',
-        );*/
         setMapCenter(event.nativeEvent.data);
     };
 
     const loadStations = async () => {
-        addMarker(8.93413, 44.40757, '<h1>Ciao</h1>');
-        addMarker(8.93, 44.404, '<h1>Hello</h1>');
-        addMarker(8.935, 44.405, '<h1>Pippo</h1>');
+        try {
+            axios
+                .get(
+                    `http://${API_URL}:${API_PORT}/station`,
+                    { headers: { 'Content-Type': 'application/json' } },
+                )
+                .then(async response => {
+                    response.data.forEach(station => {
+                        addMarker(station.lon, station.lat, `<h1>${station.name}</h1>`);
+                    });
+                })
+                .catch(error => {
+                    throw new Error('Loading stations failed');
+                });
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
     return (

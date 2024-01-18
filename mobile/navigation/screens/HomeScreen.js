@@ -17,7 +17,8 @@ const HomeScreen = () => {
     const webRef = useRef();
     const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
     const [stationId, setStationId] = useState(null);
-    const snapPoints = useMemo(() => ['60%', '25%'], []);
+    const [stationInfo, setStationInfo] = useState({});
+    const snapPoints = useMemo(() => ['65%', '30%'], []);
 	const bottomSheetRef = useRef(null);
 
     const onButtonPress = () => {
@@ -45,10 +46,21 @@ const HomeScreen = () => {
         bottomSheetRef.current.snapToIndex(1);
     }
 
-    const handleClickMarker = (data) => {
+    const handleClickMarker = async (data) => {
         setStationId(data.id);
         bottomSheetRef.current?.present();
         bottomSheetRef.current.snapToIndex(0);
+
+        try {
+            const res = await axios.get(
+                `http://${API_URL}:${API_PORT}/station/${data.id}`,
+                { headers: { 'Content-Type': 'application/json' } });
+                
+            console.log(res.data);
+            setStationInfo(res.data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
     const handleMapEvent = event => {
@@ -71,7 +83,8 @@ const HomeScreen = () => {
                 )
                 .then(async response => {
                     response.data.forEach(station => {
-                        addMarker(station.lon, station.lat, station.id);
+                        if (!station.dismissed)
+                            addMarker(station.lon, station.lat, station.id);
                     });
                 })
                 .catch(error => {
@@ -108,7 +121,41 @@ const HomeScreen = () => {
 				snapPoints={snapPoints}
 				enablePanDownToClose={true}>
 
-                <Text>{stationId}</Text>
+                <View style={style.stationInfoContainer}>
+                    <Text style={style.titleText}>{stationInfo.name}</Text>
+                    <View style={style.displayGrid}>
+                        <View style={style.itemGridContainer}>  
+                            <Text style={style.itemGridTextTitle}>Power</Text>
+                            <Text style={style.itemGridText}>{(Math.round(stationInfo.power * 100) / 100).toFixed(2)}</Text>
+                        </View>
+                        <View style={style.itemGridContainer}>  
+                            <Text style={style.itemGridTextTitle}>Price</Text>
+                            <Text style={style.itemGridText}>{stationInfo.price / 100}</Text>
+                        </View>
+                        <View style={{marginTop: 16, height: 150}}>
+                            <View style={style.itemGridContainer}>  
+                                <Text style={style.itemGridTextTitle}>Description</Text>
+                                <Text style={style.itemGridText}>{stationInfo.description ?? "Questa è una descrizione temporanea\nQuesta è una descrizione temporanea\nQuesta è una descrizione temporanea\nQuesta è una descrizione temporanea\nQuesta è una descrizione temporanea"}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={style.buttonsContainer}>
+                    <View style={style.displayGridBtns}>
+                        <TouchableOpacity style={style.modalBtns}>
+                            <View >  
+                                <Text style={{color: "#fff"}}>Avvia</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={style.modalBtns}>
+                            <View >  
+                                <Text style={{color: "#fff"}}>Prenota</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    
+                </View>
             
             </BottomSheetModal>
                 
@@ -150,6 +197,52 @@ const style = StyleSheet.create({
         borderRadius: 5,
         elevation: 5,
     },
+    stationInfoContainer: {
+        paddingHorizontal: 48,
+        paddingVertical: 16,
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    titleText: {
+        fontSize: 24,
+        fontWeight: '700',
+    },
+    displayGrid: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'column',   
+    },
+    displayGridBtns: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'row',   
+    },
+    itemGridContainer: {
+        marginTop: 16,
+    },
+    itemGridTextTitle: {
+        fontSize: 20,
+        fontWeight: "500"
+    },
+    itemGridText: {
+        fontSize: 16,
+    },
+    buttonsContainer: {
+        paddingHorizontal: 48,
+        marginTop: 16,
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    modalBtns: {
+        width: '40%',
+        height: 50,
+        backgroundColor: gloabl_style.main_color,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 18,
+        borderRadius: 5,
+    }
 });
 
 export default HomeScreen;

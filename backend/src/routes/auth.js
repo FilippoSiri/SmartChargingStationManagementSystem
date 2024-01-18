@@ -7,19 +7,11 @@ const { verifyToken } = require("../middleware/authMiddleware");
 //TODO: Check status code
 router.post("/register", async (req, res) => {
     console.log(req.body);
-    const newUser = new User(
-        null,
-        req.body.name,
-        req.body.surname,
-        req.body.email,
-        req.body.password,
-        0,
-        new Date(),
-        false
-    );
+    const newUser = new User(null, req.body.name, req.body.surname, req.body.email, req.body.password, 0, new Date(), false);
     const addedUser = await newUser.save();
+    
     if (addedUser !== null) {
-        const token = generateAccessToken({ userId: addedUser.id });
+        const token = generateAccessToken({ userId: addedUser.id, isAdmin: addedUser.is_admin });
         res.status(201).json({ token: token });
     } else {
         res.status(500).json({ message: "Error adding user" });

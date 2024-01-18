@@ -72,7 +72,11 @@ const EditStation = () => {
                 dismissed: stationInfo.dismissed,
                 last_heartbeat: stationInfo.last_heartbeat,
                 notes: stationInfo.notes,
-            }
+            },
+            { headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": localStorage.getItem("token") 
+            }}
         );
 
         if (res.status === 201) {

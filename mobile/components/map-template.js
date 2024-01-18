@@ -19,7 +19,7 @@ export default `
     <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.13.0/maps/maps-web.min.js'></script>
 
     <script>
-        function addMarker(lng, lat, id, customElem) {
+        function addMarker(lng, lat, id) {
             let popupOffsets = {
                 top: [0, 0],
                 bottom: [0, -70],
@@ -32,8 +32,6 @@ export default `
             console.log("yuppe");
 
             let marker = new tt.Marker().setLngLat([lng, lat]).addTo(map);
-            let popup = new tt.Popup({ offset: popupOffsets }).setHTML(customElem);
-            marker.setPopup(popup);
  
             marker.getElement().addEventListener('click', function (e) {
                 let msg = JSON.stringify({type: "marker_click", id: id});

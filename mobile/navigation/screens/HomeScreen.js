@@ -17,7 +17,7 @@ const HomeScreen = () => {
     const webRef = useRef();
     const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
     const [stationId, setStationId] = useState(null);
-    const snapPoints = useMemo(() => ['50%', '25%'], []);
+    const snapPoints = useMemo(() => ['60%', '25%'], []);
 	const bottomSheetRef = useRef(null);
 
     const onButtonPress = () => {
@@ -29,10 +29,10 @@ const HomeScreen = () => {
         );
     };
 
-    const addMarker = (lng, lat, id, txt) => {
+    const addMarker = (lng, lat, id) => {
         webRef.current.injectJavaScript(
             `
-                addMarker(${lng}, ${lat}, ${id}, '${txt}');                
+                addMarker(${lng}, ${lat}, ${id});                
             `,
         );
     };
@@ -71,7 +71,7 @@ const HomeScreen = () => {
                 )
                 .then(async response => {
                     response.data.forEach(station => {
-                        addMarker(station.lon, station.lat, station.id, `<h1>${station.name}</h1>`);
+                        addMarker(station.lon, station.lat, station.id);
                     });
                 })
                 .catch(error => {

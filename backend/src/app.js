@@ -5,6 +5,7 @@ const stationRouter = require("./routes/station");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 const cors = require("cors");
+var path = require('path');
 const { RPCServer, RPCClient } = require("ocpp-rpc");
 
 const app = express();
@@ -14,6 +15,10 @@ app.use(
         origin: `http://localhost:${process.env.FE_PORT}`,
     })
 );
+
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(__dirname + '/public'));
+app.set('view engine', 'ejs');
 
 const httpServer = app.listen(process.env.RPC_PORT, "localhost");
 const rpcServer = new RPCServer();

@@ -95,6 +95,23 @@ class User {
         );
     }
 
+    static async getByEmail(email) {
+        const sql = "SELECT * FROM User WHERE email = ?";
+        const [rows, _] = await conn.query(sql, [email]);
+        if (rows.length == 0) return null;
+        const row = rows[0];
+        return new User(
+            row.id,
+            row.name,
+            row.surname,
+            row.email,
+            row.password,
+            row.balance,
+            row.token_reset_time,
+            row.is_admin
+        );
+    }
+
     static async getAll() {
         const sql = "SELECT * FROM User";
         const [rows, _] = await conn.query(sql);

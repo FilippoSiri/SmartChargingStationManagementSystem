@@ -37,6 +37,14 @@ CREATE TABLE StationUsage (
     FOREIGN KEY (station_id) REFERENCES Station(id)
 );
 
+CREATE TABLE ResetPasswordToken (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255),
+    token VARCHAR(255),
+    generated_time DATETIME,
+    used BOOLEAN
+);
+
 INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes)
             VALUES ('Station 1', 44.41225398745292, 8.943041803651521, 421, 3.4212377134862795, 0, NOW(), 'This is a note');
 

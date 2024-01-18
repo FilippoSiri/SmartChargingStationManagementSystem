@@ -12,7 +12,7 @@ import global_style from '../../style';
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from '../AuthContext';
 import axios from 'axios';
-import { API_URL, API_PORT } from '../../config';
+import { API_URL, API_PORT } from '@env';
 
 const RegistrationScreen = ({ navigation }) => {
     const [name, setName] = useState('');

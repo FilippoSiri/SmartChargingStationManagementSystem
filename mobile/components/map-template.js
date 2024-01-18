@@ -1,4 +1,4 @@
-import { TOMTOM_API_KEY } from '../config';
+import { TOMTOM_API_KEY } from '@env';
 export default `
 <div>
     <style>

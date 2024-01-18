@@ -10,7 +10,7 @@ import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
 import gloabl_style from '../../style';
 import axios from 'axios';
-import { API_URL, API_PORT } from '../../config';
+import { API_URL, API_PORT } from '@env';
 import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const HomeScreen = () => {

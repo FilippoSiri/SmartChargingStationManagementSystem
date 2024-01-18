@@ -12,7 +12,7 @@ import RegistrationScreen from './screens/RegistrationScreen';
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
-import { API_URL, API_PORT } from '../config';
+import { API_URL, API_PORT } from '@env';
 import global_style from '../style';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';

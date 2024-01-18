@@ -10,7 +10,7 @@ import {
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from '../AuthContext';
 import axios from 'axios';
-import { API_URL, API_PORT } from '../../config';
+import { API_URL, API_PORT } from '@env';
 
 import gloabl_style from '../../style';
 
@@ -20,6 +20,7 @@ const LoginScreen = ({ navigation }) => {
     const { setAuthToken } = useContext(AuthContext);
 
     const login = async () => {
+        console.log(`http://${API_URL}:${API_PORT}/auth/login`);
         try {
             axios
                 .post(

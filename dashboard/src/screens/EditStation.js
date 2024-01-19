@@ -70,7 +70,6 @@ const EditStation = () => {
                 price: stationInfo.price * 100,
                 power: stationInfo.power,
                 dismissed: stationInfo.dismissed,
-                last_heartbeat: stationInfo.last_heartbeat,
                 notes: stationInfo.notes,
             },
             { headers: { 
@@ -217,10 +216,7 @@ const EditStation = () => {
                             <input
                                 className="input-edit-station"
                                 type="text"
-                                value={new Date(
-                                    stationInfo.last_heartbeat ??
-                                        new Date().toISOString()
-                                ).toLocaleString()}
+                                value={stationInfo.last_heartbeat !== null ? new Date(stationInfo.last_heartbeat).toLocaleString() : "--"}
                                 disabled
                                 style={{ cursor: "not-allowed" }}
                             />

@@ -13,6 +13,12 @@ import axios from 'axios';
 import { API_URL, API_PORT } from '@env';
 import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
 
+const stationStatusColor = {
+    0: '#00ff00',
+    1: '#ffa500',
+    2: '#ff0000',
+};
+
 const HomeScreen = () => {
     const webRef = useRef();
     const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
@@ -30,10 +36,11 @@ const HomeScreen = () => {
         );
     };
 
-    const addMarker = (lng, lat, id) => {
+    const addMarker = (lng, lat, id, color) => {
+        console.log(`addMarker(${lng}, ${lat}, ${id}, '${color}')`);
         webRef.current.injectJavaScript(
             `
-                addMarker(${lng}, ${lat}, ${id});                
+                addMarker(${lng}, ${lat}, ${id}, '${color}');                
             `,
         );
     };
@@ -71,6 +78,8 @@ const HomeScreen = () => {
             handleClickMarker(data);
         }else if(data.type === 'drag_start'){
             handleDragStartMap(data);
+        } else if (data.type === 'debug') {
+            console.log(data.message);
         }
     };
 
@@ -83,8 +92,11 @@ const HomeScreen = () => {
                 )
                 .then(async response => {
                     response.data.forEach(station => {
-                        if (!station.dismissed)
-                            addMarker(station.lon, station.lat, station.id);
+                        if (!station.dismissed){
+                            console.log(station);
+                            console.log(stationStatusColor[station.status]);
+                            addMarker(station.lon, station.lat, station.id, stationStatusColor[station.status]);
+                        }
                     });
                 })
                 .catch(error => {

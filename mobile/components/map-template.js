@@ -10,6 +10,43 @@ export default `
                 height: 100%;
                 width: 100%;
             }
+
+            .marker-icon {
+                background-position: center;
+                background-size: 22px 22px;
+                border-radius: 50%;
+                height: 22px;
+                left: 4px;
+                position: absolute;
+                text-align: center;
+                top: 3px;
+                transform: rotate(45deg);
+                width: 22px;
+            }
+            .marker {
+                height: 50px;
+                width: 50px;
+            }
+            .marker-content {
+                background: #c30b82;
+                border-radius: 50% 50% 50% 0;
+                height: 50px;
+                left: 50%;
+                margin: -15px 0 0 -15px;
+                position: absolute;
+                top: 50%;
+                transform: rotate(-45deg);
+                width: 50px;
+            }
+            .marker-content::before {
+                border-radius: 50%;
+                content: "";
+                height: 24px;
+                margin: 3px 0 0 3px;
+                position: absolute;
+                width: 24px;
+            }
+        </style>
     </style>
     
     <div id='map' class='map'></div>
@@ -19,19 +56,19 @@ export default `
     <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.13.0/maps/maps-web.min.js'></script>
 
     <script>
-        function addMarker(lng, lat, id) {
-            let popupOffsets = {
-                top: [0, 0],
-                bottom: [0, -70],
-                "bottom-right": [0, -70],
-                "bottom-left": [0, -70],
-                left: [25, -35],
-                right: [-25, -35],
-            };
+        function addMarker(lng, lat, id, color) {
 
-            console.log("yuppe");
+            var markerElement = document.createElement('div');
+            markerElement.className = 'marker';
 
-            let marker = new tt.Marker().setLngLat([lng, lat]).addTo(map);
+            var markerContentElement = document.createElement('div');
+            markerContentElement.className = 'marker-content';
+            markerContentElement.style.backgroundColor = color;
+            markerElement.appendChild(markerContentElement);
+            // add marker to map
+            let marker = new tt.Marker({element: markerElement})
+                .setLngLat([lng, lat])
+                .addTo(map);
  
             marker.getElement().addEventListener('click', function (e) {
                 let msg = JSON.stringify({type: "marker_click", id: id});

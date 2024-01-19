@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import {
     Box,
     Button,
+    Checkbox,
     Container,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
+    FormControlLabel,
     Grid,
     Slide,
     Typography,
@@ -48,11 +50,12 @@ const EditStation = () => {
     const handleChangeStationInfo = (e) => {
         let fieldToUpdate = e.target.getAttribute("field");
         let newValue = e.target.value;
-
-        if (fieldToUpdate === "dismissed")
-            newValue = newValue === "true" ? true : false;
-
         setStationinfo({ ...stationInfo, [fieldToUpdate]: newValue });
+    };
+
+    const handleChangeDismissed = (e) => {
+        let newValue = e.target.checked;
+        setStationinfo({ ...stationInfo, "dismissed": newValue });
     };
 
     const handleSubmitClick = async (e) => {
@@ -70,7 +73,6 @@ const EditStation = () => {
                 price: stationInfo.price * 100,
                 power: stationInfo.power,
                 dismissed: stationInfo.dismissed,
-                last_heartbeat: stationInfo.last_heartbeat,
                 notes: stationInfo.notes,
             },
             { headers: { 
@@ -131,9 +133,8 @@ const EditStation = () => {
                             <Typography variant="body1">Name</Typography>
                             <input
                                 className="input-edit-station"
-                                placeholder={
-                                    stationInfo.name ?? "Insert station name"
-                                }
+                                placeholder="Insert station name"                         
+                                value={stationInfo.name ?? ""}
                                 field="name"
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
@@ -146,9 +147,8 @@ const EditStation = () => {
                                 type="text"
                                 field="power"
                                 className="input-edit-station"
-                                placeholder={
-                                    stationInfo.power ?? "Insert power"
-                                }
+                                placeholder="Insert power"
+                                value={stationInfo.power ?? ""}
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
                             />
@@ -162,35 +162,19 @@ const EditStation = () => {
                                 type="text"
                                 field="price"
                                 className="input-edit-station"
-                                placeholder={
-                                    stationInfo.price ?? "Insert price"
-                                }
+                                placeholder="Insert price"
+                                value={stationInfo.price ?? ""}
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
                             />
                         </Grid>
 
                         <Grid item xs={4}>
-                            <Typography variant="body1">Dismissed</Typography>
-                            <select
-                                field="dismissed"
-                                className="input-edit-station"
-                                value={stationInfo.dismissed}
-                                onChange={handleChangeStationInfo}
-                                required={id ? false : true}
-                            >
-                                <option value="false">False</option>
-                                <option value="true">True</option>
-                            </select>
-                        </Grid>
-
-                        <Grid item xs={4}>
                             <Typography variant="body1">Longitude</Typography>
                             <input
                                 className="input-edit-station"
-                                placeholder={
-                                    stationInfo.lon ?? "Insert longitude"
-                                }
+                                placeholder="Insert longitude"
+                                value={stationInfo.lon ?? ""}
                                 field="lon"
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
@@ -201,9 +185,8 @@ const EditStation = () => {
                             <Typography variant="body1">Latitude</Typography>
                             <input
                                 className="input-edit-station"
-                                placeholder={
-                                    stationInfo.lat ?? "Insert latitude"
-                                }
+                                placeholder="Insert latitude"
+                                value={stationInfo.lat ?? ""}
                                 field="lat"
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
@@ -217,20 +200,22 @@ const EditStation = () => {
                             <input
                                 className="input-edit-station"
                                 type="text"
-                                value={new Date(
-                                    stationInfo.last_heartbeat ??
-                                        new Date().toISOString()
-                                ).toLocaleString()}
+                                value={id && stationInfo.last_heartbeat !== null ? new Date(stationInfo.last_heartbeat).toLocaleString() : "--"}
                                 disabled
                                 style={{ cursor: "not-allowed" }}
                             />
+                        </Grid>
+
+                        <Grid item xs={4}>
+                            <FormControlLabel control={<Checkbox field="dismissed" onChange={handleChangeDismissed} checked={stationInfo.dismissed ?? false} />} label="Dismissed" />
                         </Grid>
 
                         <Grid item xs={12}>
                             <Typography variant="body1">Note</Typography>
                             <textarea
                                 className="input-edit-station"
-                                placeholder={stationInfo.notes ?? "Insert note"}
+                                placeholder="Insert note"
+                                value={stationInfo.notes ?? ""}
                                 style={{ height: "100px", width: "100%" }}
                                 field="notes"
                                 onChange={handleChangeStationInfo}

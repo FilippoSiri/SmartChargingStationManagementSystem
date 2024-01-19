@@ -21,7 +21,6 @@ const LoginScreen = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
         const res = await axios.post(
             `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/auth/login`,
             {

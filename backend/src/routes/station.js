@@ -1,6 +1,6 @@
 "use strict";
 const express = require("express");
-const Station = require("../models/station");
+const Station = require("../models/Station");
 const StationUsage = require("../models/StationUsage");
 const {
     verifyToken,
@@ -22,7 +22,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 //TODO: Check status code
-router.post("/", verifyTokenAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
     const newStation = new Station(
         null,
         req.body.name,
@@ -33,7 +33,7 @@ router.post("/", verifyTokenAdmin, async (req, res) => {
         req.body.dismissed,
         req.body.last_heartbeat,
         req.body.notes,
-        Station.SECONDARY_STATUS.FREE
+        Station.STATUS.FREE
     );
     const addedStation = await newStation.save();
     if (addedStation !== null) {
@@ -45,15 +45,25 @@ router.post("/", verifyTokenAdmin, async (req, res) => {
 //TODO: Check status code
 router.patch("/", verifyTokenAdmin, async (req, res) => {
     const station = await Station.getById(req.body.id);
+    console.log(station)
     if (station !== null) {
-        station.name = req.body.name;
-        station.lat = req.body.lat;
-        station.lon = req.body.lon;
-        station.price = req.body.price;
-        station.power = req.body.power;
-        station.dismissed = req.body.dismissed;
-        station.last_heartbeat = req.body.last_heartbeat;
-        station.notes = req.body.notes;
+        if (req.body.name !== undefined)
+            station.name = req.body.name;
+        if (req.body.lat !== undefined)
+            station.lat = req.body.lat;
+        if (req.body.lon !== undefined)
+            station.lon = req.body.lon;
+        if (req.body.price !== undefined)
+            station.price = req.body.price;
+        if (req.body.power !== undefined)
+            station.power = req.body.power;
+        if (req.body.dismissed !== undefined)
+            station.dismissed = req.body.dismissed;
+        if (req.body.last_heartbeat !== undefined)
+            station.last_heartbeat = req.body.last_heartbeat;
+        if (req.body.notes !== undefined)
+            station.notes = req.body.notes;
+        console.log(station)
         const updatedStation = await station.save();
         if (updatedStation !== null) {
             res.status(201).json(updatedStation);
@@ -73,13 +83,8 @@ router.post("/reserve/", verifyToken, async (req, res) => {
     if (station === null)
         return res.status(404).json({ message: "Station not found" });
 
-    if (
-        station.status !== Station.STATUS.AVAILABLE ||
-        station.secondary_status !== Station.SECONDARY_STATUS.FREE
-    )
-        return res.status(409).json({
-            message: "Station is currently not available for reservation",
-        });
+    if (station.status !== Station.STATUS.FREE)
+        return res.status(409).json({message: "Station is currently not available for reservation"});
 
     const stationUsage = new StationUsage();
     stationUsage.station_id = stationId;

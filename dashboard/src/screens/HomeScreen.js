@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Container, Grid, Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
-// import "@tomtom-international/web-sdk-maps/dist/maps.css";
-// import tt from "@tomtom-international/web-sdk-maps";
+import "@tomtom-international/web-sdk-maps/dist/maps.css";
+import tt from "@tomtom-international/web-sdk-maps";
 
 import axios from "axios";
 
@@ -80,35 +80,35 @@ const HomeScreen = () => {
             setStations(data);
         };
 
-        // let map = tt.map({
-        //   key: process.env.REACT_APP_TOMTOM_API_KEY,
-        //   container: mapElement.current,
-        //   center: [8.93413, 44.40757],
-        //   zoom: 15,
-        // });
+        let map = tt.map({
+            key: process.env.REACT_APP_TOMTOM_API_KEY,
+            container: mapElement.current,
+            center: [8.93413, 44.40757],
+            zoom: 15,
+        });
 
-        // setMap(map);
+        setMap(map);
         fetchStations();
 
-        // return () => map.remove();
+        return () => map.remove();
     }, []);
 
-    // useEffect(() => {
-    //   stations.forEach((station) => {
-    //     addMarker(station);
-    //   });
-    // }, [stations]);
+    const addMarker = useCallback((station) => {
+        let marker = new tt.Marker()
+            .setLngLat([station.lon, station.lat])
+            .addTo(map);
+        marker.setPopup(
+            new tt.Popup({ offset: 35 }).setHTML(
+                `<h3>${station.name}</h3><p>Power: ${station.power}</p><p>Price: ${station.price}</p>`
+            )
+        );
+    },[map]);
 
-    // const addMarker = (station) => {
-    //   let marker = new tt.Marker()
-    //     .setLngLat([station.lon, station.lat])
-    //     .addTo(map);
-    //   marker.setPopup(
-    //     new tt.Popup({ offset: 35 }).setHTML(
-    //       `<h3>${station.name}</h3><p>Power: ${station.power}</p><p>Price: ${station.price}</p>`
-    //     )
-    //   );
-    // };
+    useEffect(() => {
+        stations.forEach((station) => {
+            addMarker(station);
+        });
+    }, [stations, addMarker]);
 
     return (
         <Container maxWidth="xl" style={{ marginTop: "3em" }}>

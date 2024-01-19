@@ -69,7 +69,7 @@ router.get("/resetPasswordToken", async (req, res) => {
         from: process.env.EMAIL_FROM,
         to: req.body.email,
         subject: 'Reset your password',
-        text: `Hello, you can reset your password here: http://${process.env.API_BASE_URL}:${process.env.PORT}/auth/resetPasswordPage?token=${token}`
+        text: `Hello, you can reset your password here: http://${process.env.API_URL}:${process.env.PORT}/auth/resetPasswordPage?token=${token}`
     };
 
     transporter.sendMail(mailOptions, function(error, info){
@@ -82,7 +82,7 @@ router.get("/resetPasswordToken", async (req, res) => {
 });
 
 router.get("/resetPasswordPage", verifyTokenResetPassword, async (req, res) => {
-    return res.render('resetPassword', { email: req.email, url: `http://${process.env.API_BASE_URL}:${process.env.PORT}/auth/resetPassword?token=${req.query.token}` });
+    return res.render('resetPassword', { email: req.email, url: `http://${process.env.API_URL}:${process.env.PORT}/auth/resetPassword?token=${req.query.token}` });
 });
 
 

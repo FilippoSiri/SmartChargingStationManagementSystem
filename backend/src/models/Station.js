@@ -117,7 +117,7 @@ class Station {
                     row.lon,
                     row.price,
                     row.power,
-                    row.dismissed,
+                    row.dismissed == 1,
                     row.last_heartbeat,
                     row.notes,
                     status
@@ -142,7 +142,7 @@ class Station {
             row.lon,
             row.price,
             row.power,
-            row.dismissed,
+            row.dismissed == 1,
             row.last_heartbeat,
             row.notes,
             status

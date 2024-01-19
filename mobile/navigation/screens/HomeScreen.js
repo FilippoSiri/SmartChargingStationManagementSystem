@@ -17,6 +17,8 @@ const stationStatusColor = {
     0: '#00ff00',
     1: '#ffa500',
     2: '#ff0000',
+    4: '#000000',
+    5: '#000000',
 };
 
 const HomeScreen = () => {
@@ -153,21 +155,23 @@ const HomeScreen = () => {
                     </View>
                 </View>
 
+                        { stationInfo.status === 0 && (
                 <View style={style.buttonsContainer}>
                     <View style={style.displayGridBtns}>
-                        <TouchableOpacity style={style.modalBtns}>
-                            <View >  
-                                <Text style={{color: "#fff"}}>Avvia</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={style.modalBtns}>
-                            <View >  
-                                <Text style={{color: "#fff"}}>Prenota</Text>
-                            </View>
-                        </TouchableOpacity>
+                                <TouchableOpacity style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Avvia</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Prenota</Text>
+                                    </View>
+                                </TouchableOpacity>
                     </View>
                     
                 </View>
+                        )}
             
             </BottomSheetModal>
                 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useContext } from 'react';
 import {
     StyleSheet,
     View,
@@ -12,6 +12,7 @@ import gloabl_style from '../../style';
 import axios from 'axios';
 import { API_URL, API_PORT } from '@env';
 import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
+import { AuthContext } from '../AuthContext';
 
 const stationStatusColor = {
     0: '#00ff00',
@@ -22,6 +23,7 @@ const stationStatusColor = {
 };
 
 const HomeScreen = () => {
+    const { authToken, setAuthToken } = useContext(AuthContext);
     const webRef = useRef();
     const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
     const [stationId, setStationId] = useState(null);
@@ -39,7 +41,6 @@ const HomeScreen = () => {
     };
 
     const addMarker = (lng, lat, id, color) => {
-        console.log(`addMarker(${lng}, ${lat}, ${id}, '${color}')`);
         webRef.current.injectJavaScript(
             `
                 addMarker(${lng}, ${lat}, ${id}, '${color}');                
@@ -67,6 +68,7 @@ const HomeScreen = () => {
                 
             console.log(res.data);
             setStationInfo(res.data);
+            setStationId(data.id);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -94,16 +96,30 @@ const HomeScreen = () => {
                 )
                 .then(async response => {
                     response.data.forEach(station => {
-                        if (!station.dismissed){
-                            console.log(station);
-                            console.log(stationStatusColor[station.status]);
+                        if (!station.dismissed)
                             addMarker(station.lon, station.lat, station.id, stationStatusColor[station.status]);
-                        }
                     });
                 })
                 .catch(error => {
                     throw new Error('Loading stations failed');
                 });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleReserveClick = async () => {
+        try {
+            const res = await axios.post(
+                `http://${API_URL}:${API_PORT}/station/reserve/`,
+                { id: stationId  }, { 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    } 
+                },
+            );
+            console.log(res.data);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -155,23 +171,22 @@ const HomeScreen = () => {
                     </View>
                 </View>
 
-                        { stationInfo.status === 0 && (
-                <View style={style.buttonsContainer}>
-                    <View style={style.displayGridBtns}>
-                                <TouchableOpacity style={style.modalBtns}>
-                                    <View >  
-                                        <Text style={{color: "#fff"}}>Avvia</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={style.modalBtns}>
-                                    <View >  
-                                        <Text style={{color: "#fff"}}>Prenota</Text>
-                                    </View>
-                                </TouchableOpacity>
+                { stationInfo.status === 0 && (
+                    <View style={style.buttonsContainer}>
+                        <View style={style.displayGridBtns}>
+                            <TouchableOpacity style={style.modalBtns}>
+                                <View >  
+                                    <Text style={{color: "#fff"}}>Avvia</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleReserveClick} style={style.modalBtns}>
+                                <View >  
+                                    <Text style={{color: "#fff"}}>Prenota</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    
-                </View>
-                        )}
+                )}
             
             </BottomSheetModal>
                 

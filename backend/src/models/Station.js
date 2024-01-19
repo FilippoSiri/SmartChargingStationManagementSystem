@@ -1,30 +1,29 @@
 "use strict";
 const conn = require("../utils/db-connection");
 const StationUsage = require("./StationUsage");
-const { RESERVATION_TIME } = require("../utils/constants");
+const { RESERVATION_TIME, HEARTBEAT_TIME } = require("../utils/constants");
 
 const STATUS = {
-    AVAILABLE: 0,
-    DISMISSED: 1,
-    BROKEN: 2,
-};
-
-const SECONDARY_STATUS = {
     FREE: 0,
     RESERVED: 1,
-    IN_USE: 2,
+    USED: 2,
+    DISMISSED: 3,
+    BROKEN: 4,
+    UNDEFINED: 5
 };
 
-async function getSecondaryStatus(lastReservation, lastUsage) {
+async function getStatus(station, lastReservation, lastUsage) {
+    if (station.last_heartbeat === null)
+        return STATUS.UNDEFINED;
+    if (station.dismissed)
+        return STATUS.DISMISSED;
+    if (station.last_heartbeat === null || station.last_heartbeat.getTime() + HEARTBEAT_TIME < Date.now())
+        return STATUS.BROKEN;
     if (lastUsage && lastUsage.end_time === null)
-        return SECONDARY_STATUS.IN_USE;
-    else if (
-        lastReservation &&
-        lastReservation.reservation_time.getTime() + RESERVATION_TIME >
-            Date.now()
-    )
-        return SECONDARY_STATUS.RESERVED;
-    return SECONDARY_STATUS.FREE;
+        return STATUS.USED;
+    if (lastReservation && lastReservation.reservation_time.getTime() + RESERVATION_TIME > Date.now())
+        return STATUS.RESERVED;
+    return STATUS.FREE;
 }
 
 class Station {
@@ -38,7 +37,7 @@ class Station {
         dismissed,
         last_heartbeat,
         notes,
-        secondary_status
+        status
     ) {
         this.id = id;
         this.name = name;
@@ -49,7 +48,7 @@ class Station {
         this.dismissed = dismissed;
         this.last_heartbeat = last_heartbeat;
         this.notes = notes;
-        this.secondary_status = secondary_status;
+        this.status = status;
     }
 
     async save() {
@@ -73,10 +72,7 @@ class Station {
                 this.id
             );
             const lastUsage = await StationUsage.getLastUsage(this.id);
-            this.secondary_status = await getSecondaryStatus(
-                lastReservation,
-                lastUsage
-            );
+            this.status = await getStatus(this, lastReservation, lastUsage);
         } else {
             // insert new station
             const sql =
@@ -91,7 +87,7 @@ class Station {
                 this.last_heartbeat,
                 this.notes,
             ]);
-            this.secondary_status = SECONDARY_STATUS.FREE;
+            this.status = STATUS.UNDEFINED;
             if (rows.affectedRows == 0) return null;
             this.id = rows.insertId;
         }
@@ -113,10 +109,7 @@ class Station {
                 const lastUsage = allUsage.find(
                     (usage) => usage.station_id === row.id
                 );
-                const secondary_status = await getSecondaryStatus(
-                    lastReservation,
-                    lastUsage
-                );
+                const status = await getStatus(row, lastReservation, lastUsage);
                 return new Station(
                     row.id,
                     row.name,
@@ -127,7 +120,7 @@ class Station {
                     row.dismissed,
                     row.last_heartbeat,
                     row.notes,
-                    secondary_status
+                    status
                 );
             })
         );
@@ -140,10 +133,8 @@ class Station {
         const row = rows[0];
         const lastReservation = await StationUsage.getLastReservation(row.id);
         const lastUsage = await StationUsage.getLastUsage(row.id);
-        const secondary_status = await getSecondaryStatus(
-            lastReservation,
-            lastUsage
-        );
+        const status = await getStatus(row, lastReservation, lastUsage);
+
         return new Station(
             row.id,
             row.name,
@@ -154,12 +145,11 @@ class Station {
             row.dismissed,
             row.last_heartbeat,
             row.notes,
-            secondary_status
+            status
         );
     }
 }
 
 Station.STATUS = STATUS;
-Station.SECONDARY_STATUS = SECONDARY_STATUS;
 
 module.exports = Station;

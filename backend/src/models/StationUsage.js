@@ -65,7 +65,7 @@ class StationUsage {
         return rows.map(row => new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price));
     }
     
-    static async getLastReservation(station_id) {
+    static async getLastReservationByStationId(station_id) {
         const sql = 'SELECT * FROM StationUsage WHERE station_id = ? and reservation_time is not null and start_time is null ORDER BY reservation_time DESC LIMIT 1';
         const [rows, _] = await conn.query(sql, [station_id]);
         if(rows.length == 0)

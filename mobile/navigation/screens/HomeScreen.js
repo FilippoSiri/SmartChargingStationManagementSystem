@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useContext } from 'react';
+import React, { useState, useRef, useMemo, useContext, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -13,6 +13,7 @@ import axios from 'axios';
 import { API_URL, API_PORT } from '@env';
 import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
 import { AuthContext } from '../AuthContext';
+import { Base64 } from 'js-base64';
 
 const stationStatusColor = {
     0: '#00ff00',
@@ -24,10 +25,13 @@ const stationStatusColor = {
 
 const HomeScreen = () => {
     const { authToken, setAuthToken } = useContext(AuthContext);
+    const [decodedToken, setDecodedToken] = useState(null);
     const webRef = useRef();
     const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
     const [stationId, setStationId] = useState(null);
     const [stationInfo, setStationInfo] = useState({});
+    const [lastStationUsage, setLastStationUsage] = useState({});
+    const [lastStationReservation, setLastStationReservation] = useState({});
     const snapPoints = useMemo(() => ['65%', '30%'], []);
 	const bottomSheetRef = useRef(null);
 
@@ -66,9 +70,25 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${data.id}`,
                 { headers: { 'Content-Type': 'application/json' } });
                 
-            console.log(res.data);
             setStationInfo(res.data);
             setStationId(data.id);
+
+            if (res.data.status === 1) {
+                console.log('last reservation');
+                const res2 = await axios.get(
+                    `http://${API_URL}:${API_PORT}/station/${data.id}/last_reservation`,
+                    { headers: { 'Content-Type': 'application/json' } });
+
+                console.log(res2.data);
+                setLastStationReservation(res2.data);
+            } else if (res.data.status === 2) {
+                const res2 = await axios.get(
+                    `http://${API_URL}:${API_PORT}/station/${data.id}/last_usage`,
+                    { headers: { 'Content-Type': 'application/json' } });
+
+                console.log(res2.data);
+                setLastStationUsage(res2.data);
+            }
         } catch (error) {
             console.error('Error:', error);
         }
@@ -142,6 +162,30 @@ const HomeScreen = () => {
         }
     }
 
+    const handleStopCharging = async () => {
+        try {
+            const res = await axios.post(
+                `http://${API_URL}:${API_PORT}/station/stop_charging/`,
+                { id: stationId  }, { 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    } 
+                },
+            );
+            console.log(res.data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    useEffect(() => {
+        if (authToken) {
+            const decodedToken = JSON.parse(Base64.decode(authToken.split('.')[1]));
+            setDecodedToken(decodedToken);
+        }
+    }, []);
+
     return (
         <View style={style.container}>
             <View style={style.buttons}>
@@ -203,6 +247,32 @@ const HomeScreen = () => {
                             </TouchableOpacity>
                         </View>
                     </View>
+                )}
+
+                {
+                    stationInfo.status == 2 && lastStationUsage !== null && lastStationUsage.user_id == decodedToken.userId && (
+                        <View style={style.buttonsContainer}>
+                            <View style={style.displayGridBtns}>
+                                <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Termina</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                )}
+
+{
+                    stationInfo.status == 1 && lastStationReservation !== null && lastStationReservation.user_id == decodedToken.userId && (
+                        <View style={style.buttonsContainer}>
+                            <View style={style.displayGridBtns}>
+                                <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                 )}
             
             </BottomSheetModal>

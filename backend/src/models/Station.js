@@ -68,7 +68,7 @@ class Station {
                 this.id,
             ]);
             if (rows.affectedRows == 0) return null;
-            const lastReservation = await StationUsage.getLastReservation(
+            const lastReservation = await StationUsage.getLastReservationByStationId(
                 this.id
             );
             const lastUsage = await StationUsage.getLastUsageByStationId(this.id);
@@ -131,7 +131,7 @@ class Station {
         const [rows, _] = await conn.query(sql, [id]);
         if (rows.length == 0) return null;
         const row = rows[0];
-        const lastReservation = await StationUsage.getLastReservation(row.id);
+        const lastReservation = await StationUsage.getLastReservationByStationId(row.id);
         const lastUsage = await StationUsage.getLastUsageByStationId(row.id);
         const status = await getStatus(row, lastReservation, lastUsage);
 

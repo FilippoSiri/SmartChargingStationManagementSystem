@@ -125,6 +125,23 @@ const HomeScreen = () => {
         }
     }
 
+    const handleStartCharging = async () => {
+        try {
+            const res = await axios.post(
+                `http://${API_URL}:${API_PORT}/station/start_charging/`,
+                { id: stationId  }, { 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    } 
+                },
+            );
+            console.log(res.data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     return (
         <View style={style.container}>
             <View style={style.buttons}>
@@ -174,7 +191,7 @@ const HomeScreen = () => {
                 { stationInfo.status === 0 && (
                     <View style={style.buttonsContainer}>
                         <View style={style.displayGridBtns}>
-                            <TouchableOpacity style={style.modalBtns}>
+                            <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
                                 <View >  
                                     <Text style={{color: "#fff"}}>Avvia</Text>
                                 </View>

@@ -74,7 +74,7 @@ class StationUsage {
         return new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price);
     }
 
-    static async getLastUsage(station_id) { 
+    static async getLastUsageByStationId(station_id) { 
         const sql = 'SELECT * FROM StationUsage WHERE station_id = ? and start_time is not null ORDER BY start_time DESC LIMIT 1';
         const [rows, _] = await conn.query(sql, [station_id]);
         if(rows.length == 0)

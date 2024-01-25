@@ -226,7 +226,7 @@ const HomeScreen = () => {
                         <View style={{marginTop: 16, height: 150}}>
                             <View style={style.itemGridContainer}>  
                                 <Text style={style.itemGridTextTitle}>Description</Text>
-                                <Text style={style.itemGridText}>{stationInfo.description ?? "Questa è una descrizione temporanea\nQuesta è una descrizione temporanea\nQuesta è una descrizione temporanea\nQuesta è una descrizione temporanea\nQuesta è una descrizione temporanea"}</Text>
+                                <Text style={style.itemGridText}>{stationInfo.description}</Text>
                             </View>
                         </View>
                     </View>

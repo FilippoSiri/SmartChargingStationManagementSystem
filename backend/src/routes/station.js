@@ -44,6 +44,7 @@ router.post("/", async (req, res) => {
         req.body.dismissed,
         req.body.last_heartbeat,
         req.body.notes,
+        req.body.description,
         Station.STATUS.FREE
     );
     const addedStation = await newStation.save();
@@ -74,6 +75,8 @@ router.patch("/", verifyTokenAdmin, async (req, res) => {
             station.last_heartbeat = req.body.last_heartbeat;
         if (req.body.notes !== undefined)
             station.notes = req.body.notes;
+        if (req.body.description !== undefined)
+            station.description = req.body.descriptionx;
         console.log(station)
         const updatedStation = await station.save();
         if (updatedStation !== null) {

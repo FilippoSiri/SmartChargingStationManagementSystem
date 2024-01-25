@@ -37,6 +37,7 @@ class Station {
         dismissed,
         last_heartbeat,
         notes,
+        description,
         status
     ) {
         this.id = id;
@@ -48,6 +49,7 @@ class Station {
         this.dismissed = dismissed;
         this.last_heartbeat = last_heartbeat;
         this.notes = notes;
+        this.description = description;
         this.status = status;
     }
 
@@ -55,7 +57,7 @@ class Station {
         if (this.id) {
             // update existing station
             const sql =
-                "UPDATE Station SET name = ?, lat = ?, lon = ?, price = ?, power = ?, dismissed = ?, last_heartbeat = ?, notes = ? WHERE id = ?";
+                "UPDATE Station SET name = ?, lat = ?, lon = ?, price = ?, power = ?, dismissed = ?, last_heartbeat = ?, notes = ?, description = ? WHERE id = ?";
             const [rows, _] = await conn.query(sql, [
                 this.name,
                 this.lat,
@@ -65,6 +67,7 @@ class Station {
                 this.dismissed,
                 this.last_heartbeat,
                 this.notes,
+                this.description,
                 this.id,
             ]);
             if (rows.affectedRows == 0) return null;
@@ -76,7 +79,7 @@ class Station {
         } else {
             // insert new station
             const sql =
-                "INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             const [rows, _] = await conn.query(sql, [
                 this.name,
                 this.lat,
@@ -86,6 +89,7 @@ class Station {
                 this.dismissed,
                 this.last_heartbeat,
                 this.notes,
+                this.description,
             ]);
             this.status = STATUS.UNDEFINED;
             if (rows.affectedRows == 0) return null;
@@ -120,6 +124,7 @@ class Station {
                     row.dismissed == 1,
                     row.last_heartbeat,
                     row.notes,
+                    row.description,
                     status
                 );
             })
@@ -145,6 +150,7 @@ class Station {
             row.dismissed == 1,
             row.last_heartbeat,
             row.notes,
+            row.description,
             status
         );
     }

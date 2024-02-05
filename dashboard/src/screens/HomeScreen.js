@@ -105,7 +105,12 @@ const HomeScreen = () => {
         setMap(map);
         fetchStations();
 
-        return () => map.remove();
+        let intervalId = setInterval(fetchStations, 60000);
+
+        return () => {
+            map.remove();
+            clearInterval(intervalId);
+        }
     }, []);
 
     const addMarker = useCallback((station) => {

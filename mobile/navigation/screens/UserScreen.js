@@ -2,9 +2,8 @@ import React, { useContext } from 'react';
 import {
     View,
     Text,
-    TextInput,
     StyleSheet,
-    Alert,
+    SafeAreaView,
     TouchableOpacity,
 } from 'react-native';
 import * as Keychain from 'react-native-keychain';
@@ -21,13 +20,13 @@ const UserScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={gloabl_style.main_view}>
+        <SafeAreaView style={gloabl_style.main_view}>
             <View style={style.form_container}>
                 <TouchableOpacity onPress={() => logout()} style={style.btn}>
                     <Text style={{ color: gloabl_style.text_color_in_btn }}>Logout</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

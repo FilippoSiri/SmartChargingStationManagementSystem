@@ -32,6 +32,12 @@ const columns = [
         editable: false,
     },
     {
+        field: "status",
+        headerName: "Station Status",
+        width: 150,
+        editable: false,
+    },
+    {
         field: "edit",
         headerName: "Edit",
         width: 150,
@@ -49,6 +55,15 @@ const columns = [
         ),
     },
 ];
+
+const stationStatuses = {
+    0: "Free",
+    1: "Reserved",
+    2: "In use",
+    3: "Dismissed",
+    4: "Broken",
+    5: "Undefined"
+}
 
 const HomeScreen = () => {
     const [stations, setStations] = useState([]);
@@ -74,7 +89,7 @@ const HomeScreen = () => {
                     lon: station.lon,
                     price: station.price / 100,
                     power: Math.round(station.power * 10).toFixed(2),
-                    status: station.status,
+                    status: stationStatuses[station.status],
                 };
             });
             setStations(data);

@@ -7,7 +7,7 @@ const router = express.Router();
 const { verifyToken, verifyTokenResetPassword } = require("../middleware/authMiddleware");
 const nodeMailer = require("nodemailer");
 
-import { emailValidRegex, strongPasswordRegex } from "../utils/constants";
+const { emailValidRegex, strongPasswordRegex } = require("../utils/constants");
 
 //TODO: Check status code
 router.post("/register", async (req, res) => {
@@ -47,7 +47,7 @@ router.post("/login", async (req, res) => {
         }, null);
         res.json({ token: token });
     } else {
-        res.status(401).json({ message: "Login failed" });
+        res.status(401).json({ message: "Login failed, wrong password" });
     }
 });
 

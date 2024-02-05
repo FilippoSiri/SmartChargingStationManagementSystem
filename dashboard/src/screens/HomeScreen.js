@@ -81,28 +81,30 @@ const HomeScreen = () => {
 
     useEffect(() => {
         const fetchStations = async () => {
-            console.log(
-                `http://localhost:${process.env.REACT_APP_API_PORT}/station`
-            );
-            let { data } = await axios.get(
-                `http://localhost:${process.env.REACT_APP_API_PORT}/station`
-            );
+            try {
 
-            console.log(data[0]);
+                let { data } = await axios.get(
+                    `http://localhost:${process.env.REACT_APP_API_PORT}/station`
+                );
 
-            data = data.map((station) => {
-                return {
-                    id: station.id,
-                    name: station.name,
-                    lat: station.lat,
-                    lon: station.lon,
-                    price: station.price / 100,
-                    power: Math.round(station.power * 10).toFixed(2),
-                    status: station.status,
-                    string_status: stationStatuses[station.status],
-                };
-            });
-            setStations(data);
+                console.log(data[0]);
+
+                data = data.map((station) => {
+                    return {
+                        id: station.id,
+                        name: station.name,
+                        lat: station.lat,
+                        lon: station.lon,
+                        price: station.price / 100,
+                        power: Math.round(station.power * 10).toFixed(2),
+                        status: station.status,
+                        string_status: stationStatuses[station.status],
+                    };
+                });
+                setStations(data);
+            } catch (error) {
+                alert("Error fetching stations")
+            }
         };
 
         let map = tt.map({

@@ -76,7 +76,7 @@ router.patch("/", verifyTokenAdmin, async (req, res) => {
         if (req.body.notes !== undefined)
             station.notes = req.body.notes;
         if (req.body.description !== undefined)
-            station.description = req.body.descriptionx;
+            station.description = req.body.description;
         console.log(station)
         const updatedStation = await station.save();
         if (updatedStation !== null) {

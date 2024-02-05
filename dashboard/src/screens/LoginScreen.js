@@ -21,22 +21,27 @@ const LoginScreen = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const res = await axios.post(
-            `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/auth/login`,
-            {
-                email: email,
-                password: password,
-            },
-            { headers: { "Content-Type": "application/json" } }
-        );
 
-        let decoded = jwtDecode(res.data.token);
+        try {
+            const res = await axios.post(
+                `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/auth/login`,
+                {
+                    email: email,
+                    password: password,
+                },
+                { headers: { "Content-Type": "application/json" } }
+            );
 
-        if (!decoded.isAdmin)
-            return alert("You are not authorized to access this page!");
+            let decoded = jwtDecode(res.data.token);
 
-        localStorage.setItem("token", res.data.token);
-        navigate("/");
+            if (!decoded.isAdmin)
+                return alert("You are not authorized to access this page!");
+
+            localStorage.setItem("token", res.data.token);
+            navigate("/");
+        } catch (error) {
+            alert("Something went wrong");
+        }
     };
 
     const handleUsernameChange = (e) => {

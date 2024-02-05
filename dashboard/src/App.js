@@ -28,15 +28,21 @@ function App() {
                     return;
                 }
 
-                const res = await axios.get(
-                    `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/auth/validateToken`,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: token,
-                        },
-                    });
-                if (res.status !== 200) {
+                try {
+                    const res = await axios.get(
+                        `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/auth/validateToken`,
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: token,
+                            },
+                        });
+                    if (res.status !== 200) {
+                        navigate("/login");
+                        return;
+                    }
+                } catch (error) {
+                    localStorage.removeItem("token");
                     navigate("/login");
                     return;
                 }

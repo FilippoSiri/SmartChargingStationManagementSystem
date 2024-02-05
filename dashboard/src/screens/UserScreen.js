@@ -41,21 +41,32 @@ const UserScreen = () => {
     
     const handleUpdateAdmin = (e, id) => {
         e.preventDefault();
-        axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value == "true" ? 1 : 0}, {
-            headers: {Authorization: localStorage.getItem("token")}
-        })
 
-        setUserAdminValue({...userAdminValue, [id]: e.target.value});
+        try {
+            axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value == "true" ? 1 : 0}, {
+                headers: {Authorization: localStorage.getItem("token")}
+            })
+
+            setUserAdminValue({...userAdminValue, [id]: e.target.value});
+        } catch (error) {
+            alert("Something went wrong updating user admin");
+        }
     };
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/`);
-            setUsers(res.data);
-            setUserAdminValue(res.data.reduce((acc, user) => {
-                acc[user.id] = user.is_admin == 1 ? "true" : "false";
-                return acc;
-            }, {}));
+
+            try {
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/`);
+                
+                setUsers(res.data);
+                setUserAdminValue(res.data.reduce((acc, user) => {
+                    acc[user.id] = user.is_admin == 1 ? "true" : "false";
+                    return acc;
+                }, {}));
+            } catch (error) {
+                alert("Something went wrong fetching users");
+            }
         };
 
         fetchUsers();

@@ -6,6 +6,7 @@ import {
     StyleSheet,
     SafeAreaView,
     TouchableOpacity,
+    Alert
 } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from '../AuthContext';
@@ -41,6 +42,35 @@ const LoginScreen = ({ navigation }) => {
             console.error('Error:', error);
         }
     };
+    
+    const forgotPassword = async () => {
+        var validRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (!email.match(validRegex)) {
+            Alert.alert('Error', 'Invalid email address');
+            return;
+        }
+        console.log(`http://${API_URL}:${API_PORT}/auth/resetPasswordToken`);
+        try{
+            axios
+                .post(
+                    `http://${API_URL}:${API_PORT}/auth/resetPasswordToken`,
+                    JSON.stringify({ email }),
+                    { headers: { 'Content-Type': 'application/json' } },
+                )
+                .then(response => {
+                    console.log(response);
+                    Alert.alert('Success', 'Password reset link sent to your email');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Alert.alert('Error', "Error resetting password. Please try again later.");
+                });
+        }catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Error', "Error resetting password. Please try again later.");
+        }
+    };
 
     return (
         <SafeAreaView style={gloabl_style.main_view}>
@@ -55,7 +85,7 @@ const LoginScreen = ({ navigation }) => {
                 </View>
 
                 <View style={style.texts_container}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={forgotPassword}>
                         <Text style={{ color: gloabl_style.main_color }}>
                             Forgot password
                         </Text>

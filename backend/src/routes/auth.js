@@ -55,7 +55,7 @@ router.get("/validateToken", verifyToken, async (req, res) => {
     res.json({ message: "Valid token" });
 });
 
-router.get("/resetPasswordToken", async (req, res) => {
+router.post("/resetPasswordToken", async (req, res) => {
     if(!req.body.email){
         res.status(400).json({ message: "Missing email" });
         return;

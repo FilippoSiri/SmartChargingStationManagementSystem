@@ -2,9 +2,9 @@ import React, { useState, useRef, useMemo, useContext, useEffect } from 'react';
 import {
     StyleSheet,
     View,
-    TextInput,
     TouchableOpacity,
     Text,
+    SafeAreaView
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
@@ -14,6 +14,9 @@ import { API_URL, API_PORT } from '@env';
 import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
 import { AuthContext } from '../AuthContext';
 import { Base64 } from 'js-base64';
+
+import { PermissionsAndroid } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
 
 const stationStatusColor = {
     0: '#085C13',
@@ -27,7 +30,6 @@ const HomeScreen = () => {
     const { authToken, setAuthToken } = useContext(AuthContext);
     const [decodedToken, setDecodedToken] = useState(null);
     const webRef = useRef();
-    const [mapCenter, setMapCenter] = useState('8.93413, 44.40757');
     const [stationId, setStationId] = useState(null);
     const [stationInfo, setStationInfo] = useState({});
     const [lastStationUsage, setLastStationUsage] = useState({});
@@ -35,12 +37,63 @@ const HomeScreen = () => {
     const snapPoints = useMemo(() => ['65%', '30%'], []);
 	const bottomSheetRef = useRef(null);
 
-    const onButtonPress = () => {
-        const [lng, lat] = mapCenter.split(',');
+    const updatePosition = (position) => {
         webRef.current.injectJavaScript(
             `  
-                map.setCenter([${parseFloat(lng)}, ${parseFloat(lat)}]);
-            `,
+                setCenter(${position.coords.longitude}, ${position.coords.latitude});                
+            `
+        );
+    }
+
+    const loadPosition = () => {
+        const requestLocationPermission = async () => {
+            if (Platform.OS === 'ios') {
+                getOneTimeLocation();
+                subscribeLocationLocation();
+            } else {
+                try {
+                    const granted = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+                            title: 'Location Access Required',
+                            message: 'This App needs to Access your location',
+                        },
+                    );
+                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        //To Check, If Permission is granted
+                        getOneTimeLocation();
+                        subscribeLocationLocation();
+                    } 
+                } catch (err) {
+                    console.warn(err);
+                }
+            }
+        };
+        requestLocationPermission();
+        return () => {
+            Geolocation.clearWatch(watchID);
+        };
+    };
+    
+    
+    const getOneTimeLocation = () => {
+        Geolocation.getCurrentPosition(
+            //Will give you the current location
+            updatePosition,
+            (error) => console.warn(error.message), {
+                enableHighAccuracy: false,
+                timeout: 30000,
+                maximumAge: 1000
+            },
+        );
+    };
+    
+    const subscribeLocationLocation = () => {
+        watchID = Geolocation.watchPosition(
+            updatePosition,
+            (error) => console.warn(error.message), {
+                enableHighAccuracy: false,
+                maximumAge: 1000
+            },
         );
     };
 
@@ -51,10 +104,6 @@ const HomeScreen = () => {
             `,
         );
     };
-
-    const handleDragEndMap = (data) => {
-        setMapCenter(`${data.lon}, ${data.lat}`);
-    }
 
     const handleDragStartMap = (data) => {
         bottomSheetRef.current.snapToIndex(1);
@@ -96,9 +145,7 @@ const HomeScreen = () => {
 
     const handleMapEvent = event => {
         const data = JSON.parse(event.nativeEvent.data);
-        if(data.type === 'drag_map'){
-            handleDragEndMap(data);
-        }else if(data.type === 'marker_click'){
+        if(data.type === 'marker_click'){
             handleClickMarker(data);
         }else if(data.type === 'drag_start'){
             handleDragStartMap(data);
@@ -126,6 +173,11 @@ const HomeScreen = () => {
         } catch (error) {
             console.error('Error:', error);
         }
+    }
+
+    const loadMap = () => {
+        loadStations();
+        loadPosition();
     }
 
     const handleReserveClick = async () => {
@@ -187,22 +239,14 @@ const HomeScreen = () => {
     }, []);
 
     return (
-        <View style={style.container}>
-            <View style={style.buttons}>
-                <TextInput
-                    style={style.textInput}
-                    onChangeText={setMapCenter}
-                    value={mapCenter}></TextInput>
-                <TouchableOpacity style={style.searchBtn} onPress={onButtonPress}>
-                    <Text style={{ color: gloabl_style.text_color_in_btn }}>Search</Text>
-                </TouchableOpacity>
-            </View>
-            <WebView
+        <SafeAreaView style={style.container}> 
+      
+           <WebView
                 ref={webRef}
                 onMessage={handleMapEvent}
                 style={style.map}
                 originWhitelist={['*']}
-                onLoadEnd={loadStations}
+                onLoadEnd={loadMap}
                 source={{ html: mapTemplate }}/> 
             
             <BottomSheetModal
@@ -277,7 +321,7 @@ const HomeScreen = () => {
             
             </BottomSheetModal>
                 
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -287,33 +331,11 @@ const style = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-    buttons: {
-        flexDirection: 'row',
-        height: '15%',
-        color: '#000',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 12,
-    },
-    textInput: {
-        height: 40,
-        width: '60%',
-        margin: 16,
-        padding: 10,
-        borderWidth: 1,
-        borderRadius: 5,
-    },
     map: {
         width: '100%',
         height: '85%',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    searchBtn: {
-        backgroundColor: gloabl_style.main_color,
-        padding: 10,
-        borderRadius: 5,
-        elevation: 5,
     },
     stationInfoContainer: {
         paddingHorizontal: 48,

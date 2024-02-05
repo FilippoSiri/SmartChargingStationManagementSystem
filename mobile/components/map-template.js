@@ -76,6 +76,10 @@ export default `
             });
         }
 
+        function setCenter(lng, lat) {
+            map.setCenter([lng, lat])
+        }
+
         // create the map
         tt.setProductInfo('TomTom Maps React Native Demo', '1.0');
         let map = tt.map({

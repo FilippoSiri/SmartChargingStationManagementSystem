@@ -4,7 +4,7 @@ import {
     Text,
     TextInput,
     StyleSheet,
-    Alert,
+    SafeAreaView,
     TouchableOpacity,
 } from 'react-native';
 import * as Keychain from 'react-native-keychain';
@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={gloabl_style.main_view}>
+        <SafeAreaView style={gloabl_style.main_view}>
             <View style={style.form_container}>
                 <View style={style.field_container}>
                     <Text>Email</Text>
@@ -71,7 +71,7 @@ const LoginScreen = ({ navigation }) => {
                     <Text style={{ color: gloabl_style.text_color_in_btn }}>Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

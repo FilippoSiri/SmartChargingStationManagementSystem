@@ -5,6 +5,7 @@ import {
     TextInput,
     StyleSheet,
     Alert,
+    SafeAreaView,
     TouchableOpacity,
 } from 'react-native';
 
@@ -57,7 +58,7 @@ const RegistrationScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={gloabl_style.main_view}>
+        <SafeAreaView style={gloabl_style.main_view}>
             <View style={style.form_container}>
                 <View style={style.field_container}>
                     <Text>Name</Text>
@@ -96,7 +97,7 @@ const RegistrationScreen = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

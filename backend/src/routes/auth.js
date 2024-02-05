@@ -7,8 +7,20 @@ const router = express.Router();
 const { verifyToken, verifyTokenResetPassword } = require("../middleware/authMiddleware");
 const nodeMailer = require("nodemailer");
 
+import { emailValidRegex, strongPasswordRegex } from "../utils/constants";
+
 //TODO: Check status code
 router.post("/register", async (req, res) => {
+    if (!req.body.email.match(emailValidRegex)) {
+        res.status(400).json({ message: "Invalid email address" });
+        return;
+    }
+
+    if (!req.body.password.match(strongPasswordRegex)) {
+        res.status(400).json({ message: "Invalid password" });
+        return;
+    }
+
     console.log(req.body);
     if(await User.getByEmail(req.body.email) !== null) {
         res.status(409).json({ message: "Email already registered" });

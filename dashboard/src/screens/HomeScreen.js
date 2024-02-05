@@ -10,7 +10,6 @@ import "@tomtom-international/web-sdk-maps/dist/maps.css";
 import tt from "@tomtom-international/web-sdk-maps";
 
 import axios from "axios";
-import CustomMarker from "../components/CustomMarker";
 
 const columns = [
     { field: "id", headerName: "ID", width: 90 },

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 const pages = [
     { name: "Home", link: "/" },
     { name: "Add Station", link: "/station" },
+    { name: "User", link: "/user" },
 ];
 const settings = ["Logout"];
 

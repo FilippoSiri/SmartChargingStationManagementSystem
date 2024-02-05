@@ -9,6 +9,7 @@ import LoginScreen from "./screens/LoginScreen";
 import {jwtDecode} from "jwt-decode";
 
 import axios from "axios";
+import UserScreen from "./screens/UserScreen";
 
 function App() {
     const navigate = useNavigate();
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/station" element={<EditStation />} />
                 <Route path="/station/:id" element={<EditStation />} />
                 <Route path="/login" element={<LoginScreen />} />
+                <Route path="/user" element={<UserScreen />} />
                 <Route path="*" element={<h1>Not Found</h1>} />
             </Routes>
         </div>

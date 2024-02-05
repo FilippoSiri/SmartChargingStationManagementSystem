@@ -1,0 +1,84 @@
+import React, { useEffect, useState } from 'react';
+import { Container } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import axios from 'axios';
+
+const UserScreen = () => {
+    const [users, setUsers] = useState([]);
+    const [userAdminValue, setUserAdminValue] = useState({});
+    const columns = [
+        { field: "id", headerName: "ID", width: 120 },
+        {
+            field: "name",
+            headerName: "User Name",
+            minWidth: 150,
+            editable: false,
+        },
+        {
+            field: "surname",
+            headerName: "user Surname",
+            minWidth: 150,
+            editable: false,
+        },
+        {
+            field: "email",
+            headerName: "User Email",
+            minWidth: 300,
+            editable: false,
+        },
+        {
+            field: "is_admin",
+            headerName: "Is Admin?",
+            minWidth: 150,
+            renderCell: (params) => (
+                <select value={userAdminValue[params.id]} style={{width: "100%", "padding": "0.5em", "borderRadius": "5px"}} onChange={e => handleUpdateAdmin(e, params.id)}>
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                </select>
+            ),
+        },
+    ];
+    
+    const handleUpdateAdmin = (e, id) => {
+        e.preventDefault();
+        axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value == "true" ? 1 : 0}, {
+            headers: {Authorization: localStorage.getItem("token")}
+        })
+
+        setUserAdminValue({...userAdminValue, [id]: e.target.value});
+    };
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/`);
+            setUsers(res.data);
+            setUserAdminValue(res.data.reduce((acc, user) => {
+                acc[user.id] = user.is_admin == 1 ? "true" : "false";
+                return acc;
+            }, {}));
+        };
+
+        fetchUsers();
+    }, []);
+
+    return (
+        <Container maxWidth="xl" style={{ marginTop: "3em" }}>
+            <DataGrid
+                style={{ height: "100%", width: "100%" }}
+                rows={users}
+                columns={columns}
+                initialState={{
+                    pagination: {
+                        paginationModel: {
+                            pageSize: 10,
+                        },
+                    },
+                }}
+                pageSizeOptions={[10]}
+                disableRowSelectionOnClick
+            />
+        </Container>
+    );
+};
+
+export default UserScreen;

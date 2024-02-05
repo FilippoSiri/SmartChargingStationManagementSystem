@@ -206,19 +206,32 @@ const EditStation = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={12}>
                             <FormControlLabel control={<Checkbox field="dismissed" onChange={handleChangeDismissed} checked={stationInfo.dismissed ?? false} />} label="Dismissed" />
                         </Grid>
 
-                        <Grid item xs={12}>
+                        <Grid item xs={6}>
                             <Typography variant="body1">Note</Typography>
                             <textarea
-                                className="input-edit-station"
+                                className="input-edit-station textarea"
                                 placeholder="Insert note"
                                 value={stationInfo.notes ?? ""}
                                 style={{ height: "100px", width: "100%" }}
                                 field="notes"
                                 onChange={handleChangeStationInfo}
+                            />
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <Typography variant="body1">Description</Typography>
+                            <textarea
+                                className="input-edit-station textarea"
+                                placeholder="Insert note"
+                                value={stationInfo.description ?? ""}
+                                style={{ height: "100px", width: "100%"}}
+                                field="description"
+                                onChange={handleChangeStationInfo}
+                                rows="10"
                             />
                         </Grid>
 

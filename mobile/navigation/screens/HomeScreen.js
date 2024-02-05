@@ -16,7 +16,7 @@ import { AuthContext } from '../AuthContext';
 import { Base64 } from 'js-base64';
 
 const stationStatusColor = {
-    0: '#00ff00',
+    0: '#085C13',
     1: '#ffa500',
     2: '#ff0000',
     4: '#000000',

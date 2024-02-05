@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, createElement } from "react";
 import { Container, Grid, Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -10,6 +10,7 @@ import "@tomtom-international/web-sdk-maps/dist/maps.css";
 import tt from "@tomtom-international/web-sdk-maps";
 
 import axios from "axios";
+import CustomMarker from "../components/CustomMarker";
 
 const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -32,7 +33,7 @@ const columns = [
         editable: false,
     },
     {
-        field: "status",
+        field: "string_status",
         headerName: "Station Status",
         width: 150,
         editable: false,
@@ -65,6 +66,15 @@ const stationStatuses = {
     5: "Undefined"
 }
 
+const stationColors = {
+    0: "#085C13",
+    1: "#FFD700",
+    2: "#FF0000",
+    3: "#000000",
+    4: "#000000",
+    5: "#000000"
+}
+
 const HomeScreen = () => {
     const [stations, setStations] = useState([]);
     const [map, setMap] = useState({});
@@ -89,7 +99,8 @@ const HomeScreen = () => {
                     lon: station.lon,
                     price: station.price / 100,
                     power: Math.round(station.power * 10).toFixed(2),
-                    status: stationStatuses[station.status],
+                    status: station.status,
+                    string_status: stationStatuses[station.status],
                 };
             });
             setStations(data);
@@ -114,7 +125,14 @@ const HomeScreen = () => {
     }, []);
 
     const addMarker = useCallback((station) => {
-        let marker = new tt.Marker()
+        const mymarker = document.createElement('div');
+        mymarker.className = 'marker';
+        const markerContentElement = document.createElement('div');
+        markerContentElement.className = 'marker-content';
+        markerContentElement.style.background = stationColors[station.status];
+        mymarker.appendChild(markerContentElement);
+
+        let marker = new tt.Marker({element: mymarker})
             .setLngLat([station.lon, station.lat])
             .addTo(map);
         marker.setPopup(

@@ -262,7 +262,7 @@ const HomeScreen = () => {
                         </View>
                 )}
 
-{
+                {
                     stationInfo.status == 1 && lastStationReservation !== null && lastStationReservation.user_id == decodedToken.userId && (
                         <View style={style.buttonsContainer}>
                             <View style={style.displayGridBtns}>

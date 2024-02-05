@@ -18,7 +18,7 @@ const pages = [
     { name: "Home", link: "/" },
     { name: "Add Station", link: "/station" },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Logout"];
 
 const CustomNavbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -39,6 +39,11 @@ const CustomNavbar = () => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem("token")
+        navigate("/login")
+    }
 
     const redirect = (path) => {
         navigate(path);
@@ -181,19 +186,11 @@ const CustomNavbar = () => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting}
-                                    onClick={() => {
-                                        handleCloseUserMenu();
-                                        redirect("DACAMABIARE");
-                                    }}
-                                >
-                                    <Typography textAlign="center">
-                                        {setting}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
+                            <MenuItem onClick={handleLogout}>
+                                <Typography textAlign="center">
+                                    Logout
+                                </Typography>
+                            </MenuItem>
                         </Menu>
                     </Box>
                 </Toolbar>

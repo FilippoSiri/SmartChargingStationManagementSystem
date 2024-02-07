@@ -181,4 +181,5 @@ router.post("/stop_charging/", verifyToken, async (req, res) => {
 });
 
 
+
 module.exports = router;

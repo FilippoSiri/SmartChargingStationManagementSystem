@@ -100,12 +100,17 @@ const UserScreen = ({ navigation }) => {
             });
 
             if (response.status === 201) {
+                console.log(response.data);
+                if (confirmPassword !== '') {
+                    setConfirmPassword("");
+                    setUserData({...userData, password: ""});
+                    await Keychain.setGenericPassword('jwtToken', response.data.token);
+                    setAuthToken(response.data.token);
+                }
                 Alert.alert('Success', 'User updated');
             } else {
                 Alert.alert('Error', 'User not updated');
             }
-
-            console.log(response.data);
 
         } catch (error) {
             console.error(error);
@@ -146,14 +151,14 @@ const UserScreen = ({ navigation }) => {
                 <View style={style.form_container}>
                     <View style={style.field_container}>
                         <Text>Password</Text>
-                        <TextInput secureTextEntry style={style.text_input} onChangeText={text => handleChangeData("password", text)}/>
+                        <TextInput secureTextEntry style={style.text_input} value={userData.password ?? ""} onChangeText={text => handleChangeData("password", text)}/>
                     </View>
                 </View>
 
                 <View style={style.form_container}>
                     <View style={style.field_container}>
                         <Text>Password confirm  </Text>
-                        <TextInput style={style.text_input} secureTextEntry onChangeText={text => setConfirmPassword(text)} />
+                        <TextInput style={style.text_input} secureTextEntry value={confirmPassword} onChangeText={text => setConfirmPassword(text)} />
                     </View>
                 </View>
 

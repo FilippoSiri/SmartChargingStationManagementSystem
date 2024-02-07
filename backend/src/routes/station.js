@@ -120,7 +120,7 @@ router.post("/start_charging/", verifyToken, async (req, res) => {
     let savedStationUsage = null;
     const stationId = req.body.id;
     const userId = req.userId;
-
+    
     const station = await Station.getById(stationId);
     if (station === null)
         return res.status(404).json({ message: "Station not found" });
@@ -146,7 +146,12 @@ router.post("/start_charging/", verifyToken, async (req, res) => {
     }
 
     if (savedStationUsage !== null) {
-        res.status(201).json(savedStationUsage);
+        if(await RPCStation.remoteStartTransaction(stationId)){
+            res.status(201).json(savedStationUsage);
+        }else{
+            console.log("RemoteStartTransaction Declined");
+            res.status(500).json({ message: "RemoteStartTransaction Declined" });
+        }
     } else {
         res.status(500).json({ message: "Error starting charging" });
     }

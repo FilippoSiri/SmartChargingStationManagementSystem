@@ -99,7 +99,7 @@ async function StopTransaction(){
 
 cli.handle('RemoteStartTransaction', ({params}) => {
     console.log('Server requested RemoteStartTransaction:', params);
-    return {transactionId: 1234};
+    return {status: 'Accepted'};
 });
 
 cli.handle('RemoteStopTransaction', ({params}) => {

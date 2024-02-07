@@ -6,49 +6,40 @@ class RPCStation{
         console.log(this.stations);
     }
     
-    static getStation(identity) {
-        return this.stations.get(identity);
-    }
-
-    static async remoteStartTransaction(clientStation){
-        return await clientStation.call('RemoteStartTransaction', {
-            connectorId: 0,
-            idTag: "123456",
-            chargingProfile: {
-                chargingProfileId: 1,
-                stackLevel: 1,
-                chargingProfilePurpose: "TxProfile",
-                chargingProfileKind: "Absolute",
-                chargingSchedule: {
-                    duration: 100,
-                    startSchedule: new Date().toISOString(),
-                    chargingRateUnit: "W",
-                    chargingSchedulePeriod: [{
-                        startPeriod: 0,
-                        limit: 100,
-                        numberPhases: 1
-                    }]
-                }
-            }
-        });
+    static async remoteStartTransaction(stationId){
+        try{
+            const response = await this.stations.get(stationId).call('RemoteStartTransaction', {
+                connectorId: 0,
+                idTag: "123456"
+            });
+            return response.status === 'Accepted';   
+        }catch(e){
+            console.log(e);
+            return false;
+        }
     }
     
-    static async remoteStopTransaction(clientStation){
-        return await clientStation.call('RemoteStopTransaction', {
-            transactionId: 1234
-        });
+    static async remoteStopTransaction(stationId){
+        try{
+            const response = await this.stations.get(stationId).call('RemoteStopTransaction', {
+                transactionId: 1234
+            });
+        }catch(e){
+            console.log(e);
+            return false;
+        }
+        
     }
     
-    static async changeAvailability(clientStation){
-        return await clientStation.call('ChangeAvailability', {
+    static async changeAvailability(stationId){
+        return await this.stations.get(stationId).call('ChangeAvailability', {
             connectorId: 0,
             type: "Operative"
         });
     }
     
-    static async reserveNow(clientStation){
-        console.log("Entro");
-        return await clientStation.call('ReserveNow', {
+    static async reserveNow(stationId){
+        return await this.stations.get(stationId).call('ReserveNow', {
             connectorId: 0,
             expiryDate: new Date().toISOString(),
             idTag: "1234",
@@ -56,8 +47,8 @@ class RPCStation{
         });
     }
     
-    static async cancelReservation(clientStation){
-        return await clientStation.call('CancelReservation', {
+    static async cancelReservation(stationId){
+        return await this.stations.get(stationId).call('CancelReservation', {
             reservationId: 1234
         });
     }

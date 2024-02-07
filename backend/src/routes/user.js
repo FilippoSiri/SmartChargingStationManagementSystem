@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
 const User = require("../models/User");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken, verifyTokenAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 
@@ -46,7 +46,7 @@ router.patch("/", verifyToken, async (req, res) => {
     }
 });
 
-router.patch("/set_user_admin/:id", verifyToken, async (req, res) => {
+router.patch("/set_user_admin/:id", verifyTokenAdmin, async (req, res) => {
     const user = await User.getById(req.params.id);
     if (user !== null) {
         user.is_admin = req.body.is_admin;

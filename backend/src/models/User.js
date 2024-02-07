@@ -56,6 +56,7 @@ class User {
             if (rows.affectedRows == 0) return null;
             this.id = rows.insertId;
         }
+        this.password = "";
         return this;
     }
 
@@ -70,7 +71,7 @@ class User {
                 row.name,
                 row.surname,
                 row.email,
-                row.password,
+                "",
                 row.balance,
                 row.token_reset_time,
                 row.is_admin
@@ -88,7 +89,7 @@ class User {
             row.name,
             row.surname,
             row.email,
-            row.password,
+            "",
             row.balance,
             row.token_reset_time,
             row.is_admin
@@ -105,7 +106,7 @@ class User {
             row.name,
             row.surname,
             row.email,
-            row.password,
+            "",
             row.balance,
             row.token_reset_time,
             row.is_admin
@@ -122,7 +123,7 @@ class User {
                     row.name,
                     row.surname,
                     row.email,
-                    row.password,
+                    "",
                     row.balance,
                     row.token_reset_time,
                     row.is_admin

@@ -4,13 +4,15 @@ const User = require("../models/User");
 const { verifyToken } = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+
+router.get("/all", async (req, res) => {
     const users = await User.getAll();
     res.json(users);
 });
 
-router.get("/getById/:id", async (req, res) => {
-    const user = await User.getById(req.params.id);
+
+router.get("/", verifyToken, async (req, res) => {
+    const user = await User.getById(req.userId);
     if (user !== null) {
         res.json(user);
     } else {

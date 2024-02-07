@@ -91,7 +91,9 @@ server.on('client', async (client) => {
 
 });
 
-server.listen(4001);
+const rpcPort = process.env.RPC_PORT || 3001;
+server.listen(rpcPort);
+console.log(`Listening RPC Server on port ${rpcPort}...`)
 
 const cors = require("cors");
 var path = require('path');

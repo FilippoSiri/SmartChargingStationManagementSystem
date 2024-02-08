@@ -43,7 +43,7 @@ const UserScreen = () => {
         e.preventDefault();
 
         try {
-            axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value == "true" ? 1 : 0}, {
+            axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value === "true" ? 1 : 0}, {
                 headers: {Authorization: localStorage.getItem("token")}
             })
 
@@ -61,7 +61,7 @@ const UserScreen = () => {
                 
                 setUsers(res.data);
                 setUserAdminValue(res.data.reduce((acc, user) => {
-                    acc[user.id] = user.is_admin == 1 ? "true" : "false";
+                    acc[user.id] = user.is_admin === 1 ? "true" : "false";
                     return acc;
                 }, {}));
             } catch (error) {

@@ -18,6 +18,7 @@ const pages = [
     { name: "Home", link: "/" },
     { name: "Add Station", link: "/station" },
     { name: "User", link: "/user" },
+    { name: "Report", link: "/report" },
 ];
 const settings = ["Logout"];
 

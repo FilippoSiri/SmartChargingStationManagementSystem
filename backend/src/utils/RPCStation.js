@@ -31,19 +31,13 @@ class RPCStation{
         
     }
     
-    static async changeAvailability(stationId){
-        return await this.stations.get(stationId).call('ChangeAvailability', {
-            connectorId: 0,
-            type: "Operative"
-        });
-    }
-    
     static async reserveNow(stationId){
         return await this.stations.get(stationId).call('ReserveNow', {
             connectorId: 0,
             expiryDate: new Date().toISOString(),
             idTag: "1234",
-            parentIdTag: "1234"
+            parentIdTag: "1234",
+            reservationId: 1234
         });
     }
     

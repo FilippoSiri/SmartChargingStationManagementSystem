@@ -54,7 +54,12 @@ router.post("/:id/reserve", verifyToken, async (req, res) => {
     const savedStationUsage = await stationUsage.save();
 
     if (savedStationUsage !== null) {
-        res.status(201).json(savedStationUsage);
+        if(await RPCStation.reserveNow(stationId)){
+            res.status(201).json(savedStationUsage);
+        }else{
+            console.log("ReserveNow Declined");
+            res.status(500).json({ message: "ReserveNow Declined" });
+        }
     } else {
         res.status(500).json({ message: "Error reserving station" });
     }
@@ -81,7 +86,12 @@ router.post("/:id/cancel_reservation", verifyToken, async (req, res) => {
     const savedStationUsage = await lastStationReservation.save();
 
     if (savedStationUsage !== null) {
-        res.status(201).json(savedStationUsage);
+        if(await RPCStation.cancelReservation(stationId)){
+            res.status(201).json(savedStationUsage);
+        }else{
+            console.log("cancelReservation Declined");
+            res.status(500).json({ message: "cancelReservation Declined" });
+        }
     } else {
         res.status(500).json({ message: "Error cancelling reservation" });
     }
@@ -151,7 +161,12 @@ router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
     const savedStationUsage = await lastStationUsage.save();
 
     if (savedStationUsage !== null) {
-        res.status(201).json(savedStationUsage);
+        if(await RPCStation.remoteStopTransaction(stationId)){
+            res.status(201).json(savedStationUsage);
+        }else{
+            console.log("RemoteStartTransaction Declined");
+            res.status(500).json({ message: "RemoteStartTransaction Declined" });
+        }
     } else {
         res.status(500).json({ message: "Error stopping charging" });
     }

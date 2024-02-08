@@ -104,11 +104,6 @@ cli.handle('RemoteStartTransaction', ({params}) => {
 
 cli.handle('RemoteStopTransaction', ({params}) => {
     console.log('Server requested RemoteStopTransaction:', params);
-    return {idTagInfo: {status: 'Accepted'}};
-});
-
-cli.handle('ChangeAvailability', ({params}) => {
-    console.log('Server requested ChangeAvailability:', params);
     return {status: 'Accepted'};
 });
 
@@ -118,8 +113,9 @@ cli.handle('ReserveNow', ({params}) => {
 });
 
 cli.handle('CancelReservation', ({params}) => {
-
-}); // no response required
+    console.log('Server requested CancelReservation:', params);
+    return {status: 'Accepted'};
+});
 
 function processInput(input) {
 

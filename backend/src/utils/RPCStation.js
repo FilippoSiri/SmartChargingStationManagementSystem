@@ -12,7 +12,7 @@ class RPCStation{
                 connectorId: 0,
                 idTag: "123456"
             });
-            return response.status === 'Accepted';   
+            return response.status === 'Accepted';
         }catch(e){
             console.log(e);
             return false;
@@ -24,6 +24,7 @@ class RPCStation{
             const response = await this.stations.get(stationId).call('RemoteStopTransaction', {
                 transactionId: 1234
             });
+            return response.status === 'Accepted';
         }catch(e){
             console.log(e);
             return false;

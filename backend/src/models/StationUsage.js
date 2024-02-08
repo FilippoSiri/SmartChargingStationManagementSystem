@@ -18,7 +18,7 @@ class StationUsage {
         if (this.id) {
             // update existing station usage
             const sql = 'UPDATE StationUsage SET user_id = ?, station_id = ?, start_time = ?, end_time = ?, reservation_time = ?, kw = ?, price = ?, deleted = ? WHERE id = ?';
-            const [rows, _] = await conn.query(sql, [this.user_id, this.station_id, this.start_time, this.end_time, this.reservation_time, this.kw, this.price, this.id, this.deleted]);
+            const [rows, _] = await conn.query(sql, [this.user_id, this.station_id, this.start_time, this.end_time, this.reservation_time, this.kw, this.price, this.deleted, this.id]);
             if(rows.affectedRows == 0)
                 return null;
         } else {

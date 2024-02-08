@@ -1,4 +1,4 @@
-class RPCStation{
+class RPCStationService{
     static stations = new Map();
 
     static addStation(station) {
@@ -50,4 +50,4 @@ class RPCStation{
     
 }
 
-module.exports = RPCStation;
+module.exports = RPCStationService;

@@ -83,6 +83,19 @@ class StationUsage {
         const row = rows[0];
         return new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price, row.deleted);
     }
+
+    static async getReport() {
+
+        const sql = `
+            SELECT SUM(kw * price) as total, SUM(kw) as kw, MONTH(start_time) as month
+            FROM stationusage
+            WHERE start_time IS NOT NULL AND YEAR(start_time) = YEAR(NOW())
+            GROUP BY month`;
+
+        const [rows, _] = await conn.query(sql);
+
+        return rows;
+    }
 }
 
 module.exports = StationUsage;

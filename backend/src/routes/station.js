@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     res.json(await StationService.getAll());
 });
 
-function getCorrectError(error) {
+function getCorrectError(error, res) {
     switch (error.message) {
         case "Station not found":
             return res.status(404).json({ message: error.message });
@@ -27,6 +27,12 @@ function getCorrectError(error) {
     }
 }
 
+router.get("/report", verifyTokenAdmin, async (req, res) => {
+    const result = await StationService.getReport();
+    console.log(result);
+    res.status(200).json(result);
+});
+
 router.get("/:id", async (req, res) => {
     try {
         const stationId = req.params.id;
@@ -34,7 +40,7 @@ router.get("/:id", async (req, res) => {
         const savedStationUsage = await StationService.startCharging(stationId, userId);
         res.json(savedStationUsage);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -53,7 +59,7 @@ router.post("/:id/reserve", verifyToken, async (req, res) => {
         const savedStationUsage = await StationService.reserve(stationId, userId);
         res.status(201).json(savedStationUsage);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -64,7 +70,7 @@ router.post("/:id/cancel_reservation", verifyToken, async (req, res) => {
         const savedStationUsage = await StationService.cancelReservation(stationId, userId);
         res.status(201).json(savedStationUsage);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -75,7 +81,7 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
         const savedStationUsage = await StationService.startCharging(stationId, userId);
         res.status(201).json(savedStationUsage);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -86,7 +92,7 @@ router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
         const savedStationUsage = await StationService.stopCharging(stationId, userId);
         res.status(201).json(savedStationUsage);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -106,7 +112,7 @@ router.post("/", async (req, res) => {
         );
         res.status(201).json(newStation);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 //TODO: Check status code
@@ -126,7 +132,7 @@ router.patch("/", verifyTokenAdmin, async (req, res) => {
         );
         res.status(201).json(station);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 

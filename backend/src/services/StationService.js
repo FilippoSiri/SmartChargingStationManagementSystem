@@ -209,7 +209,25 @@ class StationService {
             throw new Error("Error updating station");
         }
         throw new Error("Station not found");
-    }    
+    }
+
+    static async getReport(){
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        const rows = await StationUsage.getReport();
+
+        const data = months.reduce((acc, month) => {
+            acc[month] = {revenue: 0, usedPower: 0};
+            return acc;
+        }, {});
+
+
+        rows.forEach(row => {
+            data[months[row.month - 1]].revenue = row.total;
+            data[months[row.month - 1]].usedPower = row.kw;
+        });
+
+        return data;
+    }
 }
 
 module.exports = StationService;

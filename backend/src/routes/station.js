@@ -58,6 +58,8 @@ router.post("/:id/reserve", verifyToken, async (req, res) => {
             res.status(201).json(savedStationUsage);
         }else{
             console.log("ReserveNow Declined");
+            savedStationUsage.deleted = true;
+            savedStationUsage.save();
             res.status(500).json({ message: "ReserveNow Declined" });
         }
     } else {
@@ -90,6 +92,8 @@ router.post("/:id/cancel_reservation", verifyToken, async (req, res) => {
             res.status(201).json(savedStationUsage);
         }else{
             console.log("cancelReservation Declined");
+            savedStationUsage.deleted = false;
+            savedStationUsage.save();
             res.status(500).json({ message: "cancelReservation Declined" });
         }
     } else {
@@ -131,6 +135,12 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
         if(await RPCStation.remoteStartTransaction(stationId)){
             res.status(201).json(savedStationUsage);
         }else{
+            if(savedStationUsage.reservation_time !== null)
+                savedStationUsage.start_time = null;
+            else
+                savedStationUsage.deleted = true;
+            savedStationUsage.save();
+
             console.log("RemoteStartTransaction Declined");
             res.status(500).json({ message: "RemoteStartTransaction Declined" });
         }
@@ -165,6 +175,8 @@ router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
             res.status(201).json(savedStationUsage);
         }else{
             console.log("RemoteStartTransaction Declined");
+            savedStationUsage.end_time = null;
+            savedStationUsage.save();
             res.status(500).json({ message: "RemoteStartTransaction Declined" });
         }
     } else {

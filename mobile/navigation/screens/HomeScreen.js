@@ -34,7 +34,7 @@ const HomeScreen = () => {
     const [stationInfo, setStationInfo] = useState({});
     const [lastStationUsage, setLastStationUsage] = useState({});
     const [lastStationReservation, setLastStationReservation] = useState({});
-    const [isActionPerformedz, setIsActionPerformed] = useState(false);
+    const [isActionPerformed, setIsActionPerformed] = useState(false);
     const snapPoints = useMemo(() => ['65%', '30%'], []);
 	const bottomSheetRef = useRef(null);
 
@@ -110,6 +110,32 @@ const HomeScreen = () => {
         bottomSheetRef.current.snapToIndex(1);
     }
 
+    const getLastStationReservation = async (id) => {
+        try {
+
+            const response = await axios.get(
+                `http://${API_URL}:${API_PORT}/station/${id}/last_reservation`,
+                { headers: { 'Content-Type': 'application/json' } },
+                );
+            setLastStationReservation(response.data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        
+    }
+
+    const getLastStationUsage = async (id) => {
+        try {
+            const response = await axios.get(
+                `http://${API_URL}:${API_PORT}/station/${id}/last_usage`,
+                { headers: { 'Content-Type': 'application/json' } },
+                );
+            setLastStationUsage(response.data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     const handleClickMarker = async (data) => {
         setStationId(data.id);
         bottomSheetRef.current?.present();
@@ -124,20 +150,9 @@ const HomeScreen = () => {
             setStationId(data.id);
 
             if (res.data.status === 1) {
-                console.log('last reservation');
-                const res2 = await axios.get(
-                    `http://${API_URL}:${API_PORT}/station/${data.id}/last_reservation`,
-                    { headers: { 'Content-Type': 'application/json' } });
-
-                console.log(res2.data);
-                setLastStationReservation(res2.data);
+                getLastStationReservation(data.id);
             } else if (res.data.status === 2) {
-                const res2 = await axios.get(
-                    `http://${API_URL}:${API_PORT}/station/${data.id}/last_usage`,
-                    { headers: { 'Content-Type': 'application/json' } });
-
-                console.log(res2.data);
-                setLastStationUsage(res2.data);
+                getLastStationUsage(data.id);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -150,8 +165,6 @@ const HomeScreen = () => {
             handleClickMarker(data);
         }else if(data.type === 'drag_start'){
             handleDragStartMap(data);
-        } else if (data.type === 'debug') {
-            console.log(data.message);
         }
     };
 
@@ -193,8 +206,30 @@ const HomeScreen = () => {
                 },
             );
             console.log(res.data);
+            setIsActionPerformed(true);
+            setStationInfo({...stationInfo, status: 1});
+            getLastStationReservation(stationId);
         } catch (error) {
             console.error('Error:', error);
+        }
+    }
+
+    const handleCancelReservationClick = async () => {
+        try {
+            const res = await axios.post(
+                `http://${API_URL}:${API_PORT}/station/${stationId}/cancel_reservation/`,
+                { }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    }
+                },
+            );
+            console.log(res.data);
+            setIsActionPerformed(true);
+            setStationInfo({...stationInfo, status: 0});
+        } catch (error) {
+            console.error(error.message);
         }
     }
 
@@ -210,6 +245,8 @@ const HomeScreen = () => {
                 },
             );
             console.log(res.data);
+            setIsActionPerformed(true);
+            setStationInfo({...stationInfo, status: 2});
         } catch (error) {
             console.error('Error:', error);
         }
@@ -226,6 +263,9 @@ const HomeScreen = () => {
                     } 
                 },
             );
+            setIsActionPerformed(true);
+            setStationInfo({...stationInfo, status: 0});
+            getLastStationUsage(stationId);
             console.log(res.data);
         } catch (error) {
             console.error('Error:', error);
@@ -233,11 +273,26 @@ const HomeScreen = () => {
     }
 
     useEffect(() => {
+        const updateMapEveryMinute = setInterval(() => {
+            loadStations();
+        }, 60000);
+
         if (authToken) {
             const decodedToken = JSON.parse(Base64.decode(authToken.split('.')[1]));
             setDecodedToken(decodedToken);
         }
+
+        return () => {
+            clearInterval(updateMapEveryMinute);
+        }
     }, []);
+
+    useEffect(() => {
+        if (isActionPerformed) {
+            loadStations();
+            setIsActionPerformed(false);
+        }
+    }, [isActionPerformed]);
 
     return (
         <SafeAreaView style={style.container}> 
@@ -310,14 +365,19 @@ const HomeScreen = () => {
                 {
                     stationInfo.status == 1 && lastStationReservation !== null && lastStationReservation.user_id == decodedToken.userId && (
                         <View style={style.buttonsContainer}>
-                            <View style={style.displayGridBtns}>
-                                <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
-                                    <View >  
-                                        <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
+                        <View style={style.displayGridBtns}>
+                            <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
+                                <View >  
+                                    <Text style={{color: "#fff"}}>Avvia</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleCancelReservationClick} style={style.modalBtns}>
+                                <View >  
+                                    <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
+                    </View>
                 )}
             
             </BottomSheetModal>

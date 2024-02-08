@@ -34,6 +34,7 @@ const HomeScreen = () => {
     const [stationInfo, setStationInfo] = useState({});
     const [lastStationUsage, setLastStationUsage] = useState({});
     const [lastStationReservation, setLastStationReservation] = useState({});
+    const [isActionPerformedz, setIsActionPerformed] = useState(false);
     const snapPoints = useMemo(() => ['65%', '30%'], []);
 	const bottomSheetRef = useRef(null);
 
@@ -183,8 +184,8 @@ const HomeScreen = () => {
     const handleReserveClick = async () => {
         try {
             const res = await axios.post(
-                `http://${API_URL}:${API_PORT}/station/reserve/`,
-                { id: stationId  }, { 
+                `http://${API_URL}:${API_PORT}/station/${stationId}/reserve/`,
+                { }  , { 
                     headers: { 
                         'Content-Type': 'application/json',
                         Authorization: authToken,
@@ -200,8 +201,8 @@ const HomeScreen = () => {
     const handleStartCharging = async () => {
         try {
             const res = await axios.post(
-                `http://${API_URL}:${API_PORT}/station/start_charging/`,
-                { id: stationId  }, { 
+                `http://${API_URL}:${API_PORT}/station/${stationId}/start_charging/`,
+                { }, { 
                     headers: { 
                         'Content-Type': 'application/json',
                         Authorization: authToken,
@@ -217,8 +218,8 @@ const HomeScreen = () => {
     const handleStopCharging = async () => {
         try {
             const res = await axios.post(
-                `http://${API_URL}:${API_PORT}/station/stop_charging/`,
-                { id: stationId  }, { 
+                `http://${API_URL}:${API_PORT}/station/${stationId}/stop_charging/`,
+                { }, { 
                     headers: { 
                         'Content-Type': 'application/json',
                         Authorization: authToken,

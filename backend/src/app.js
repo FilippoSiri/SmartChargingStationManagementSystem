@@ -58,7 +58,11 @@ server.on('client', async (client) => {
 
     client.handle('Authorize', ({params}) => {
         console.log(`Server got Authorize from ${client.identity}:`, params);
-        return {};
+        return {
+            idTagInfo: {
+                status: "Accepted"
+            }
+        };
     });
 
     client.handle('StartTransaction', ({params}) => {

@@ -59,15 +59,16 @@ async function MeterValues(){
         transactionId: 1234,
         meterValue: [{
             timestamp: new Date().toISOString(),
-            value: 1000,
+            value: 1000
         }],
+        sampledValue: [{}]
     });
 
 }
 
 //
 async function Authorize(){
-    if(status != possibleStatus.Available || status != possibleStatus.Charging) return;
+    //if(status != possibleStatus.Available || status != possibleStatus.Charging) return;
     await cli.call('Authorize', {
         idTag: "1234",
     });
@@ -86,7 +87,7 @@ async function StartTransaction(){
 //
 async function StopTransaction(){
 
-    if(status != possibleStatus.Charging) return;
+    //if(status != possibleStatus.Charging) return;
 
     await cli.call('StopTransaction', {
         idTag: "1234",
@@ -123,7 +124,7 @@ function processInput(input) {
         if (input.trim() === 'exit') {
             console.log('Exiting the program...');
             rl.close(); // Close the readline interface, effectively terminating the program
-            //Da capire come chiudere il client che non l'ho trovato il modo
+            cli.close();//Da capire come chiudere il client che non l'ho trovato il modo
           } else {
             switch(input.trim()){
 
@@ -148,7 +149,7 @@ function processInput(input) {
                     StopTransaction();
                     break;
                 default:
-                    console.log(`Received input: ${input}`);
+                    console.log(`Input non trovato: ${input}`);
                     break;
             }
             rl.question('Enter input: ', processInput);

@@ -4,7 +4,7 @@ const UserService = require("../services/UserService");
 const router = express.Router();
 const { verifyToken, verifyTokenResetPassword } = require("../middleware/authMiddleware");
 
-function getCorrectError(error) {
+function getCorrectError(error, res) {
     switch (error.message) {
         case "Invalid email address":
         case "Invalid password":
@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
             false
         );
     }catch(error){
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
         const value = await UserService.login(req.body.email, req.body.password);
         res.json(value);
     }catch(error){
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -58,7 +58,7 @@ router.post("/resetPasswordToken", async (req, res) => {
         const value = await UserService.resetPasswordToken(req.body.email);
         res.json(value);
     }catch(error){
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -73,7 +73,7 @@ router.post("/resetPassword", verifyTokenResetPassword, async (req, res) => {
         const value = await UserService.resetPassword(req.email, req.body.password);
         res.json(value);
     }catch(error){
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 

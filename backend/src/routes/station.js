@@ -49,6 +49,7 @@ router.post("/:id/reserve", verifyToken, async (req, res) => {
     stationUsage.user_id = userId;
     stationUsage.reservation_time = new Date();
     stationUsage.price = station.price;
+    stationUsage.deleted = false;
 
     const savedStationUsage = await stationUsage.save();
 
@@ -56,6 +57,33 @@ router.post("/:id/reserve", verifyToken, async (req, res) => {
         res.status(201).json(savedStationUsage);
     } else {
         res.status(500).json({ message: "Error reserving station" });
+    }
+});
+
+router.post("/:id/cancel_reservation", verifyToken, async (req, res) => {
+    const stationId = req.params.id;
+    const userId = req.userId;
+
+    const station = await Station.getById(stationId);
+    if (station === null)
+        return res.status(404).json({ message: "Station not found" });
+
+    if (station.status !== Station.STATUS.RESERVED)
+        return res.status(409).json({message: "Station is currently not available for cancelling reservation"});
+
+    const lastStationReservation = await StationUsage.getLastReservationByStationId(stationId);
+
+    if (lastStationReservation.user_id != userId)
+        return res.status(409).json({message: "You can't cancel reservation for another user"});
+
+    lastStationReservation.deleted = true;
+
+    const savedStationUsage = await lastStationReservation.save();
+
+    if (savedStationUsage !== null) {
+        res.status(201).json(savedStationUsage);
+    } else {
+        res.status(500).json({ message: "Error cancelling reservation" });
     }
 });
 
@@ -84,6 +112,7 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
         stationUsage.user_id = userId;
         stationUsage.start_time = new Date();
         stationUsage.price = station.price;
+        stationUsage.deleted = false;
 
         savedStationUsage = await stationUsage.save();
     }

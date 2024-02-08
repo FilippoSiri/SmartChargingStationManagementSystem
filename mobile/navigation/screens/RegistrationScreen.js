@@ -24,14 +24,21 @@ const RegistrationScreen = ({ navigation }) => {
     const { setAuthToken } = useContext(AuthContext);
 
     const register = async () => {
+        const validEmailRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        const validPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+
         if (password !== confirmPassword) {
             Alert.alert('Error', 'Passwords do not match');
             return;
         }
+        if (!password.match(validPasswordRegex)) {
+            Alert.alert('Error', 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character');
+            return;
+        }
 
-        var validRegex =
-            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if (!email.match(validRegex)) {
+        if (!email.match(validEmailRegex)) {
             Alert.alert('Error', 'Invalid email address');
             return;
         }

@@ -55,6 +55,7 @@ router.get("/validateToken", verifyToken, async (req, res) => {
     res.json({ message: "Valid token" });
 });
 
+// API that sends an email with a link to reset the password
 router.post("/resetPasswordToken", async (req, res) => {
     if(!req.body.email){
         res.status(400).json({ message: "Missing email" });
@@ -93,11 +94,12 @@ router.post("/resetPasswordToken", async (req, res) => {
     });
 });
 
+// API that renders the reset password page
 router.get("/resetPasswordPage", verifyTokenResetPassword, async (req, res) => {
     return res.render('resetPassword', { email: req.email, url: `http://${process.env.API_URL}:${process.env.PORT}/auth/resetPassword?token=${req.query.token}` });
 });
 
-
+// API that changes the password
 router.post("/resetPassword", verifyTokenResetPassword, async (req, res) => {
     if(!req.body.email || !req.body.password){
         res.status(400).json({ message: "Missing email or password" });
@@ -126,7 +128,6 @@ router.post("/resetPassword", verifyTokenResetPassword, async (req, res) => {
         res.status(401).json({ message: "Email not registered" });
     }
 });
-
 
 //TODO: Check expiration
 function generateAccessToken(data, expirationTime) {

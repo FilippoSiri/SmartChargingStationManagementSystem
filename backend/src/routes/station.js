@@ -33,6 +33,101 @@ router.get("/:id/last_reservation", async (req, res) => {
     res.json(stationUsage);
 });
 
+router.post("/:id/reserve", verifyToken, async (req, res) => {
+    const stationId = req.params.id;
+    const userId = req.userId;
+
+    const station = await Station.getById(stationId);
+    if (station === null)
+        return res.status(404).json({ message: "Station not found" });
+
+    if (station.status !== Station.STATUS.FREE)
+        return res.status(409).json({message: "Station is currently not available for reservation"});
+
+    const stationUsage = new StationUsage();
+    stationUsage.station_id = stationId;
+    stationUsage.user_id = userId;
+    stationUsage.reservation_time = new Date();
+    stationUsage.price = station.price;
+
+    const savedStationUsage = await stationUsage.save();
+
+    if (savedStationUsage !== null) {
+        res.status(201).json(savedStationUsage);
+    } else {
+        res.status(500).json({ message: "Error reserving station" });
+    }
+});
+
+router.post("/:id/start_charging/", verifyToken, async (req, res) => {
+    let savedStationUsage = null;
+    const stationId = req.params.id;
+    const userId = req.userId;
+    
+    const station = await Station.getById(stationId);
+    if (station === null)
+        return res.status(404).json({ message: "Station not found" });
+
+    if (station.status === Station.STATUS.RESERVED) {
+        const lastStationReservation = await StationUsage.getLastReservationByStationId(stationId);
+
+        if (lastStationReservation.user_id != userId)
+            return res.status(409).json({message: "Station is currently not available for charging"});
+
+        lastStationReservation.start_time = new Date();
+        lastStationReservation.end_time = null;
+
+        savedStationUsage = await lastStationReservation.save();
+    } else {
+        const stationUsage = new StationUsage();
+        stationUsage.station_id = stationId;
+        stationUsage.user_id = userId;
+        stationUsage.start_time = new Date();
+        stationUsage.price = station.price;
+
+        savedStationUsage = await stationUsage.save();
+    }
+
+    if (savedStationUsage !== null) {
+        if(await RPCStation.remoteStartTransaction(stationId)){
+            res.status(201).json(savedStationUsage);
+        }else{
+            console.log("RemoteStartTransaction Declined");
+            res.status(500).json({ message: "RemoteStartTransaction Declined" });
+        }
+    } else {
+        res.status(500).json({ message: "Error starting charging" });
+    }
+
+});
+
+router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
+    const stationId = req.params.id;
+    const userId = req.userId;
+
+    const station = await Station.getById(stationId);
+    if (station === null)
+        return res.status(404).json({ message: "Station not found" });
+
+    if (station.status !== Station.STATUS.USED)
+        return res.status(409).json({message: "Station is currently not available for stopping charging"});
+
+    const lastStationUsage = await StationUsage.getLastUsageByStationId(stationId);
+
+    if (lastStationUsage.user_id != userId)
+        return res.status(409).json({message: "You can't stop charging for another user"});
+
+    lastStationUsage.end_time = new Date();
+
+    const savedStationUsage = await lastStationUsage.save();
+
+    if (savedStationUsage !== null) {
+        res.status(201).json(savedStationUsage);
+    } else {
+        res.status(500).json({ message: "Error stopping charging" });
+    }
+});
+
 //TODO: Check status code
 router.post("/", async (req, res) => {
     const newStation = new Station(
@@ -90,100 +185,7 @@ router.patch("/", verifyTokenAdmin, async (req, res) => {
     }
 });
 
-router.post("/reserve/", verifyToken, async (req, res) => {
-    const stationId = req.body.id;
-    const userId = req.userId;
 
-    const station = await Station.getById(stationId);
-    if (station === null)
-        return res.status(404).json({ message: "Station not found" });
-
-    if (station.status !== Station.STATUS.FREE)
-        return res.status(409).json({message: "Station is currently not available for reservation"});
-
-    const stationUsage = new StationUsage();
-    stationUsage.station_id = stationId;
-    stationUsage.user_id = userId;
-    stationUsage.reservation_time = new Date();
-    stationUsage.price = station.price;
-
-    const savedStationUsage = await stationUsage.save();
-
-    if (savedStationUsage !== null) {
-        res.status(201).json(savedStationUsage);
-    } else {
-        res.status(500).json({ message: "Error reserving station" });
-    }
-});
-
-router.post("/start_charging/", verifyToken, async (req, res) => {
-    let savedStationUsage = null;
-    const stationId = req.body.id;
-    const userId = req.userId;
-    
-    const station = await Station.getById(stationId);
-    if (station === null)
-        return res.status(404).json({ message: "Station not found" });
-
-    if (station.status === Station.STATUS.RESERVED) {
-        const lastStationReservation = await StationUsage.getLastReservationByStationId(stationId);
-
-        if (lastStationReservation.user_id != userId)
-            return res.status(409).json({message: "Station is currently not available for charging"});
-
-        lastStationReservation.start_time = new Date();
-        lastStationReservation.end_time = null;
-
-        savedStationUsage = await lastStationReservation.save();
-    } else {
-        const stationUsage = new StationUsage();
-        stationUsage.station_id = stationId;
-        stationUsage.user_id = userId;
-        stationUsage.start_time = new Date();
-        stationUsage.price = station.price;
-
-        savedStationUsage = await stationUsage.save();
-    }
-
-    if (savedStationUsage !== null) {
-        if(await RPCStation.remoteStartTransaction(stationId)){
-            res.status(201).json(savedStationUsage);
-        }else{
-            console.log("RemoteStartTransaction Declined");
-            res.status(500).json({ message: "RemoteStartTransaction Declined" });
-        }
-    } else {
-        res.status(500).json({ message: "Error starting charging" });
-    }
-
-});
-
-router.post("/stop_charging/", verifyToken, async (req, res) => {
-    const stationId = req.body.id;
-    const userId = req.userId;
-
-    const station = await Station.getById(stationId);
-    if (station === null)
-        return res.status(404).json({ message: "Station not found" });
-
-    if (station.status !== Station.STATUS.USED)
-        return res.status(409).json({message: "Station is currently not available for stopping charging"});
-
-    const lastStationUsage = await StationUsage.getLastUsageByStationId(stationId);
-
-    if (lastStationUsage.user_id != userId)
-        return res.status(409).json({message: "You can't stop charging for another user"});
-
-    lastStationUsage.end_time = new Date();
-
-    const savedStationUsage = await lastStationUsage.save();
-
-    if (savedStationUsage !== null) {
-        res.status(201).json(savedStationUsage);
-    } else {
-        res.status(500).json({ message: "Error stopping charging" });
-    }
-});
 
 
 

@@ -76,7 +76,7 @@ async function Authorize(){
 
 //
 async function StartTransaction(){
-    if(status != possibleStatus.Available) return;
+    //if(status != possibleStatus.Available) return;
     await cli.call('StartTransaction', {
         connectorId: 0,
         idTag: "1234",
@@ -125,6 +125,7 @@ function processInput(input) {
             console.log('Exiting the program...');
             rl.close(); // Close the readline interface, effectively terminating the program
             cli.close();//Da capire come chiudere il client che non l'ho trovato il modo
+            return;
           } else {
             switch(input.trim()){
 

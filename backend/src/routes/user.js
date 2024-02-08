@@ -1,75 +1,73 @@
 "use strict";
 const express = require("express");
-const User = require("../models/User");
+const UserService = require("../services/UserService");
 const { verifyToken, verifyTokenAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 
+function getCorrectError(error) {
+    switch (error.message) {
+        case "User not found":
+            return res.status(404).json({ message: error.message });
+        /*case "Station is currently not available for reservation":
+        case "Station is currently not available for cancelling reservation":
+        case "You can't cancel reservation for another user":
+        case "Station is currently not available for charging":
+        case "Station is currently not available for stopping charging":
+        case "You can't stop charging for another user":
+            return res.status(409).json({ message: error.message });*/
+        default:
+            return res.status(500).json({ message: error.message });
+    }
+}
+
 router.get("/all", async (req, res) => {
-    const users = await User.getAll();
-    res.json(users);
+    res.json(await UserService.getAll());
 });
 
 
 router.get("/", verifyToken, async (req, res) => {
-    const user = await User.getById(req.userId);
-    if (user !== null) {
+    try {
+        const userId = req.userId;
+        const user = await UserService.getById(userId);
         res.json(user);
-    } else {
-        res.status(404).json({ message: "User not found" });
+    } catch (error) {
+        getCorrectError(error);
     }
 });
 
 //TODO: Check status code
 router.patch("/", verifyToken, async (req, res) => {
-    const user = await User.getById(req.userId);
-    if (user !== null) {
-        if (req.body.name !== undefined) user.name = req.body.name;
-
-        if (req.body.surname !== undefined) user.surname = req.body.surname;
-
-        if (req.body.email !== undefined) user.email = req.body.email;
-
-        if (req.body.password !== undefined) {
-            user.password = req.body.password;
-            user.token_reset_time = new Date();
-        }
-
-        const updatedUser = await user.save();
-        if (updatedUser !== null) {
-            if (req.body.password !== undefined) {
-                const token = generateAccessToken({ userId: updatedUser.id, isAdmin: updatedUser.is_admin }, null);
-                res.status(201).json({ token: token });
-            } else
-            res.status(201).json({ message: "User updated" });
-        } else {
-            res.status(500).json({ message: "Error updating user" });
-        }
-    } else {
-        res.status(404).json({ message: "User not found" });
+    try {
+        const value = await UserService.update(
+            req.userId,
+            req.body.name,
+            req.body.surname,
+            req.body.email,
+            req.body.password,
+            undefined
+        );
+        res.status(201).json(value);
+    } catch (error) {
+        getCorrectError(error);
     }
 });
 
 router.patch("/:id/set_user_admin/", verifyTokenAdmin, async (req, res) => {
-    const user = await User.getById(req.params.id);
-    if (user !== null) {
-        user.is_admin = req.body.is_admin;
-        const updatedUser = await user.save();
-        if (updatedUser !== null) {
-            res.status(201).json(updatedUser);
-        } else {
-            res.status(500).json({ message: "Error updating user" });
-        }
-    } else {
-        res.status(404).json({ message: "User not found" });
+    try {
+        const value = await UserService.update(
+            req.params.id,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            req.body.is_admin
+        );
+        res.status(201).json(value);
+    } catch (error) {
+        getCorrectError(error);
     }
 });
-
-function generateAccessToken(data, expirationTime) {
-    if(expirationTime !== null) 
-        return jwt.sign(data, process.env.JWT_SECRET_KEY, { expiresIn: `${expirationTime}s` }); 
-    return jwt.sign(data, process.env.JWT_SECRET_KEY);
-}
 
 module.exports = router;

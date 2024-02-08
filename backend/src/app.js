@@ -4,7 +4,7 @@ const express = require("express");
 const stationRouter = require("./routes/station");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
-const RPCStation = require("./utils/RPCStation");
+const RPCStation = require("./services/RPCStationService");
 
 const { RPCServer, createRPCError } = require('ocpp-rpc');
 

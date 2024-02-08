@@ -1,4 +1,4 @@
-class RPCStation{
+class RPCStationService{
     static stations = new Map();
 
     static addStation(station) {
@@ -12,7 +12,7 @@ class RPCStation{
                 connectorId: 0,
                 idTag: "123456"
             });
-            return response.status === 'Accepted';
+            return response.status === 'Accepted';   
         }catch(e){
             console.log(e);
             return false;
@@ -24,7 +24,7 @@ class RPCStation{
             const response = await this.stations.get(stationId).call('RemoteStopTransaction', {
                 transactionId: 1234
             });
-            return response.status === 'Accepted';
+            return response.status === 'Accepted';   
         }catch(e){
             console.log(e);
             return false;
@@ -33,21 +33,33 @@ class RPCStation{
     }
     
     static async reserveNow(stationId){
-        return await this.stations.get(stationId).call('ReserveNow', {
-            connectorId: 0,
-            expiryDate: new Date().toISOString(),
-            idTag: "1234",
-            parentIdTag: "1234",
-            reservationId: 1234
-        });
+        try{
+            const response = await this.stations.get(stationId).call('ReserveNow', {
+                connectorId: 0,
+                expiryDate: new Date().toISOString(),
+                idTag: "1234",
+                parentIdTag: "1234",
+                reservationId: 1234
+            });
+            return response.status === 'Accepted';
+        }catch(e){
+            console.log(e);
+            return false;
+        }
     }
     
     static async cancelReservation(stationId){
-        return await this.stations.get(stationId).call('CancelReservation', {
-            reservationId: 1234
-        });
+        try{
+            const response = await this.stations.get(stationId).call('CancelReservation', {
+                reservationId: 1234
+            });
+            return response.status === 'Accepted';
+        }catch(e){
+            console.log(e);
+            return false;
+        }
     }
     
 }
 
-module.exports = RPCStation;
+module.exports = RPCStationService;

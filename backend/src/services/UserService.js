@@ -2,7 +2,7 @@
 const User = require("../models/User");
 const ResetPasswordToken = require("../models/ResetPasswordToken");
 const { emailValidRegex, strongPasswordRegex } = require("../utils/constants");
-
+const jwt = require("jsonwebtoken");
 
 
 function generateAccessToken(data, expirationTime) {
@@ -58,7 +58,10 @@ class UserService {
         if(await User.getByEmail(email) !== null)
             throw new Error("Email already registered");
 
-        const user = new User(name, surname, email, password, is_admin);
+        const user = new User(null, name, surname, email, password, 0, new Date(), is_admin);
+
+        console.log(user);
+
         const newUser = await user.save();
         if(newUser !== null) {
             const token = generateAccessToken({ userId: newUser.id, isAdmin: newUser.is_admin }, null);

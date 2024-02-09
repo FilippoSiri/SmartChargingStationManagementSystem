@@ -41,7 +41,7 @@ class StationService {
         const savedStationUsage = await stationUsage.save();
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.reserveNow(stationId)){
+            if(await RPCStationService.reserveNow(id)){
                 return savedStationUsage;
             }else{
                 console.log("ReserveNow Declined");
@@ -62,7 +62,7 @@ class StationService {
         if (station.status !== Station.STATUS.RESERVED)
             throw new Error("Station is currently not available for cancelling reservation");
     
-        const lastStationReservation = await StationUsage.getLastReservationByStationId(stationId);
+        const lastStationReservation = await StationUsage.getLastReservationByStationId(id);
     
         if (lastStationReservation.user_id != userId)
             throw new Error("You can't cancel reservation for another user");
@@ -72,7 +72,7 @@ class StationService {
         const savedStationUsage = await lastStationReservation.save();
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.cancelReservation(stationId)){
+            if(await RPCStationService.cancelReservation(id)){
                 return savedStationUsage;
             }else{
                 console.log("cancelReservation Declined");
@@ -92,7 +92,7 @@ class StationService {
             throw new Error("Station not found");
     
         if (station.status === Station.STATUS.RESERVED) {
-            const lastStationReservation = await StationUsage.getLastReservationByStationId(stationId);
+            const lastStationReservation = await StationUsage.getLastReservationByStationId(id);
     
             if (lastStationReservation.user_id != userId)
                 throw new Error("Station is currently not available for charging");
@@ -137,7 +137,7 @@ class StationService {
         if (station.status !== Station.STATUS.USED)
             throw new Error("Station is currently not available for stopping charging");
     
-        const lastStationUsage = await StationUsage.getLastUsageByStationId(stationId);
+        const lastStationUsage = await StationUsage.getLastUsageByStationId(id);
     
         if (lastStationUsage.user_id != userId)
             throw new Error("You can't stop charging for another user");
@@ -147,7 +147,7 @@ class StationService {
         const savedStationUsage = await lastStationUsage.save();
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.remoteStopTransaction(stationId)){
+            if(await RPCStationService.remoteStopTransaction(id)){
                 return savedStationUsage;
             }else{
                 console.log("RemoteStartTransaction Declined");

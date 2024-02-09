@@ -59,9 +59,10 @@ async function MeterValues(){
         transactionId: 1234,
         meterValue: [{
             timestamp: new Date().toISOString(),
-            value: 1000
-        }],
-        sampledValue: [{}]
+            sampledValue: [{
+                value: "1000"
+            }]
+        }]
     });
 
 }

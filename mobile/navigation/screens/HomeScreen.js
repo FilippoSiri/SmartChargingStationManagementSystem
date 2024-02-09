@@ -245,6 +245,7 @@ const HomeScreen = () => {
                 },
             );
             console.log(res.data);
+            getLastStationUsage(stationId);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 2});
         } catch (error) {

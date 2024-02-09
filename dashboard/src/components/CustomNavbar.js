@@ -20,12 +20,12 @@ const pages = [
     { name: "User", link: "/user" },
     { name: "Report", link: "/report" },
 ];
-const settings = ["Logout"];
 
 const CustomNavbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const navigate = useNavigate();
+    const token = localStorage.getItem("token");
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -43,6 +43,7 @@ const CustomNavbar = () => {
     };
 
     const handleLogout = () => {
+        handleCloseUserMenu();
         localStorage.removeItem("token")
         navigate("/login")
     }
@@ -73,7 +74,7 @@ const CustomNavbar = () => {
                         SCSMS
                     </Typography>
 
-                    <Box
+                    {token && <><Box
                         sx={{
                             flexGrow: 1,
                             display: { xs: "flex", md: "none" },
@@ -113,7 +114,7 @@ const CustomNavbar = () => {
                                     onClick={() => {
                                         handleCloseNavMenu();
                                         redirect(page.link);
-                                    }}
+                                    } }
                                 >
                                     <Typography textAlign="center">
                                         {page.name}{" "}
@@ -121,8 +122,7 @@ const CustomNavbar = () => {
                                 </MenuItem>
                             ))}
                         </Menu>
-                    </Box>
-                    <Typography
+                    </Box><Typography
                         variant="h5"
                         noWrap
                         component="a"
@@ -138,63 +138,58 @@ const CustomNavbar = () => {
                             textDecoration: "none",
                         }}
                     >
-                        SCSMS
-                    </Typography>
-                    <Box
-                        sx={{
-                            flexGrow: 1,
-                            display: { xs: "none", md: "flex" },
-                        }}
-                    >
-                        {pages.map((page) => (
-                            <Button
-                                key={page.name}
-                                onClick={() => {
-                                    handleCloseNavMenu();
-                                    redirect(page.link);
-                                }}
-                                sx={{ my: 2, color: "white", display: "block" }}
-                            >
-                                {page.name}
-                            </Button>
-                        ))}
-                    </Box>
-
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton
-                                onClick={handleOpenUserMenu}
-                                sx={{ p: 0 }}
-                            >
-                                <Avatar
-                                    alt="Remy Sharp"
-                                    src="/static/images/avatar/2.jpg"
-                                />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: "45px" }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
+                            SCSMS
+                        </Typography><Box
+                            sx={{
+                                flexGrow: 1,
+                                display: { xs: "none", md: "flex" },
                             }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
                         >
-                            <MenuItem onClick={handleLogout}>
-                                <Typography textAlign="center">
-                                    Logout
-                                </Typography>
-                            </MenuItem>
-                        </Menu>
-                    </Box>
+                            {pages.map((page) => (
+                                <Button
+                                    key={page.name}
+                                    onClick={() => {
+                                        handleCloseNavMenu();
+                                        redirect(page.link);
+                                    } }
+                                    sx={{ my: 2, color: "white", display: "block" }}
+                                >
+                                    {page.name}
+                                </Button>
+                            ))}
+                        </Box><Box sx={{ flexGrow: 0 }}>
+                            <Tooltip title="Open settings">
+                                <IconButton
+                                    onClick={handleOpenUserMenu}
+                                    sx={{ p: 0 }}
+                                >
+                                    <Avatar />
+                                </IconButton>
+                            </Tooltip>
+                            <Menu
+                                sx={{ mt: "45px" }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                <MenuItem onClick={handleLogout}>
+                                    <Typography textAlign="center">
+                                        Logout
+                                    </Typography>
+                                </MenuItem>
+                            </Menu>
+                        </Box></>
+                }
                 </Toolbar>
             </Container>
         </AppBar>

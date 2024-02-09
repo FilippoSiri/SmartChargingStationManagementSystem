@@ -5,6 +5,7 @@ const stationRouter = require("./routes/station");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 const RPCStation = require("./services/RPCStationService");
+const StationService = require("./services/StationService");
 
 const { RPCServer, createRPCError } = require('ocpp-rpc');
 
@@ -37,9 +38,11 @@ server.on('client', async (client) => {
         };
     });
     
-    client.handle('Heartbeat', ({params}) => {
+    client.handle('Heartbeat', async ({params}) => {
         console.log(`Server got Heartbeat from ${client.identity}:`, params);
-
+        const station = await StationService.getById(client.identity);
+        station.last_heartbeat = new Date();
+        await station.save();
         // respond with the server's current time.
         return {
             currentTime: new Date().toISOString()

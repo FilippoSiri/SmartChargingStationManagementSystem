@@ -11,6 +11,8 @@ import {
     DialogTitle,
     FormControlLabel,
     Grid,
+    MenuItem,
+    Select,
     Slide,
     Typography,
 } from "@mui/material";
@@ -28,6 +30,8 @@ const EditStation = () => {
     const [openCancel, setOpenCancel] = useState(false);
     const [stationInfo, setStationinfo] = useState({});
     const [dialogMessage, setDialogMessage] = useState("");
+    const [multipleSelectValue, setmultipleSelectValue] = useState([]);
+    const [connectorTypes, setConnectorTypes] = useState([]);
 
     useEffect(() => {
         const getStationInfo = async () => {
@@ -50,6 +54,23 @@ const EditStation = () => {
 
         if (id) getStationInfo();
     }, [id]);
+
+    useEffect(() => {
+        const getConnectorTypes = async () => {
+            try {
+                let { data } = await axios.get(
+                    `http://localhost:${process.env.REACT_APP_API_PORT}/connector`
+                );
+                console.log(data);
+                setConnectorTypes(data);
+            } catch (error) {
+                alert("Error getting connector types");
+                console.log(error);
+            }
+        }
+
+        getConnectorTypes();
+    }, []);
 
     const handleChangeStationInfo = (e) => {
         let fieldToUpdate = e.target.getAttribute("field");
@@ -83,6 +104,7 @@ const EditStation = () => {
                     dismissed: stationInfo.dismissed,
                     notes: stationInfo.notes,
                     description: stationInfo.description,
+                    connectors: connectorTypes.filter(connectorType => multipleSelectValue.includes(connectorType.name)).map(connectorType => {return {id: connectorType.id}})
                 },
                 { headers: { 
                     "Content-Type": "application/json", 
@@ -113,6 +135,11 @@ const EditStation = () => {
     const handleCloseCancel = () => {
         setOpenCancel(false);
     };
+
+    const handleSelectChange = (e) => {
+        const {target: { value }} = e;
+        setmultipleSelectValue(typeof value === "string" ? value.split(",") : value);
+    }
 
     return (
         <Container xs={"xl"} style={{ marginTop: "3em" }}>
@@ -219,7 +246,18 @@ const EditStation = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={12}>
+                        <Grid item xs={4}>
+                            <Select style={{width: "50%", height: "37.5px"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
+                                {
+                                    connectorTypes.map((connectorType, index) => {
+                                        return (
+                                            <MenuItem key={index} value={connectorType.id}>{connectorType.name}</MenuItem>
+                                        );
+                                    })
+                                }
+                            </Select>
+                        </Grid>
+                        <Grid item xs={8}>
                             <FormControlLabel control={<Checkbox field="dismissed" onChange={handleChangeDismissed} checked={stationInfo.dismissed ?? false} />} label="Dismissed" />
                         </Grid>
 

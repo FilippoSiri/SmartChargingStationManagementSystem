@@ -7,11 +7,24 @@ CREATE TABLE Station (
     lat DECIMAL(11, 8),
     lon DECIMAL(11, 8),
     price int,
-    power DECIMAL(11, 8),
     dismissed BOOLEAN,
     last_heartbeat DATETIME,
     notes TEXT,
     description TEXT
+);
+
+CREATE TABLE Connector (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    power DECIMAL(11, 8)
+);
+
+CREATE TABLE StationConnector (
+    station_id int,
+    connector_id int,
+    PRIMARY KEY (station_id, connector_id),
+    FOREIGN KEY (station_id) REFERENCES Station(id),
+    FOREIGN KEY (connector_id) REFERENCES Connector(id)
 );
 
 CREATE TABLE User (
@@ -47,32 +60,35 @@ CREATE TABLE ResetPasswordToken (
     used BOOLEAN
 );
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 1', 44.41225398745292, 8.943041803651521, 421, 3.4212377134862795, 0, NOW(), 'This is a note', 'description 1');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 1', 44.41225398745292, 8.943041803651521, 421, 0, NOW(), 'This is a note', 'description 1');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 2', 44.40973066556966, 8.937683635571881, 228, 3.6384354501274463, 0, NOW(), 'This is a note', 'description 2');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 2', 44.40973066556966, 8.937683635571881, 228, 0, NOW(), 'This is a note', 'description 2');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 3', 44.40959225369384, 8.938335670510613, 259, 4.732612399122979, 0, NOW(), 'This is a note', 'description 3');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 3', 44.40959225369384, 8.938335670510613, 259, 0, NOW(), 'This is a note', 'description 3');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 4', 44.41490247844163, 8.948156087159589, 228, 3.952524392919057, 0, NOW(), 'This is a note', 'description 4');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 4', 44.41490247844163, 8.948156087159589, 228, 0, NOW(), 'This is a note', 'description 4');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 5', 44.41668083596903, 8.945843180774654, 428, 2.9332294756920354, 0, NOW(), 'This is a note', 'description 5');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 5', 44.41668083596903, 8.945843180774654, 428, 0, NOW(), 'This is a note', 'description 5');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 6', 44.41298340189158, 8.939498167023588, 341, 3.525655247462496, 0, NOW(), 'This is a note', 'description 6');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 6', 44.41298340189158, 8.939498167023588, 341, 0, NOW(), 'This is a note', 'description 6');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 7', 44.410629875247835, 8.940450134372531, 167, 3.6201685757315314, 0, NOW(), 'This is a note', 'description 7');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 7', 44.410629875247835, 8.940450134372531, 167, 0, NOW(), 'This is a note', 'description 7');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 8', 44.416008668901455, 8.94061536564911, 351, 3.7019193661509875, 0, NOW(), 'This is a note', 'description 8');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 8', 44.416008668901455, 8.94061536564911, 351, 0, NOW(), 'This is a note', 'description 8');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 9', 44.41648755559513, 8.943489395794249, 320, 4.548326041075304, 0, NOW(), 'This is a note', 'description 9');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 9', 44.41648755559513, 8.943489395794249, 320, 0, NOW(), 'This is a note', 'description 9');
 
-INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description)
-            VALUES ('Station 10', 44.413023902482834, 8.938031770503345, 175, 3.2172681666350913, 0, NOW(), 'This is a note', 'description 10');
+INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description)
+            VALUES ('Station 10', 44.413023902482834, 8.938031770503345, 175, 0, NOW(), 'This is a note', 'description 10');
+
+INSERT INTO Connector (name, power) VALUES ('Type 1', 50);
+INSERT INTO Connector (name, power) VALUES ('Type 2', 70);

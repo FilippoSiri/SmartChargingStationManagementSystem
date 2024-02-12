@@ -33,37 +33,36 @@ class Station {
         lat,
         lon,
         price,
-        power,
         dismissed,
         last_heartbeat,
         notes,
         description,
-        status
+        status,
+        connectors
     ) {
         this.id = id;
         this.name = name;
         this.lat = lat;
         this.lon = lon;
         this.price = price;
-        this.power = power;
         this.dismissed = dismissed;
         this.last_heartbeat = last_heartbeat;
         this.notes = notes;
         this.description = description;
         this.status = status;
+        this.connectors = connectors;
     }
 
     async save() {
         if (this.id) {
             // update existing station
             const sql =
-                "UPDATE Station SET name = ?, lat = ?, lon = ?, price = ?, power = ?, dismissed = ?, last_heartbeat = ?, notes = ?, description = ? WHERE id = ?";
+                "UPDATE Station SET name = ?, lat = ?, lon = ?, price = ?, dismissed = ?, last_heartbeat = ?, notes = ?, description = ? WHERE id = ?";
             const [rows, _] = await conn.query(sql, [
                 this.name,
                 this.lat,
                 this.lon,
                 this.price,
-                this.power,
                 this.dismissed,
                 this.last_heartbeat,
                 this.notes,
@@ -78,19 +77,20 @@ class Station {
             this.status = await getStatus(this, lastReservation, lastUsage);
         } else {
             // insert new station
+            console.log("ciao");
             const sql =
-                "INSERT INTO Station (name, lat, lon, price, power, dismissed, last_heartbeat, notes, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             const [rows, _] = await conn.query(sql, [
                 this.name,
                 this.lat,
                 this.lon,
                 this.price,
-                this.power,
                 this.dismissed,
                 this.last_heartbeat,
                 this.notes,
                 this.description,
             ]);
+            console.log("ciao");
             this.status = STATUS.UNDEFINED;
             if (rows.affectedRows == 0) return null;
             this.id = rows.insertId;
@@ -120,12 +120,12 @@ class Station {
                     row.lat,
                     row.lon,
                     row.price,
-                    row.power,
                     row.dismissed == 1,
                     row.last_heartbeat,
                     row.notes,
                     row.description,
-                    status
+                    status,
+                    undefined
                 );
             })
         );
@@ -146,13 +146,25 @@ class Station {
             row.lat,
             row.lon,
             row.price,
-            row.power,
             row.dismissed == 1,
             row.last_heartbeat,
             row.notes,
             row.description,
-            status
+            status,
+            undefined
         );
+    }
+
+    async addConnector(id){
+        const sql = "INSERT INTO StationConnector (station_id, connector_id) VALUES (?, ?)";
+        const [rows, _] = await conn.query(sql, [this.id, id]);
+        return rows.affectedRows > 0;
+    }
+
+    async removeConnectors(){
+        const sql = "DELETE FROM StationConnector WHERE station_id = ?";
+        const [rows, _] = await conn.query(sql, [this.id]);
+        return rows.affectedRows > 0;
     }
 }
 

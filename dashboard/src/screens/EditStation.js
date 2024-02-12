@@ -202,7 +202,7 @@ const EditStation = () => {
                                 {
                                     connectorTypes.map((connectorType, index) => {
                                         return (
-                                            <MenuItem key={index} value={connectorType.id}>{connectorType.name}</MenuItem>
+                                            <MenuItem key={index} value={connectorType.name}>{connectorType.name}</MenuItem>
                                         );
                                     })
                                 }

@@ -64,7 +64,6 @@ const EditStation = () => {
                 console.log(data);
                 setConnectorTypes(data);
             } catch (error) {
-                alert("Error getting connector types");
                 console.log(error);
             }
         }
@@ -100,7 +99,6 @@ const EditStation = () => {
                     lat: stationInfo.lat,
                     lon: stationInfo.lon,
                     price: stationInfo.price * 100,
-                    power: stationInfo.power,
                     dismissed: stationInfo.dismissed,
                     notes: stationInfo.notes,
                     description: stationInfo.description,
@@ -182,19 +180,6 @@ const EditStation = () => {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <Typography variant="body1">Power</Typography>
-                            <input
-                                type="text"
-                                field="power"
-                                className="input-edit-station"
-                                placeholder="Insert power"
-                                value={stationInfo.power ?? ""}
-                                onChange={handleChangeStationInfo}
-                                required={id ? false : true}
-                            />
-                        </Grid>
-
-                        <Grid item xs={4}>
                             <Typography variant="body1">
                                 Price (€/kWh)
                             </Typography>
@@ -207,6 +192,21 @@ const EditStation = () => {
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
                             />
+                        </Grid>
+
+                        <Grid item xs={4}>
+                            <Typography variant="body1">
+                                Connectors
+                            </Typography>
+                            <Select style={{width: "50%", height: "37.5px"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
+                                {
+                                    connectorTypes.map((connectorType, index) => {
+                                        return (
+                                            <MenuItem key={index} value={connectorType.id}>{connectorType.name}</MenuItem>
+                                        );
+                                    })
+                                }
+                            </Select>
                         </Grid>
 
                         <Grid item xs={4}>
@@ -246,18 +246,7 @@ const EditStation = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
-                            <Select style={{width: "50%", height: "37.5px"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
-                                {
-                                    connectorTypes.map((connectorType, index) => {
-                                        return (
-                                            <MenuItem key={index} value={connectorType.id}>{connectorType.name}</MenuItem>
-                                        );
-                                    })
-                                }
-                            </Select>
-                        </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={12}>
                             <FormControlLabel control={<Checkbox field="dismissed" onChange={handleChangeDismissed} checked={stationInfo.dismissed ?? false} />} label="Dismissed" />
                         </Grid>
 

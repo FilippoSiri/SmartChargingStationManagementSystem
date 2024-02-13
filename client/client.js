@@ -9,9 +9,25 @@ const possibleStatus = {
     Reserved: 'Reserved',
     Unavailable: 'Unavailable',
     Faulted: 'Faulted'
-  };
-  
+};
 
+const possibleReasonStopTransaction = {
+    EmergencyStop: 'EmergencyStop',
+    EVDisconnected: 'EVDisconnected',
+    HardReset: 'HardReset',
+    Local: 'Local',
+    Other: 'Other',
+    PowerLoss: 'PowerLoss',
+    Reboot: 'Reboot',
+    Remote: 'Remote',
+    SoftReset: 'SoftReset',
+    UnlockCommand: 'UnlockCommand',
+    DeAuthorized: 'DeAuthorized'
+}
+  
+var transactionId;
+var reservationId = 5000;
+var timerHeartbeat;
 var status = possibleStatus.Available;
 
 const rl = readline.createInterface({
@@ -68,34 +84,60 @@ async function MeterValues(){
 }
 
 //
-async function Authorize(){
+async function Authorize(IdTag){
     //if(status != possibleStatus.Available || status != possibleStatus.Charging) return;
-    await cli.call('Authorize', {
-        idTag: "1234",
-    });
+    const res = await cli.call('Authorize', {
+        idTag: IdTag,
+    })
+    console.log(res); //result sarà sempre "approved"
+
+    rl.question('Enter input: ', processInput);
 }
 
 //
-async function StartTransaction(){
+async function StartTransaction(ConnectorId, IdTag, ReservationId){
     //if(status != possibleStatus.Available) return;
-    await cli.call('StartTransaction', {
-        connectorId: 0,
-        idTag: "1234",
-        meterStart: 1000,
-        timestamp: new Date().toISOString(),
-    });
+    let res;
+    if(ReservationId == undefined){
+        res = await cli.call('StartTransaction', {
+            connectorId: parseInt(ConnectorId),
+            idTag: IdTag,
+            meterStart: 1000,
+            timestamp: new Date().toISOString()
+        });
+    }else{
+        res = await cli.call('StartTransaction', {
+            connectorId: parseInt(ConnectorId),
+            idTag: IdTag,
+            meterStart: 1000,
+            timestamp: new Date().toISOString(),
+            reservationId: ReservationId
+        });
+    }
+    console.log(res);
+    rl.question('Enter input: ', processInput);    
 }
 //
-async function StopTransaction(){
-
+async function StopTransaction(reasonCode){
+    let res;
     //if(status != possibleStatus.Charging) return;
-
-    await cli.call('StopTransaction', {
-        idTag: "1234",
-        meterStop: 1000,
-        timestamp: new Date().toISOString(),
-        transactionId: 1234,
-    });
+    if(reasonCode == undefined){
+        res = await cli.call('StopTransaction', {
+            idTag: "1234",
+            meterStop: 1000,
+            timestamp: new Date().toISOString(),
+            transactionId: 1234,
+        });
+    }else{
+        res = await cli.call('StopTransaction', {
+            idTag: "1234",
+            meterStop: 1000,
+            timestamp: new Date().toISOString(),
+            transactionId: 1234,
+            reason: reasonCode
+        });
+    
+    }
 }
 
 
@@ -142,12 +184,32 @@ function processInput(input) {
                     MeterValues();
                     break;
                 case 'Authorize':
-                    Authorize();
+                    rl.question('Enter idTag: ', async (IdTag) => {
+                        await Authorize(IdTag);
+                    });
                     break;
                 case 'StartTransaction':
-                    StartTransaction();
+                    rl.question('Enter connectorId: ', async (connectorId) => {
+                        rl.question('Enter idTag: ', async (idTag) => {
+                            if(status == possibleStatus.Reserved) //La colonnina era stata prenotata
+                                await StartTransaction(connectorId, idTag, 1000)
+                            else                                  //La colonnina non era stata prenotata
+                                await StartTransaction(connectorId, idTag);
+                        });
+                    });
                     break;
                 case 'StopTransaction':
+                    console.log('Possible Reason Stop Transaction:');
+                    let indexPrint = 1;
+                    Object.entries(possibleReasonStopTransaction).forEach(([_, reason]) => {
+                        console.log(`${indexPrint}. ${reason}`);
+                        indexPrint++;
+                    });
+                    rl.question('Enter the reason code number: ', async (reasonCodeNumber) => {
+                        const reasonCode = Object.values(possibleReasonStopTransaction)[reasonCodeNumber - 1];
+                        console.log(reasonCode);
+                        await StopTransaction(reasonCode);
+                    });
                     StopTransaction();
                     break;
                 default:

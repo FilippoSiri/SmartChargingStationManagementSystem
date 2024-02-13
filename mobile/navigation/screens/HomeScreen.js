@@ -17,6 +17,7 @@ import { Base64 } from 'js-base64';
 
 import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import { useIsFocused } from '@react-navigation/native';
 
 const stationStatusColor = {
     0: '#085C13',
@@ -37,6 +38,7 @@ const HomeScreen = () => {
     const [isActionPerformed, setIsActionPerformed] = useState(false);
     const snapPoints = useMemo(() => ['65%', '30%'], []);
 	const bottomSheetRef = useRef(null);
+    const isFocused = useIsFocused();
 
     const updatePosition = (position) => {
         webRef.current.injectJavaScript(
@@ -287,6 +289,12 @@ const HomeScreen = () => {
             clearInterval(updateMapEveryMinute);
         }
     }, []);
+
+    useEffect(() => {
+        if (isFocused) {
+            loadStations();
+        }
+    }, [isFocused]);
 
     useEffect(() => {
         if (isActionPerformed) {

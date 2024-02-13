@@ -40,7 +40,7 @@ const LoginScreen = () => {
             localStorage.setItem("token", res.data.token);
             navigate("/");
         } catch (error) {
-            alert("Something went wrong");
+            alert(error.response.data.message);
         }
     };
 
@@ -62,6 +62,7 @@ const LoginScreen = () => {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
+                                    fullWidth
                                     required
                                     id="outlined-basic"
                                     label="Email"
@@ -73,6 +74,7 @@ const LoginScreen = () => {
 
                             <Grid item xs={12}>
                                 <TextField
+                                    fullWidth
                                     required
                                     id="outlined-password-input"
                                     label="Password"
@@ -80,7 +82,7 @@ const LoginScreen = () => {
                                     onChange={handlePasswordChange}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={2}>
                                 <Button type="submit" variant="contained">
                                     Login
                                 </Button>

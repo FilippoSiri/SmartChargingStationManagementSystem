@@ -12,7 +12,7 @@ function getCorrectError(error, res) {
         case "Missing email":
         case "Missing password":
             return res.status(400).json({ message: error.message });
-        case "Login failed, wrong password":
+        case "Invalid credentials":
         case "Email not registered":
             return res.status(401).json({ message: error.message });
         case "User not found":
@@ -34,6 +34,7 @@ router.post("/register", async (req, res) => {
             req.body.password,
             false
         );
+        res.json(value);
     }catch(error){
         return getCorrectError(error, res);
     }

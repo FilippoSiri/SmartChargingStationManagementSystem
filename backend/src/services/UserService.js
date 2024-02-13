@@ -74,7 +74,7 @@ class UserService {
     static async login(email, password){
         const user = await User.login(email, password);
         if(user === null)
-            throw new Error("Login failed, wrong password");
+            throw new Error("Invalid credentials");
         const token = generateAccessToken({
             userId: user.id,
             isAdmin: user.is_admin,

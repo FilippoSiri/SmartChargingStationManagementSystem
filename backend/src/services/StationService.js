@@ -2,16 +2,22 @@
 const Station = require("../models/Station");
 const StationUsage = require("../models/StationUsage");
 const RPCStationService = require("./RPCStationService");
+const ConnectorService = require("./ConnectorService");
 
 class StationService {
     static async getAll(){
-        return await Station.getAll();
+        let stations = await Station.getAll();
+        await stations.forEach(async station => {
+            station.connectors = await ConnectorService.getByStationId(station.id);
+        });
+        return stations;
     }
 
     static async getById(id){
-        const station = await Station.getById(id);
+        let station = await Station.getById(id);
         if(station === null)
             throw new Error("Station not found");
+        station.connectors = await ConnectorService.getByStationId(station.id);
         return station;
     }
     
@@ -160,7 +166,7 @@ class StationService {
         }
     }
 
-    static async add(name, lat, lon, price, power, dismissed, last_heartbeat, notes, description){
+    static async add(name, lat, lon, price, power, dismissed, last_heartbeat, notes, description, connectors){
         const newStation = new Station(
             null,
             name,
@@ -172,16 +178,29 @@ class StationService {
             last_heartbeat,
             notes,
             description,
-            Station.STATUS.FREE
+            Station.STATUS.FREE,
+            undefined
         );
         const addedStation = await newStation.save();
         if (addedStation !== null) {
-            return addedStation;
+            const addedConnectors = new Array();
+            console.log("Connectors:");
+            console.log(connectors);
+            await connectors.forEach(async connector => {
+                const connectorModel = await ConnectorService.getById(connector.id);
+                if(connectorModel === null)
+                    console.log(`Connector ${connector.id} not found`);
+                if(await connectorModel.addToStation(addedStation.id))
+                    addedConnectors.push(connectorModel);
+                else
+                    console.log(`Error adding connector ${connector.id} to station ${addedStation.id}`);
+            });
+            return addedStation.connectors = addedConnectors;
         }
         throw new Error("Error adding station");
     }
 
-    static async update(id, name, lat, lon, price, power, dismissed, last_heartbeat, notes, description){
+    static async update(id, name, lat, lon, price, power, dismissed, last_heartbeat, notes, description, connectors){
         const station = await Station.getById(id);
         if (station !== null) {
             if (name !== undefined)
@@ -201,9 +220,24 @@ class StationService {
             if (notes !== undefined)
                 station.notes = notes;
             if (description !== undefined)
-                station.description = description;
+                station.description = description;    
             const updatedStation = await station.save();
             if (updatedStation !== null) {
+                if(connectors !== undefined){
+                    await updatedStation.removeConnectors();
+                    const addedConnectors = new Array();
+                    await connectors.forEach(async connector => {
+                        const connectorModel = await ConnectorService.getById(connector.id);
+                        if(connectorModel === null)
+                            console.log(`Connector ${connector.id} not found`);
+                        if(await connectorModel.addToStation(addedStation.id))
+                            addedConnectors.push(connectorModel);
+                        else
+                            console.log(`Error adding connector ${connector.id} to station ${addedStation.id}`);
+                    });
+                    updatedStation.connectors = addedConnectors;
+                }
+            
                 return updatedStation;
             }
             throw new Error("Error updating station");
@@ -227,7 +261,7 @@ class StationService {
         });
 
         return data;
-    }
+    }   
 }
 
 module.exports = StationService;

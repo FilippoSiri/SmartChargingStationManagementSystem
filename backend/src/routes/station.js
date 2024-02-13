@@ -99,8 +99,9 @@ router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
 });
 
 //TODO: Check status code
-router.post("/", async (req, res) => {
+router.post("/", verifyTokenAdmin, async (req, res) => {
     try {
+        console.log(req.body);
         const newStation = await StationService.add(
             req.body.name,
             req.body.lat,
@@ -110,7 +111,8 @@ router.post("/", async (req, res) => {
             req.body.dismissed,
             req.body.last_heartbeat,
             req.body.notes,
-            req.body.description
+            req.body.description,
+            req.body.connectors
         );
         res.status(201).json(newStation);
     } catch (error) {
@@ -130,7 +132,8 @@ router.patch("/", verifyTokenAdmin, async (req, res) => {
             req.body.dismissed,
             req.body.last_heartbeat,
             req.body.notes,
-            req.body.description
+            req.body.description,
+            req.body.connectors
         );
         res.status(201).json(station);
     } catch (error) {

@@ -11,6 +11,8 @@ import {
     DialogTitle,
     FormControlLabel,
     Grid,
+    MenuItem,
+    Select,
     Slide,
     Typography,
 } from "@mui/material";
@@ -28,6 +30,8 @@ const EditStation = () => {
     const [openCancel, setOpenCancel] = useState(false);
     const [stationInfo, setStationinfo] = useState({});
     const [dialogMessage, setDialogMessage] = useState("");
+    const [multipleSelectValue, setmultipleSelectValue] = useState([]);
+    const [connectorTypes, setConnectorTypes] = useState([]);
 
     useEffect(() => {
         const getStationInfo = async () => {
@@ -50,6 +54,22 @@ const EditStation = () => {
 
         if (id) getStationInfo();
     }, [id]);
+
+    useEffect(() => {
+        const getConnectorTypes = async () => {
+            try {
+                let { data } = await axios.get(
+                    `http://localhost:${process.env.REACT_APP_API_PORT}/connector`
+                );
+                console.log(data);
+                setConnectorTypes(data);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getConnectorTypes();
+    }, []);
 
     const handleChangeStationInfo = (e) => {
         let fieldToUpdate = e.target.getAttribute("field");
@@ -79,10 +99,10 @@ const EditStation = () => {
                     lat: stationInfo.lat,
                     lon: stationInfo.lon,
                     price: stationInfo.price * 100,
-                    power: stationInfo.power,
                     dismissed: stationInfo.dismissed,
                     notes: stationInfo.notes,
                     description: stationInfo.description,
+                    connectors: connectorTypes.filter(connectorType => multipleSelectValue.includes(connectorType.name)).map(connectorType => {return {id: connectorType.id}})
                 },
                 { headers: { 
                     "Content-Type": "application/json", 
@@ -113,6 +133,11 @@ const EditStation = () => {
     const handleCloseCancel = () => {
         setOpenCancel(false);
     };
+
+    const handleSelectChange = (e) => {
+        const {target: { value }} = e;
+        setmultipleSelectValue(typeof value === "string" ? value.split(",") : value);
+    }
 
     return (
         <Container xs={"xl"} style={{ marginTop: "3em" }}>
@@ -155,19 +180,6 @@ const EditStation = () => {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <Typography variant="body1">Power</Typography>
-                            <input
-                                type="text"
-                                field="power"
-                                className="input-edit-station"
-                                placeholder="Insert power"
-                                value={stationInfo.power ?? ""}
-                                onChange={handleChangeStationInfo}
-                                required={id ? false : true}
-                            />
-                        </Grid>
-
-                        <Grid item xs={4}>
                             <Typography variant="body1">
                                 Price (€/kWh)
                             </Typography>
@@ -180,6 +192,21 @@ const EditStation = () => {
                                 onChange={handleChangeStationInfo}
                                 required={id ? false : true}
                             />
+                        </Grid>
+
+                        <Grid item xs={4}>
+                            <Typography variant="body1">
+                                Connectors
+                            </Typography>
+                            <Select style={{width: "50%", height: "37.5px"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
+                                {
+                                    connectorTypes.map((connectorType, index) => {
+                                        return (
+                                            <MenuItem key={index} value={connectorType.name}>{connectorType.name}</MenuItem>
+                                        );
+                                    })
+                                }
+                            </Select>
                         </Grid>
 
                         <Grid item xs={4}>

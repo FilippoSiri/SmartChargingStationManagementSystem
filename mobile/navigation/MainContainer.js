@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,6 +9,7 @@ import HomeScreen from './screens/HomeScreen';
 import UserScreen from './screens/UserScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
+import QRScannerScreen from './screens/QRScannerScreen';
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
@@ -22,6 +23,7 @@ const homeName = 'Home';
 const searchName = 'Search';
 const userName = 'User';
 const profileName = 'Profile';
+const QRScanner = 'QRScanner';
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
 
@@ -63,6 +65,10 @@ const MainContainer = () => {
         fetchToken();
     }, [authToken, setAuthToken]);
 
+    const test = () => {
+        console.log('test');
+    }
+
     return (
         <>    
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -83,6 +89,8 @@ const MainContainer = () => {
                                         iconName = focused ? 'search' : 'search-outline';
                                     else if (routeName === userName || routeName === profileName)
                                         iconName = focused ? 'person' : 'person-outline';
+                                    else if (routeName === QRScanner)
+                                        iconName = focused ? 'qr-code' : 'qr-code-outline';
 
                                     return <Ionicons name={iconName} size={size} color={color} />;
                                 },
@@ -93,6 +101,7 @@ const MainContainer = () => {
                                 tabBarStyle: { padding: 10, height: 60 },
                             })}>
                             <Tab.Screen name={homeName} component={HomeScreen} />
+                            <Tab.Screen name={QRScanner} component={QRScannerScreen} />
                             <Tab.Screen name={profileName} component={UserScreen}/>
                         </Tab.Navigator>
                     }       

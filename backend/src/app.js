@@ -69,17 +69,6 @@ server.on('client', async (client) => {
         };
     });
 
-    client.handle('StartTransaction', ({params}) => {
-        //Chiamare funzioni di controllo
-        console.log(`Server got StartTransaction from ${client.identity}:`, params);
-        return {
-            transactionId: 1234,
-            idTagInfo: {
-                status: "Accepted"
-            }
-        };
-    });
-
     client.handle('StopTransaction', ({params}) => {
         console.log(`Server got StopTransaction from ${client.identity}:`, params);
         return {

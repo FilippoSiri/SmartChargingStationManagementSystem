@@ -73,7 +73,7 @@ server.on('client', async (client) => {
         //Chiamare funzioni di controllo
         console.log(`Server got StartTransaction from ${client.identity}:`, params);
         return {
-            transactionId: 1234,
+            transactionId: 123456789,
             idTagInfo: {
                 status: "Accepted"
             }

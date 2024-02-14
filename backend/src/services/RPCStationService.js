@@ -6,13 +6,13 @@ class RPCStationService{
         console.log(this.stations);
     }
     
-    static async remoteStartTransaction(stationId){
+    //deve prendere in ingresso idTag (id Utente)
+    static async remoteStartTransaction(stationId, IdTag){
         try{
             const response = await this.stations.get(stationId).call('RemoteStartTransaction', {
-                connectorId: 0,
-                idTag: "123456"
+                idTag: "123456"//da aggiugnere input
             });
-            return response.status === 'Accepted';   
+            return response.status === "Accepted";   
         }catch(e){
             console.log(e);
             return false;

@@ -90,8 +90,9 @@ async function Authorize(IdTag){
         idTag: IdTag,
     })
     console.log(res); //result sarà sempre "approved"
-
-    rl.question('Enter input: ', processInput);
+    if(res.idTagInfo.status != "Accepted") return false;
+    else return true;
+    //rl.question('Enter input: ', processInput);
 }
 
 //
@@ -115,39 +116,53 @@ async function StartTransaction(ConnectorId, IdTag, ReservationId){
         });
     }
     console.log(res);
-    rl.question('Enter input: ', processInput);    
+    if(res.idTagInfo.status != "Accepted") return false;
+    this.transactionId = res.transactionId;
+    return true;
+    //rl.question('Enter input: ', processInput);    
 }
 //
-async function StopTransaction(reasonCode){
+async function StopTransaction(TransactionId, reasonCode){
     let res;
     //if(status != possibleStatus.Charging) return;
     if(reasonCode == undefined){
         res = await cli.call('StopTransaction', {
-            idTag: "1234",
             meterStop: 1000,
             timestamp: new Date().toISOString(),
-            transactionId: 1234,
+            transactionId: TransactionId,
         });
     }else{
         res = await cli.call('StopTransaction', {
-            idTag: "1234",
             meterStop: 1000,
             timestamp: new Date().toISOString(),
-            transactionId: 1234,
+            transactionId: TransactionId,
             reason: reasonCode
         });
     
     }
+    this.status = possibleStatus.Available;
+    this.transactionId = undefined;
 }
 
 
 cli.handle('RemoteStartTransaction', ({params}) => {
     console.log('Server requested RemoteStartTransaction:', params);
-    return {status: 'Accepted'};
+    if(Authorize(params.idTag)){
+        if(StartTransaction(0, params.idTag)){
+            this.status = possibleStatus.Charging;
+            return {status: "Accepted"};
+        }else{
+            this.status = possibleStatus.Available;
+            return {status: "Rejected"};
+        }
+    }else return {status: "Rejected"};
+    
 });
+
 
 cli.handle('RemoteStopTransaction', ({params}) => {
     console.log('Server requested RemoteStopTransaction:', params);
+    StopTransaction(params.transactionId);
     return {status: 'Accepted'};
 });
 

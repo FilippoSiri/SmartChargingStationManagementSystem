@@ -150,6 +150,7 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${data.id}`,
                 { headers: { 'Content-Type': 'application/json' } });
                 
+            console.log(res.data);
             setStationInfo(res.data);
             setStationId(data.id);
 
@@ -332,10 +333,6 @@ const HomeScreen = () => {
                         <Text style={style.titleText}>{stationInfo.name}</Text>
                         <View style={style.displayGrid}>
                             <View style={style.itemGridContainer}>  
-                                <Text style={style.itemGridTextTitle}>Power</Text>
-                                <Text style={style.itemGridText}>{(Math.round(stationInfo.power * 100) / 100).toFixed(2)}</Text>
-                            </View>
-                            <View style={style.itemGridContainer}>  
                                 <Text style={style.itemGridTextTitle}>Price</Text>
                                 <Text style={style.itemGridText}>{stationInfo.price / 100}</Text>
                             </View>
@@ -344,7 +341,7 @@ const HomeScreen = () => {
                                     <Text style={style.itemGridTextTitle}>Connector types</Text>
                                     {
                                         stationInfo.connectors && (
-                                            <Text style={style.itemGridText}>{stationInfo.connectors.map(item => `${item.name} (${Math.round(item.power)} Kwh)`).join(" - ")}</Text>
+                                            <Text style={style.itemGridText}>{stationInfo.connectors.map(item => `${item.name} (${Math.round(item.power * 100) / 100} Kwh)`).join(" - ")}</Text>
                                         )
                                     }
                                 </View>
@@ -392,20 +389,28 @@ const HomeScreen = () => {
                 {
                     stationInfo.status == 1 && lastStationReservation !== null && lastStationReservation.user_id == decodedToken.userId && (
                         <View style={style.buttonsContainer}>
-                        <View style={style.displayGridBtns}>
-                            <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
-                                <View >  
-                                    <Text style={{color: "#fff"}}>Avvia</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={handleCancelReservationClick} style={style.modalBtns}>
-                                <View >  
-                                    <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={style.displayGridBtns}>
+                                <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Avvia</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={handleCancelReservationClick} style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
                 )}
+
+                {
+                    (stationInfo.status === 4 || stationInfo.status === 5) && (
+                        <View style={style.notAvailableTextContainer}>
+                            <Text style={style.notAvailableText}>Not available</Text>
+                        </View>
+                    )
+                }
             
             </BottomSheetModal>
                 
@@ -418,6 +423,17 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         flex: 1,
         backgroundColor: '#fff',
+    },
+    notAvailableTextContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 16,
+    },
+    notAvailableText: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: 'red',
     },
     map: {
         width: '100%',

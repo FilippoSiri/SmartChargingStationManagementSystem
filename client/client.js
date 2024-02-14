@@ -94,7 +94,29 @@ async function Authorize(IdTag){
     rl.question('Enter input: ', processInput);
 }
 
-
+//
+async function StartTransaction(ConnectorId, IdTag, ReservationId){
+    //if(status != possibleStatus.Available) return;
+    let res;
+    if(ReservationId == undefined){
+        res = await cli.call('StartTransaction', {
+            connectorId: parseInt(ConnectorId),
+            idTag: IdTag,
+            meterStart: 1000,
+            timestamp: new Date().toISOString()
+        });
+    }else{
+        res = await cli.call('StartTransaction', {
+            connectorId: parseInt(ConnectorId),
+            idTag: IdTag,
+            meterStart: 1000,
+            timestamp: new Date().toISOString(),
+            reservationId: ReservationId
+        });
+    }
+    console.log(res);
+    rl.question('Enter input: ', processInput);    
+}
 //
 async function StopTransaction(reasonCode){
     let res;

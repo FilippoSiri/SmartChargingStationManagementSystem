@@ -60,6 +60,24 @@ server.on('client', async (client) => {
         return {};
     });
 
+    client.handle('Authorize', ({params}) => {
+        console.log(`Server got Authorize from ${client.identity}:`, params);
+        return {
+            idTagInfo: {
+                status: "Accepted"
+            }
+        };
+    });
+
+    client.handle('StopTransaction', ({params}) => {
+        console.log(`Server got StopTransaction from ${client.identity}:`, params);
+        return {
+            idTagInfo: {
+                status: "Accepted"
+            }
+        };
+    });
+
     client.handle(({method, params}) => {
         // This handler will be called if the incoming method cannot be handled elsewhere.
         console.log(`Server got ${method} from ${client.identity}:`, params);

@@ -83,6 +83,41 @@ async function MeterValues(){
 
 }
 
+//
+async function Authorize(IdTag){
+    //if(status != possibleStatus.Available || status != possibleStatus.Charging) return;
+    const res = await cli.call('Authorize', {
+        idTag: IdTag,
+    })
+    console.log(res); //result sarà sempre "approved"
+
+    rl.question('Enter input: ', processInput);
+}
+
+
+//
+async function StopTransaction(reasonCode){
+    let res;
+    //if(status != possibleStatus.Charging) return;
+    if(reasonCode == undefined){
+        res = await cli.call('StopTransaction', {
+            idTag: "1234",
+            meterStop: 1000,
+            timestamp: new Date().toISOString(),
+            transactionId: 1234,
+        });
+    }else{
+        res = await cli.call('StopTransaction', {
+            idTag: "1234",
+            meterStop: 1000,
+            timestamp: new Date().toISOString(),
+            transactionId: 1234,
+            reason: reasonCode
+        });
+    
+    }
+}
+
 
 cli.handle('RemoteStartTransaction', ({params}) => {
     console.log('Server requested RemoteStartTransaction:', params);

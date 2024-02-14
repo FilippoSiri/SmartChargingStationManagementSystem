@@ -4,14 +4,16 @@ import {
     View,
     TouchableOpacity,
     Text,
-    SafeAreaView
+    SafeAreaView,
+    ScrollView,
+    Alert,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import mapTemplate from '../../components/map-template';
 import gloabl_style from '../../style';
 import axios from 'axios';
 import { API_URL, API_PORT } from '@env';
-import BottomSheet, {  BottomSheetModal } from '@gorhom/bottom-sheet';
+import BottomSheet, {  BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { AuthContext } from '../AuthContext';
 import { Base64 } from 'js-base64';
 
@@ -36,7 +38,7 @@ const HomeScreen = () => {
     const [lastStationUsage, setLastStationUsage] = useState({});
     const [lastStationReservation, setLastStationReservation] = useState({});
     const [isActionPerformed, setIsActionPerformed] = useState(false);
-    const snapPoints = useMemo(() => ['65%', '30%'], []);
+    const snapPoints = useMemo(() => ['70%', '40%'], []);
 	const bottomSheetRef = useRef(null);
     const isFocused = useIsFocused();
 
@@ -150,6 +152,11 @@ const HomeScreen = () => {
                 
             setStationInfo(res.data);
             setStationId(data.id);
+
+            if (res.status === 400) {
+                Alert.alert('Error', "Attach the machine before starting charging");
+                return;
+            }
 
             if (res.data.status === 1) {
                 getLastStationReservation(data.id);
@@ -322,23 +329,34 @@ const HomeScreen = () => {
 				enablePanDownToClose={true}>
 
                 <View style={style.stationInfoContainer}>
-                    <Text style={style.titleText}>{stationInfo.name}</Text>
-                    <View style={style.displayGrid}>
-                        <View style={style.itemGridContainer}>  
-                            <Text style={style.itemGridTextTitle}>Power</Text>
-                            <Text style={style.itemGridText}>{(Math.round(stationInfo.power * 100) / 100).toFixed(2)}</Text>
-                        </View>
-                        <View style={style.itemGridContainer}>  
-                            <Text style={style.itemGridTextTitle}>Price</Text>
-                            <Text style={style.itemGridText}>{stationInfo.price / 100}</Text>
-                        </View>
-                        <View style={{marginTop: 16, height: 150}}>
+                        <Text style={style.titleText}>{stationInfo.name}</Text>
+                        <View style={style.displayGrid}>
                             <View style={style.itemGridContainer}>  
-                                <Text style={style.itemGridTextTitle}>Description</Text>
-                                <Text style={style.itemGridText}>{stationInfo.description}</Text>
+                                <Text style={style.itemGridTextTitle}>Power</Text>
+                                <Text style={style.itemGridText}>{(Math.round(stationInfo.power * 100) / 100).toFixed(2)}</Text>
                             </View>
+                            <View style={style.itemGridContainer}>  
+                                <Text style={style.itemGridTextTitle}>Price</Text>
+                                <Text style={style.itemGridText}>{stationInfo.price / 100}</Text>
+                            </View>
+                            <View style={{marginTop: 8, height: 60}}>
+                                <View style={style.itemGridContainer}>  
+                                    <Text style={style.itemGridTextTitle}>Connector types</Text>
+                                    {
+                                        stationInfo.connectors && (
+                                            <Text style={style.itemGridText}>{stationInfo.connectors.map(item => `${item.name} (${Math.round(item.power)} Kwh)`).join(" - ")}</Text>
+                                        )
+                                    }
+                                </View>
+                            </View>
+                            <View style={{marginTop: 32, height: 100}}>
+                                <View style={style.itemGridContainer}>  
+                                    <Text style={style.itemGridTextTitle}>Description</Text>
+                                    <Text style={style.itemGridText}>{stationInfo.description}</Text>
+                                </View>
+                            </View>
+                            
                         </View>
-                    </View>
                 </View>
 
                 { stationInfo.status === 0 && (
@@ -428,7 +446,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',   
     },
     itemGridContainer: {
-        marginTop: 16,
+        marginTop: 8,
     },
     itemGridTextTitle: {
         fontSize: 20,

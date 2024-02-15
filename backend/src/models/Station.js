@@ -17,11 +17,12 @@ async function getStatus(station, lastReservation, lastUsage) {
         return STATUS.UNDEFINED;
     if (station.dismissed)
         return STATUS.DISMISSED;
-    if (station.last_heartbeat === null || station.last_heartbeat.getTime() + HEARTBEAT_TIME < Date.now())
+    // broken if no heartbeat for 3 times the heartbeat time
+    if (station.last_heartbeat === null || station.last_heartbeat.getTime() + (HEARTBEAT_TIME * 3 * 1000) < Date.now())
         return STATUS.BROKEN;
     if (lastUsage && lastUsage.end_time === null)
         return STATUS.USED;
-    if (lastReservation && lastReservation.reservation_time.getTime() + RESERVATION_TIME > Date.now())
+    if (lastReservation && lastReservation.reservation_time.getTime() + (RESERVATION_TIME * 1000) > Date.now())
         return STATUS.RESERVED;
     return STATUS.FREE;
 }

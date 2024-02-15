@@ -1,5 +1,6 @@
 const { RPCClient } = require('ocpp-rpc');
 const readline = require('readline');
+const { DEFAULT_INTERVAL } = require('./utils/constants');
 require('dotenv').config();
 
 const possibleStatus = {
@@ -190,69 +191,66 @@ cli.handle('CancelReservation', ({params}) => {
     return {status: 'Accepted'};
 });
 
+BootNotification().then((res) => {
+    if(res.status !== 'Accepted'){
+        console.log('BootNotification rejected');
+        cli.close();
+        process.exit(1);
+    }
+
+    timerHeartbeat = setInterval(async () => {
+        const res = await Heartbeat();
+        //TODO: Handle heartbeat response
+    }, (res.interval !== undefined ? res.interval : DEFAULT_INTERVAL) * 1000);
+
+
+    rl.question('Enter input: ', processInput);
+});
+
 function processInput(input) {
-
-    BootNotification().then((res) => {
-        if (input.trim() === 'exit') {
+    switch(input.trim()){
+        case 'StatusNotification':
+            StatusNotification();
+            break;
+        case 'MeterValues':
+            MeterValues();
+            break;
+        case 'Authorize':
+            rl.question('Enter idTag: ', async (IdTag) => {
+                await Authorize(IdTag);
+            });
+            break;
+        case 'StartTransaction':
+            rl.question('Enter connectorId: ', async (connectorId) => {
+                rl.question('Enter idTag: ', async (idTag) => {
+                    if(status == possibleStatus.Reserved) //La colonnina era stata prenotata
+                        await StartTransaction(connectorId, idTag, 1000)
+                    else                                  //La colonnina non era stata prenotata
+                        await StartTransaction(connectorId, idTag);
+                });
+            });
+            break;
+        case 'StopTransaction':
+            console.log('Possible Reason Stop Transaction:');
+            let indexPrint = 1;
+            Object.entries(possibleReasonStopTransaction).forEach(([_, reason]) => {
+                console.log(`${indexPrint}. ${reason}`);
+                indexPrint++;
+            });
+            rl.question('Enter the reason code number: ', async (reasonCodeNumber) => {
+                const reasonCode = Object.values(possibleReasonStopTransaction)[reasonCodeNumber - 1];
+                console.log(reasonCode);
+                await StopTransaction(reasonCode);
+            });
+            StopTransaction();
+            break;
+        case 'Exit':
             console.log('Exiting the program...');
-            rl.close(); // Close the readline interface, effectively terminating the program
-            cli.close();//Da capire come chiudere il client che non l'ho trovato il modo
-            return;
-          } else {
-            switch(input.trim()){
-
-                case 'Heartbeat':
-                    Heartbeat().then((heartbeatResponse) => {
-                        console.log(heartbeatResponse);
-                    });
-                    break;
-                case 'StatusNotification':
-                    StatusNotification();
-                    break;
-                case 'MeterValues':
-                    MeterValues();
-                    break;
-                case 'Authorize':
-                    rl.question('Enter idTag: ', async (IdTag) => {
-                        await Authorize(IdTag);
-                    });
-                    break;
-                case 'StartTransaction':
-                    rl.question('Enter connectorId: ', async (connectorId) => {
-                        rl.question('Enter idTag: ', async (idTag) => {
-                            if(status == possibleStatus.Reserved) //La colonnina era stata prenotata
-                                await StartTransaction(connectorId, idTag, 1000)
-                            else                                  //La colonnina non era stata prenotata
-                                await StartTransaction(connectorId, idTag);
-                        });
-                    });
-                    break;
-                case 'StopTransaction':
-                    console.log('Possible Reason Stop Transaction:');
-                    let indexPrint = 1;
-                    Object.entries(possibleReasonStopTransaction).forEach(([_, reason]) => {
-                        console.log(`${indexPrint}. ${reason}`);
-                        indexPrint++;
-                    });
-                    rl.question('Enter the reason code number: ', async (reasonCodeNumber) => {
-                        const reasonCode = Object.values(possibleReasonStopTransaction)[reasonCodeNumber - 1];
-                        console.log(reasonCode);
-                        await StopTransaction(reasonCode);
-                    });
-                    StopTransaction();
-                    break;
-                default:
-                    console.log(`Input non trovato: ${input}`);
-                    break;
-            }
-            rl.question('Enter input: ', processInput);
-          }
-    });
-
-    // Check if the input is the specific input that triggers the program to close
-    
+            cli.close();
+            process.exit(0);
+        default:
+            console.log(`Input non trovato: ${input}`);
+            break;
+    }
+    rl.question('Enter input: ', processInput); 
 }
-
-
-
-rl.question('Enter input: ', processInput);

@@ -7,7 +7,7 @@ const authRouter = require("./routes/auth");
 const connectorRouter = require("./routes/connector");
 const RPCStation = require("./services/RPCStationService");
 const StationService = require("./services/StationService");
-const { HEARTBEAT_TIME } = require("../utils/constants");
+const { HEARTBEAT_TIME } = require("./utils/constants");
 
 const { RPCServer, createRPCError } = require('ocpp-rpc');
 

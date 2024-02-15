@@ -166,14 +166,14 @@ class StationService {
         }
     }
 
-    static async add(name, lat, lon, price, power, dismissed, last_heartbeat, notes, description, connectors){
+    static async add(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors){
+        console.log(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors);
         const newStation = new Station(
             null,
             name,
             lat,
             lon,
             price,
-            power,
             dismissed,
             last_heartbeat,
             notes,

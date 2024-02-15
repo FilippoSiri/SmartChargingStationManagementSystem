@@ -78,7 +78,6 @@ class Station {
             this.status = await getStatus(this, lastReservation, lastUsage);
         } else {
             // insert new station
-            console.log("ciao");
             const sql =
                 "INSERT INTO Station (name, lat, lon, price, dismissed, last_heartbeat, notes, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             const [rows, _] = await conn.query(sql, [
@@ -91,7 +90,6 @@ class Station {
                 this.notes,
                 this.description,
             ]);
-            console.log("ciao");
             this.status = STATUS.UNDEFINED;
             if (rows.affectedRows == 0) return null;
             this.id = rows.insertId;

@@ -107,7 +107,6 @@ router.post("/", verifyTokenAdmin, async (req, res) => {
             req.body.lat,
             req.body.lon,
             req.body.price,
-            req.body.power,
             req.body.dismissed,
             req.body.last_heartbeat,
             req.body.notes,

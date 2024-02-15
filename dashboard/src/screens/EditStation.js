@@ -111,9 +111,9 @@ const EditStation = () => {
                     lat: stationInfo.lat,
                     lon: stationInfo.lon,
                     price: stationInfo.price * 100,
-                    dismissed: stationInfo.dismissed,
-                    notes: stationInfo.notes,
-                    description: stationInfo.description,
+                    dismissed: stationInfo.dismissed ?? false,
+                    notes: stationInfo.notes ?? "",
+                    description: stationInfo.description ?? "",
                     connectors: connectorTypes.filter(connectorType => multipleSelectValue.includes(connectorType.name)).map(connectorType => {return {id: connectorType.id}})
                 },
                 { headers: { 
@@ -191,7 +191,7 @@ const EditStation = () => {
                                 value={stationInfo.name ?? ""}
                                 field="name"
                                 onChange={handleChangeStationInfo}
-                                required={id ? false : true}
+                                required
                             />
                         </Grid>
 
@@ -206,7 +206,7 @@ const EditStation = () => {
                                 placeholder="Insert price"
                                 value={stationInfo.price ?? ""}
                                 onChange={handleChangeStationInfo}
-                                required={id ? false : true}
+                                required
                             />
                         </Grid>
 
@@ -233,7 +233,7 @@ const EditStation = () => {
                                 value={stationInfo.lon ?? ""}
                                 field="lon"
                                 onChange={handleChangeStationInfo}
-                                required={id ? false : true}
+                                required
                             />
                         </Grid>
 
@@ -245,7 +245,7 @@ const EditStation = () => {
                                 value={stationInfo.lat ?? ""}
                                 field="lat"
                                 onChange={handleChangeStationInfo}
-                                required={id ? false : true}
+                                required
                             />
                         </Grid>
 

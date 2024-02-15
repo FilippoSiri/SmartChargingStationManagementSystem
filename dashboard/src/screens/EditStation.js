@@ -111,7 +111,11 @@ const EditStation = () => {
             );
 
             if (res.status === 201) {
-                setDialogMessage("Station updated successfully");
+                if (id) {
+                    setDialogMessage("Station updated successfully");
+                } else {
+                    setDialogMessage("Station added successfully");
+                }
             } else {
                 setDialogMessage("Error updating station");
             }
@@ -311,7 +315,7 @@ const EditStation = () => {
                 onClose={handleClosePostAPI}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle>{"Update request"}</DialogTitle>
+                <DialogTitle>{id ? "Update request" : "Add request"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
                         {dialogMessage}

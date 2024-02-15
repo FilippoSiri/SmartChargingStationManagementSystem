@@ -16,31 +16,25 @@ const columns = [
     {
         field: "name",
         headerName: "Station Name",
-        width: 150,
-        editable: false,
-    },
-    {
-        field: "power",
-        headerName: "Station Power",
-        width: 150,
+        width: 170,
         editable: false,
     },
     {
         field: "price",
         headerName: "Station Price",
-        width: 150,
+        width: 170,
         editable: false,
     },
     {
         field: "string_status",
         headerName: "Station Status",
-        width: 150,
+        width: 170,
         editable: false,
     },
     {
         field: "edit",
         headerName: "Edit",
-        width: 150,
+        width: 170,
         renderCell: (params) => (
             <Link
                 to={`/station/${params.id}`}

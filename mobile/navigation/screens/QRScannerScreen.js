@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Alert, SafeAreaView, View, Text, Alert } from "react-native";
+import { Alert, SafeAreaView, View, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { RNCamera } from "react-native-camera";
 import { AuthContext } from "../AuthContext";

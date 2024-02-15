@@ -26,7 +26,8 @@ const possibleReasonStopTransaction = {
 }
   
 var transactionId;
-var reservationId = 5000;
+var reservationId;
+var idTagReserved;
 var timerHeartbeat;
 var status = possibleStatus.Available;
 
@@ -118,8 +119,7 @@ async function StartTransaction(ConnectorId, IdTag, ReservationId){
     console.log(res);
     if(res.idTagInfo.status != "Accepted") return false;
     this.transactionId = res.transactionId;
-    return true;
-    //rl.question('Enter input: ', processInput);    
+    return true;   
 }
 //
 async function StopTransaction(TransactionId, reasonCode){
@@ -140,13 +140,13 @@ async function StopTransaction(TransactionId, reasonCode){
         });
     
     }
-    this.status = possibleStatus.Available;
     this.transactionId = undefined;
 }
 
 
 cli.handle('RemoteStartTransaction', ({params}) => {
     console.log('Server requested RemoteStartTransaction:', params);
+    if(this.status == possibleStatus.Reserved && this.idTagReserved != params.idTag){return {status: "Rejected"};}
     if(Authorize(params.idTag)){
         if(StartTransaction(0, params.idTag)){
             this.status = possibleStatus.Charging;
@@ -155,23 +155,37 @@ cli.handle('RemoteStartTransaction', ({params}) => {
             this.status = possibleStatus.Available;
             return {status: "Rejected"};
         }
-    }else return {status: "Rejected"};
-    
+    }else{
+        this.status = possibleStatus.Available;
+        return {
+            status: "Rejected"
+        };
+    }
 });
 
 
 cli.handle('RemoteStopTransaction', ({params}) => {
     console.log('Server requested RemoteStopTransaction:', params);
     StopTransaction(params.transactionId);
+    this.status = possibleStatus.Available; //Il server non può impedire di fermare una transazione
     return {status: 'Accepted'};
 });
 
 cli.handle('ReserveNow', ({params}) => {
+    if(status != possibleStatus.Available) return {status: 'Rejected'};
+    this.idTagReserved = params.idTag;
+    this.reservationId = params.reservationId;
+    this.status = possibleStatus.Reserved;
     console.log('Server requested ReserveNow:', params);
     return {status: 'Accepted'};
 });
 
 cli.handle('CancelReservation', ({params}) => {
+    if(status != possibleStatus.Reserved) return {status: 'Rejected'};
+    if(params.reservationId != this.reservationId) return {status: 'Rejected'};
+    this.idTagReserved = undefined;
+    this.reservationId = undefined;
+    this.status = possibleStatus.Available;
     console.log('Server requested CancelReservation:', params);
     return {status: 'Accepted'};
 });

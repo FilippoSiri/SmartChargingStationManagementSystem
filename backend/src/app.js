@@ -82,11 +82,22 @@ server.on('client', async (client) => {
 
     client.handle('StopTransaction', ({params}) => {
         console.log(`Server got StopTransaction from ${client.identity}:`, params);
-        return {
-            idTagInfo: {
-                status: "Accepted"
+        //params contiene transactionId e meterStop e timestamp
+        //TODO chiamare servizio che cerca di fermare la transazione
+        let cancellazione = true;
+        if(cancellazione){
+            return {
+                idTagInfo: {
+                    status: "Accepted"
+                }
             }
-        };
+        }else{
+            return {
+                idTagInfo: {
+                    status: "Rejected"
+                }
+            }
+        }
     });
 
     client.handle(({method, params}) => {
@@ -105,6 +116,7 @@ console.log(`Listening RPC Server on port ${rpcPort}...`)
 
 const cors = require("cors");
 var path = require('path');
+const e = require("express");
 
 const app = express();
 

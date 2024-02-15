@@ -119,7 +119,7 @@ class StationService {
         }
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.remoteStartTransaction(id)){
+            if(await RPCStationService.remoteStartTransaction(id, userId)){
                 return savedStationUsage;
             }else{
                 if(savedStationUsage.reservation_time !== null)

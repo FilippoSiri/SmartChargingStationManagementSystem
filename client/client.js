@@ -1,3 +1,4 @@
+//RemoteStartTransaction -> StartTransaction, RemoteStopTransaction -> StopTransaction, ReserveNow, CancelReservation
 const { RPCClient } = require('ocpp-rpc');
 const readline = require('readline');
 const { DEFAULT_INTERVAL } = require('./utils/constants');
@@ -139,11 +140,11 @@ async function StopTransaction(TransactionId, reasonCode){
 }
 
 
-cli.handle('RemoteStartTransaction', ({params}) => {
+cli.handle('RemoteStartTransaction', async ({params}) => {
     console.log('Server requested RemoteStartTransaction:', params);
     if(this.status == possibleStatus.Reserved && this.idTagReserved != params.idTag){return {status: "Rejected"};}
     if(Authorize(params.idTag)){
-        if(StartTransaction(0, params.idTag)){
+        if(await StartTransaction(0, params.idTag)){
             this.status = possibleStatus.Charging;
             return {status: "Accepted"};
         }else{
@@ -159,9 +160,9 @@ cli.handle('RemoteStartTransaction', ({params}) => {
 });
 
 
-cli.handle('RemoteStopTransaction', ({params}) => {
+cli.handle('RemoteStopTransaction', async ({params}) => {
     console.log('Server requested RemoteStopTransaction:', params);
-    StopTransaction(params.transactionId);
+    await StopTransaction(params.transactionId);
     this.status = possibleStatus.Available; //Il server non può impedire di fermare una transazione
     return {status: 'Accepted'};
 });

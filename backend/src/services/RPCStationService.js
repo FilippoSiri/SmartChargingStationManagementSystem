@@ -10,7 +10,7 @@ class RPCStationService{
     static async remoteStartTransaction(stationId, IdTag){
         try{
             const response = await this.stations.get(stationId).call('RemoteStartTransaction', {
-                idTag: "123456"//da aggiugnere input
+                idTag: IdTag
             });
             return response.status === "Accepted";   
         }catch(e){

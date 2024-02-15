@@ -72,6 +72,8 @@ server.on('client', async (client) => {
 
     client.handle('StartTransaction', ({params}) => {
         //Chiamare funzioni di controllo
+        //Creare transazione sul db e restituire transactionId
+        
         console.log(`Server got StartTransaction from ${client.identity}:`, params);
         return {
             transactionId: 123456789,

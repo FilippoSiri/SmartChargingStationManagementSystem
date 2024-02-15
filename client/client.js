@@ -195,8 +195,9 @@ async function connect(){
             cli.close();
             process.exit(1);
         }
-    
+        console.log('Listening...');
         timerHeartbeat = setInterval(async () => {
+            console.log('Sending heartbeat...');
             const res = await Heartbeat();
             //TODO: Handle heartbeat response
         }, (res.interval !== undefined ? res.interval : DEFAULT_INTERVAL) * 1000);

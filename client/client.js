@@ -44,12 +44,6 @@ const cli = new RPCClient({
     strictMode: true,                // enable strict validation of requests & responses
 });
 
-// connect to the OCPP server
-async function connect(){
-    await cli.connect();
-}
-connect();
-
 async function BootNotification(){
     let res = await cli.call('BootNotification', {
         chargePointVendor: "ocpp-rpc",
@@ -191,21 +185,27 @@ cli.handle('CancelReservation', ({params}) => {
     return {status: 'Accepted'};
 });
 
-BootNotification().then((res) => {
-    if(res.status !== 'Accepted'){
-        console.log('BootNotification rejected');
-        cli.close();
-        process.exit(1);
-    }
-
-    timerHeartbeat = setInterval(async () => {
-        const res = await Heartbeat();
-        //TODO: Handle heartbeat response
-    }, (res.interval !== undefined ? res.interval : DEFAULT_INTERVAL) * 1000);
-
-
-    rl.question('Enter input: ', processInput);
-});
+// connect to the OCPP server
+async function connect(){
+    await cli.connect();
+    BootNotification().then((res) => {
+        console.log(res);
+        if(res.status !== 'Accepted'){
+            console.log('BootNotification rejected');
+            cli.close();
+            process.exit(1);
+        }
+    
+        timerHeartbeat = setInterval(async () => {
+            const res = await Heartbeat();
+            //TODO: Handle heartbeat response
+        }, (res.interval !== undefined ? res.interval : DEFAULT_INTERVAL) * 1000);
+    
+    
+        //rl.question('Enter input: ', processInput);
+    });
+}
+connect();
 
 function processInput(input) {
     switch(input.trim()){

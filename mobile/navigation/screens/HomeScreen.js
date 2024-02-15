@@ -121,6 +121,12 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${id}/last_reservation`,
                 { headers: { 'Content-Type': 'application/json' } },
                 );
+
+            if (response.status !== 200) {
+                Alert.alert('Error', "Error reriving information about the station");
+                return;
+            }
+
             setLastStationReservation(response.data);
         } catch (error) {
             console.error('Error:', error);
@@ -134,6 +140,12 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${id}/last_usage`,
                 { headers: { 'Content-Type': 'application/json' } },
                 );
+
+                if (response.status !== 200) {
+                    Alert.alert('Error', "Error reriving information about the station");
+                    return;
+                }
+
             setLastStationUsage(response.data);
         } catch (error) {
             console.error('Error:', error);
@@ -150,14 +162,14 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${data.id}`,
                 { headers: { 'Content-Type': 'application/json' } });
                 
+            if (res.status !== 200) {
+                Alert.alert('Error', "Error retriving information about the station");
+                return;
+            }
+
             console.log(res.data);
             setStationInfo(res.data);
             setStationId(data.id);
-
-            if (res.status === 400) {
-                Alert.alert('Error', "Attach the machine before starting charging");
-                return;
-            }
 
             if (res.data.status === 1) {
                 getLastStationReservation(data.id);
@@ -180,20 +192,21 @@ const HomeScreen = () => {
 
     const loadStations = async () => {
         try {
-            axios
-                .get(
-                    `http://${API_URL}:${API_PORT}/station`,
-                    { headers: { 'Content-Type': 'application/json' } },
-                )
-                .then(async response => {
-                    response.data.forEach(station => {
-                        if (!station.dismissed)
-                            addMarker(station.lon, station.lat, station.id, stationStatusColor[station.status]);
-                    });
-                })
-                .catch(error => {
-                    throw new Error('Loading stations failed');
-                });
+
+            const response = await axios.get(
+                `http://${API_URL}:${API_PORT}/station`,
+                { headers: { 'Content-Type': 'application/json' } },
+            );
+
+            if (response.status !== 200) {
+                Alert.alert('Error', "Error reriving information about the stations");
+                return;
+            }
+
+            response.data.forEach(station => {
+                if (!station.dismissed)
+                    addMarker(station.lon, station.lat, station.id, stationStatusColor[station.status]);
+            });
         } catch (error) {
             console.error('Error:', error);
         }
@@ -215,6 +228,12 @@ const HomeScreen = () => {
                     } 
                 },
             );
+
+            if (res.status !== 201) {
+                Alert.alert('Error', "Something went wrong. Please try again later.");
+                return;
+            }
+
             console.log(res.data);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 1});
@@ -235,6 +254,12 @@ const HomeScreen = () => {
                     }
                 },
             );
+
+            if (res.status !== 201) {
+                Alert.alert('Error', "Something went wrong. Please try again later.");
+                return;
+            }
+
             console.log(res.data);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
@@ -254,6 +279,12 @@ const HomeScreen = () => {
                     } 
                 },
             );
+
+            if (res.status !== 201) {
+                Alert.alert('Error', "Something went wrong. Please try again later.");
+                return;
+            }
+
             console.log(res.data);
             getLastStationUsage(stationId);
             setIsActionPerformed(true);
@@ -274,6 +305,12 @@ const HomeScreen = () => {
                     } 
                 },
             );
+
+            if (res.status !== 201) {
+                Alert.alert('Error', "Something went wrong. Please try again later.");
+                return;
+            }
+
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
             getLastStationUsage(stationId);

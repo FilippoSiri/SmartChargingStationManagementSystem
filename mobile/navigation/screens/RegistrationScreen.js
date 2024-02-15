@@ -44,21 +44,19 @@ const RegistrationScreen = ({ navigation }) => {
         }
 
         try {
-            axios
-                .post(
-                    `http://${API_URL}:${API_PORT}/auth/register`,
-                    JSON.stringify({ name, surname, email, password }),
-                    { headers: { 'Content-Type': 'application/json' } },
-                )
-                .then(async response => {
-                    const data = response.data;
-                    // Store the JWT Authentication token
-                    await Keychain.setGenericPassword('jwtToken', data.token);
-                    setAuthToken(data.token);
-                })
-                .catch(error => {
-                    throw new Error('Registration failed');
-                });
+            const res = await axios.post(`http://${API_URL}:${API_PORT}/auth/register`,
+                JSON.stringify({ name, surname, email, password }),
+                { headers: { 'Content-Type': 'application/json' } },
+            );
+
+            if (res.status !== 201) {
+                Alert.alert('Error', 'Something went wrong');
+                return;
+            }
+
+            const data = res.data;
+            await Keychain.setGenericPassword('jwtToken', data.token);
+            setAuthToken(data.token);
         } catch (error) {
             console.error('Error:', error);
         }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Alert, SafeAreaView, View, Text } from "react-native";
+import { Alert, SafeAreaView, View, Text, Alert } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { RNCamera } from "react-native-camera";
 import { AuthContext } from "../AuthContext";
@@ -25,7 +25,7 @@ const QRScannerScreen = () => {
 
     const handleOperation = async (id) => {
         try {
-                        const res = await axios.get(
+            const res = await axios.get(
                 `http://${API_URL}:${API_PORT}/station/${id}/`,
                 {
                     headers: {
@@ -34,6 +34,11 @@ const QRScannerScreen = () => {
                     },
                 }
             );
+
+            if (res.status !== 200) {
+                Alert.alert("Request failed", "Something went wrong. Please try again later");
+                return;
+            }
 
             const res_last_usage = await axios.get(
                 `http://${API_URL}:${API_PORT}/station/${id}/last_usage/`,
@@ -44,6 +49,12 @@ const QRScannerScreen = () => {
                     },
                 }
             );
+
+            if (res_last_usage.status !== 200) {
+                Alert.alert("Request failed", "Something went wrong. Please try again later");
+                return;
+            }
+
             if (res.data.status === 0 && (await handleStartCharging(id))) {
                 Alert.alert("Success activation", "Station is activated for charging");
             } else if(res.data.status === 0)

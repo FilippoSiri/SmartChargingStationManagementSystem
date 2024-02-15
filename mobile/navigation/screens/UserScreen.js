@@ -39,6 +39,11 @@ const UserScreen = ({ navigation }) => {
                     },
                 });
 
+                if (response.status !== 200) {
+                    Alert.alert('Error', 'Error fetching user data');
+                    return;
+                }
+
                 console.log(response.data);
 
                 setUserData(response.data);

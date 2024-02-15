@@ -23,21 +23,20 @@ const LoginScreen = ({ navigation }) => {
     const login = async () => {
         console.log(`http://${API_URL}:${API_PORT}/auth/login`);
         try {
-            axios
-                .post(
-                    `http://${API_URL}:${API_PORT}/auth/login`,
-                    JSON.stringify({ email, password }),
-                    { headers: { 'Content-Type': 'application/json' } },
-                )
-                .then(async response => {
-                    const data = response.data;
-                    // Store the JWT Authentication token
-                    await Keychain.setGenericPassword('jwtToken', data.token);
-                    setAuthToken(data.token);
-                })
-                .catch(error => {
-                    throw new Error('Login failed');
-                });
+
+            const res = await axios.post(`http://${API_URL}:${API_PORT}/auth/login`,
+                JSON.stringify({ email, password }),
+                { headers: { 'Content-Type': 'application/json' } },
+            );
+
+            if (res.status !== 200) {
+                Alert.alert('Error', 'Login failed');
+                return;
+            }
+
+            const data = res.data;
+            await Keychain.setGenericPassword('jwtToken', data.token);
+            setAuthToken(data.token);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -52,20 +51,17 @@ const LoginScreen = ({ navigation }) => {
         }
         console.log(`http://${API_URL}:${API_PORT}/auth/resetPasswordToken`);
         try{
-            axios
-                .post(
-                    `http://${API_URL}:${API_PORT}/auth/resetPasswordToken`,
-                    JSON.stringify({ email }),
-                    { headers: { 'Content-Type': 'application/json' } },
-                )
-                .then(response => {
-                    console.log(response);
-                    Alert.alert('Success', 'Password reset link sent to your email');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Alert.alert('Error', "Error resetting password. Please try again later.");
-                });
+            const res = await axios.post(`http://${API_URL}:${API_PORT}/auth/resetPasswordToken`,
+                JSON.stringify({ email }),
+                { headers: { 'Content-Type': 'application/json' } },
+            );
+
+            if (res.status !== 200) {
+                Alert.alert('Error', 'Error resetting password. Please try again later.');
+                return;
+            }
+
+            Alert.alert('Success', 'Password reset link sent to your email');
         }catch (error) {
             console.error('Error:', error);
             Alert.alert('Error', "Error resetting password. Please try again later.");

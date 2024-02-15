@@ -70,23 +70,34 @@ server.on('client', async (client) => {
         };
     });
 
-    client.handle('StartTransaction', ({params}) => {
+    client.handle('StartTransaction', async ({params}) => {
         //Chiamare funzioni di controllo
         //Creare transazione sul db e restituire transactionId
         
-        console.log(`Server got StartTransaction from ${client.identity}:`, params);
+        const newUsage = await StationService.createTransaction(client.identity, params.idTag);
+
+        console.log(`newUsage: ${newUsage}`);
+
+        console.log(`\nServer got StartTransaction from ${client.identity}:`, params);
         return {
-            transactionId: 123456789,
+            transactionId: newUsage.id,
             idTagInfo: {
                 status: "Accepted"
             }
         };
     });
 
-    client.handle('StopTransaction', ({params}) => {
+    client.handle('StopTransaction', async ({params}) => {
         console.log(`Server got StopTransaction from ${client.identity}:`, params);
         //params contiene transactionId e meterStop e timestamp
         //TODO chiamare servizio che cerca di fermare la transazione
+
+        console.log(`\nServer got StopTransaction from ${client.identity}:`, params);
+
+        await StationService.terminateTransaction(params.transactionId);
+
+        console.log(`\nFinito StationService.terminateTransaction`);
+
         let cancellazione = true;
         if(cancellazione){
             return {

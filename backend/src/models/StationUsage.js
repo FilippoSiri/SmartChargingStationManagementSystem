@@ -84,6 +84,15 @@ class StationUsage {
         return new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price, row.deleted);
     }
 
+    static async getLastUsageByTransactionId(transaction_id) {
+        const sql = 'SELECT * FROM StationUsage WHERE id = ?';
+        const [rows, _] = await conn.query(sql, [transaction_id]);
+        if(rows.length == 0)
+            return null;
+        const row = rows[0];
+        return new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price, row.deleted);
+    }
+
     static async getReport() {
 
         const sql = `

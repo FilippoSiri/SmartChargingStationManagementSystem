@@ -10,7 +10,7 @@ class RPCStationService{
     static async remoteStartTransaction(stationId, IdTag){
         try{
             const response = await this.stations.get(stationId).call('RemoteStartTransaction', {
-                idTag: IdTag
+                idTag: IdTag + ""
             });
             return response.status === "Accepted";   
         }catch(e){
@@ -19,10 +19,10 @@ class RPCStationService{
         }
     }
     
-    static async remoteStopTransaction(stationId){
+    static async remoteStopTransaction(stationId, transactionId){
         try{
             const response = await this.stations.get(stationId).call('RemoteStopTransaction', {
-                transactionId: 1234
+                transactionId: transactionId
             });
             return response.status === 'Accepted';   
         }catch(e){

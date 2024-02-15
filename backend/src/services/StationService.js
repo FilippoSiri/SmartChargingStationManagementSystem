@@ -92,6 +92,29 @@ class StationService {
     }
 
     static async startCharging(id, userId){
+        
+    
+        /*if (savedStationUsage !== null) {
+            if(await RPCStationService.remoteStartTransaction(id, userId)){
+                return savedStationUsage;
+            }else{
+                if(savedStationUsage.reservation_time !== null)
+                    savedStationUsage.start_time = null;
+                else
+                    savedStationUsage.deleted = true;
+                savedStationUsage.save();
+                console.log("RemoteStartTransaction Declined");
+                throw new Error("RemoteStartTransaction Declined");
+            }
+        } else {
+            throw new Error("Error starting charging");
+        }*/
+
+        if (!await RPCStationService.remoteStartTransaction(id, userId))
+            throw new Error("Error starting charging");
+    }
+
+    static async createTransaction(id, userId) {
         const station = await Station.getById(id);
         let savedStationUsage = null;
         if (station === null)
@@ -117,53 +140,40 @@ class StationService {
     
             savedStationUsage = await stationUsage.save();
         }
-    
-        if (savedStationUsage !== null) {
-            if(await RPCStationService.remoteStartTransaction(id, userId)){
-                return savedStationUsage;
-            }else{
-                if(savedStationUsage.reservation_time !== null)
-                    savedStationUsage.start_time = null;
-                else
-                    savedStationUsage.deleted = true;
-                savedStationUsage.save();
-                console.log("RemoteStartTransaction Declined");
-                throw new Error("RemoteStartTransaction Declined");
-            }
-        } else {
-            throw new Error("Error starting charging");
-        }
+
+        return savedStationUsage;
     }
 
-    static async stopCharging(id, userId){    
+    // TODO: passare in input anche il transactionId e usare quello per fermare la transazione
+    static async stopCharging(id, userId){
         const station = await Station.getById(id);
+
         if (station === null)
             throw new Error("Station not found");
-    
+
         if (station.status !== Station.STATUS.USED)
             throw new Error("Station is currently not available for stopping charging");
-    
+
         const lastStationUsage = await StationUsage.getLastUsageByStationId(id);
-    
+
         if (lastStationUsage.user_id != userId)
             throw new Error("You can't stop charging for another user");
+
+        if (!await RPCStationService.remoteStopTransaction(id, lastStationUsage.id))
+            throw new Error("Error stopping charging");
+
+        return await StationUsage.getLastUsageByStationId(id);
+    }
+
+    static async terminateTransaction(transactionId) {
+        const lastStationUsage = await StationUsage.getLastUsageByTransactionId(transactionId);
     
+        console.log(`lastStationUsage`);
+        console.log(lastStationUsage);
+
         lastStationUsage.end_time = new Date();
     
-        const savedStationUsage = await lastStationUsage.save();
-    
-        if (savedStationUsage !== null) {
-            if(await RPCStationService.remoteStopTransaction(id)){
-                return savedStationUsage;
-            }else{
-                console.log("RemoteStartTransaction Declined");
-                savedStationUsage.end_time = null;
-                savedStationUsage.save();
-                throw new Error("RemoteStartTransaction Declined");
-            }
-        } else {
-            throw new Error("Error stopping charging");
-        }
+        await lastStationUsage.save();
     }
 
     static async add(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors){

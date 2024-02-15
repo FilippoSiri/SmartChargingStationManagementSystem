@@ -94,9 +94,11 @@ async function Authorize(IdTag){
 
 //
 async function StartTransaction(ConnectorId, IdTag, ReservationId){
-    //if(status != possibleStatus.Available) return;
+    if(status !== possibleStatus.Available) return false;
+
     let res;
     if(ReservationId == undefined){
+        console.log("Chiamando StartTransaction\n");
         res = await cli.call('StartTransaction', {
             connectorId: parseInt(ConnectorId),
             idTag: IdTag,
@@ -112,6 +114,7 @@ async function StartTransaction(ConnectorId, IdTag, ReservationId){
             reservationId: ReservationId
         });
     }
+    console.log("Risposta StartTransaction\n");
     console.log(res);
     if(res.idTagInfo.status != "Accepted") return false;
     this.transactionId = res.transactionId;
@@ -120,8 +123,15 @@ async function StartTransaction(ConnectorId, IdTag, ReservationId){
 //
 async function StopTransaction(TransactionId, reasonCode){
     let res;
-    //if(status != possibleStatus.Charging) return;
+
+    console.log("Status: " + status);
+    //if(this.status !== possibleStatus.Charging) return false;
+
+    console.log("Dentro StopTransaction client\n");
+
     if(reasonCode == undefined){
+
+        console.log("Chiamando StopTransaction in server\n");
         res = await cli.call('StopTransaction', {
             meterStop: 1000,
             timestamp: new Date().toISOString(),
@@ -136,16 +146,25 @@ async function StopTransaction(TransactionId, reasonCode){
         });
     
     }
+    console.log("Risposta StopTransaction\n");
+    console.log(res);
     this.transactionId = undefined;
 }
 
 
 cli.handle('RemoteStartTransaction', async ({params}) => {
+    console.log("Inizio remote start transaction\n")
     console.log('Server requested RemoteStartTransaction:', params);
     if(this.status == possibleStatus.Reserved && this.idTagReserved != params.idTag){return {status: "Rejected"};}
     if(Authorize(params.idTag)){
+        console.log("Authorize accettato\n");
+        console.log("StartTransaction\n");
         if(await StartTransaction(0, params.idTag)){
+            console.log("StartTransaction accettato\n");
+
+            console.log("Cambiando lo stato in charging\n");
             this.status = possibleStatus.Charging;
+            console.log("Stato cambiato: " + this.status +"\n");
             return {status: "Accepted"};
         }else{
             this.status = possibleStatus.Available;
@@ -163,7 +182,9 @@ cli.handle('RemoteStartTransaction', async ({params}) => {
 cli.handle('RemoteStopTransaction', async ({params}) => {
     console.log('Server requested RemoteStopTransaction:', params);
     await StopTransaction(params.transactionId);
-    this.status = possibleStatus.Available; //Il server non può impedire di fermare una transazione
+    //this.status = possibleStatus.Available; //Il server non può impedire di fermare una transazione
+
+    console.log("RemoteStopTransaction accettato\n");
     return {status: 'Accepted'};
 });
 

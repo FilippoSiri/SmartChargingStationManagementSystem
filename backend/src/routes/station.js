@@ -77,6 +77,8 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
     try {
         const stationId = req.params.id;
         const userId = req.userId;
+        console.log(stationId, userId);
+
         const savedStationUsage = await StationService.startCharging(stationId, userId);
         res.status(201).json(savedStationUsage);
     } catch (error) {
@@ -90,7 +92,6 @@ router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
         const stationId = req.params.id;
         const userId = req.userId;
         const savedStationUsage = await StationService.stopCharging(stationId, userId);
-        console.log(savedStationUsage);
         res.status(201).json(savedStationUsage);
     } catch (error) {
         console.log(error);

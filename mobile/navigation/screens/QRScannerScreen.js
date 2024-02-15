@@ -9,8 +9,10 @@ import { API_URL, API_PORT } from "@env";
 import global_style from "../../style";
 
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 const QRScannerScreen = () => {
+    const navigate = useNavigation();
     const { authToken } = useContext(AuthContext);
     const [decodedToken, setDecodedToken] = useState({});
 
@@ -63,6 +65,8 @@ const QRScannerScreen = () => {
             } else {
                 Alert.alert("Station is not available", "Station is not available for charging");
             }
+
+            navigate.navigate("Home");
 
         } catch (error) {
             Alert.alert("Request failed", "The request to start charging failed");

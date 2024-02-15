@@ -39,13 +39,18 @@ const UserScreen = () => {
         },
     ];
     
-    const handleUpdateAdmin = (e, id) => {
+    const handleUpdateAdmin = async (e, id) => {
         e.preventDefault();
 
         try {
-            axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value === "true" ? 1 : 0}, {
+            const res = await axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value === "true" ? 1 : 0}, {
                 headers: {Authorization: localStorage.getItem("token")}
             })
+
+            if (res.status !== 201) {
+                alert("Something went wrong updating user admin");
+                return;
+            }
 
             setUserAdminValue({...userAdminValue, [id]: e.target.value});
         } catch (error) {
@@ -59,6 +64,11 @@ const UserScreen = () => {
             try {
                 const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/all`);
                 
+                if (res.status !== 200) {
+                    alert("Error fetching users");
+                    return;
+                }
+
                 setUsers(res.data);
                 setUserAdminValue(res.data.reduce((acc, user) => {
                     acc[user.id] = user.is_admin === 1 ? "true" : "false";

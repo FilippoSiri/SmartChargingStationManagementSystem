@@ -38,6 +38,7 @@ function App() {
                                 Authorization: token,
                             },
                         });
+                        
                     if (res.status !== 200) {
                         navigate("/login");
                         return;

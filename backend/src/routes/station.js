@@ -30,7 +30,7 @@ function getCorrectError(error, res) {
 router.get("/report", verifyTokenAdmin, async (req, res) => {
     const result = await StationService.getReport();
     console.log(result);
-    res.status(200).json(result);
+    res.json(result);
 });
 
 router.get("/:id", async (req, res) => {

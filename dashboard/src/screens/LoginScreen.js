@@ -32,12 +32,18 @@ const LoginScreen = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
+            if (res.status !== 200) {
+                alert("Something went wrong!");
+                return;
+            }
+
             let decoded = jwtDecode(res.data.token);
 
             if (!decoded.isAdmin)
                 return alert("You are not authorized to access this page!");
 
             localStorage.setItem("token", res.data.token);
+
             navigate("/");
         } catch (error) {
             alert(error.response.data.message);

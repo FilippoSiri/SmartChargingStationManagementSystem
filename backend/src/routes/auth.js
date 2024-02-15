@@ -34,7 +34,7 @@ router.post("/register", async (req, res) => {
             req.body.password,
             false
         );
-        res.json(value);
+        res.status(201).json(value);
     }catch(error){
         return getCorrectError(error, res);
     }

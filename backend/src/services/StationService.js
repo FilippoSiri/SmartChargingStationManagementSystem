@@ -47,7 +47,7 @@ class StationService {
         const savedStationUsage = await stationUsage.save();
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.reserveNow(id)){
+            if(await RPCStationService.reserveNow(id, savedStationUsage.id, stationUsage.user_id)){
                 return savedStationUsage;
             }else{
                 console.log("ReserveNow Declined");
@@ -78,7 +78,7 @@ class StationService {
         const savedStationUsage = await lastStationReservation.save();
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.cancelReservation(id)){
+            if(await RPCStationService.cancelReservation(id, savedStationUsage.id)){
                 return savedStationUsage;
             }else{
                 console.log("cancelReservation Declined");

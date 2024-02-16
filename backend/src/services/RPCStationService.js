@@ -32,14 +32,14 @@ class RPCStationService{
         
     }
     
-    static async reserveNow(stationId){
+    static async reserveNow(stationId, transactionId, userId){
         try{
             const response = await this.stations.get(stationId).call('ReserveNow', {
                 connectorId: 0,
                 expiryDate: new Date().toISOString(),
-                idTag: "1234",
+                idTag: userId,
                 parentIdTag: "1234",
-                reservationId: 1234
+                reservationId: transactionId
             });
             return response.status === 'Accepted';
         }catch(e){
@@ -48,10 +48,10 @@ class RPCStationService{
         }
     }
     
-    static async cancelReservation(stationId){
+    static async cancelReservation(stationId, transactionId){
         try{
             const response = await this.stations.get(stationId).call('CancelReservation', {
-                reservationId: 1234
+                reservationId: transactionId
             });
             return response.status === 'Accepted';
         }catch(e){

@@ -36,20 +36,17 @@ const EditStation = () => {
     useEffect(() => {
         const getStationInfo = async () => {
             try {
-                let { status, data } = await axios.get(
+                const {data} = await axios.get(
                     `http://localhost:${process.env.REACT_APP_API_PORT}/station/${id}`
                     );
-       
-                    // Convert price from cents to euros
-                    // need to be here, because if we do inside placeholder error occurs
-                    data.price = data.price / 100;
-                    
-                    console.log(data);
-                    setStationinfo(data);
-                } catch (error) {
-                    alert("Error getting station info");
-                    console.log(error);
-                }
+                // Convert price from cents to euros
+                // need to be here, because if we do inside placeholder error occurs
+                data.price = data.price / 100;
+                setStationinfo(data);
+            } catch (error) {
+                alert("Error getting station info");
+                console.log(error);
+            }
         };
 
         if (id) getStationInfo();
@@ -58,11 +55,9 @@ const EditStation = () => {
     useEffect(() => {
         const getConnectorTypes = async () => {
             try {
-                let { status, data } = await axios.get(
+                const { data } = await axios.get(
                     `http://localhost:${process.env.REACT_APP_API_PORT}/connector`
                 );
-                
-                console.log(data);
                 setConnectorTypes(data);
             } catch (error) {
                 alert("Error getting connector types");
@@ -77,9 +72,6 @@ const EditStation = () => {
         let fieldToUpdate = e.target.getAttribute("field");
         let newValue = e.target.value;
         setStationinfo({ ...stationInfo, [fieldToUpdate]: newValue });
-
-        console.log(stationInfo);
-
     };
 
     const handleChangeDismissed = (e) => {
@@ -93,7 +85,7 @@ const EditStation = () => {
         try {
             const reqType = id ? axios.patch : axios.post;
 
-            const res = await reqType(
+            await reqType(
                 `http://localhost:${process.env.REACT_APP_API_PORT}/station`,
                 {
                     id: stationInfo.id,

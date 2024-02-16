@@ -43,7 +43,7 @@ const UserScreen = () => {
         e.preventDefault();
 
         try {
-            const res = await axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value === "true" ? 1 : 0}, {
+            await axios.patch(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/set_user_admin/${id}`, {is_admin: e.target.value === "true" ? 1 : 0}, {
                 headers: {Authorization: localStorage.getItem("token")}
             })
 

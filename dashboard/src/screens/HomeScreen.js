@@ -77,7 +77,7 @@ const HomeScreen = () => {
         const fetchStations = async () => {
             try {
 
-                let { status, data } = await axios.get(
+                let { data } = await axios.get(
                     `http://localhost:${process.env.REACT_APP_API_PORT}/station`
                 );
 

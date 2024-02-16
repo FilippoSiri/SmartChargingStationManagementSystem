@@ -90,7 +90,6 @@ const HomeScreen = () => {
                         lat: station.lat,
                         lon: station.lon,
                         price: station.price / 100,
-                        power: Math.round(station.power * 10).toFixed(2),
                         status: station.status,
                         string_status: stationStatuses[station.status],
                     };
@@ -132,7 +131,7 @@ const HomeScreen = () => {
             .addTo(map);
         marker.setPopup(
             new tt.Popup({ offset: 35 }).setHTML(
-                `<h3>${station.name}</h3><p>Power: ${station.power}</p><p>Price: ${station.price}</p>`
+                `<h3>${station.name}</h3><p>Price: ${station.price}</p>`
             )
         );
     },[map]);

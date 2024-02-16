@@ -39,7 +39,7 @@ class RPCStationService{
                 expiryDate: new Date().toISOString(),
                 idTag: userId,
                 parentIdTag: "1234",
-                reservationId: transactionId
+                reservationId: transactionId+""
             });
             return response.status === 'Accepted';
         }catch(e){
@@ -51,7 +51,7 @@ class RPCStationService{
     static async cancelReservation(stationId, transactionId){
         try{
             const response = await this.stations.get(stationId).call('CancelReservation', {
-                reservationId: transactionId
+                reservationId: transactionId+""
             });
             return response.status === 'Accepted';
         }catch(e){

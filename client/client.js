@@ -1,7 +1,7 @@
 //RemoteStartTransaction -> StartTransaction, RemoteStopTransaction -> StopTransaction, ReserveNow, CancelReservation
 const { RPCClient } = require('ocpp-rpc');
 const readline = require('readline');
-const { DEFAULT_INTERVAL } = require('./utils/constants');
+const { DEFAULT_INTERVAL, INTERVAL_METER_VALUE } = require('./utils/constants');
 require('dotenv').config();
 
 const possibleStatus = {
@@ -31,6 +31,8 @@ var transactionId;
 var reservationId;
 var idTagReserved;
 var timerHeartbeat;
+var meterValuesInterval;
+var energyDelivered = 0;
 var status = possibleStatus.Available;
 
 const rl = readline.createInterface({
@@ -69,11 +71,13 @@ async function StatusNotification(){
 async function MeterValues(){
     await cli.call('MeterValues', {
         connectorId: 0,
-        transactionId: 1234,
+        transactionId: transactionId,
         meterValue: [{
             timestamp: new Date().toISOString(),
             sampledValue: [{
-                value: "1000"
+                value: energyDelivered + "",
+                unit: "Wh",
+                measurand: "Energy.Active.Import.Register"
             }]
         }]
     });
@@ -102,14 +106,14 @@ async function StartTransaction(ConnectorId, IdTag, ReservationId){
         res = await cli.call('StartTransaction', {
             connectorId: parseInt(ConnectorId),
             idTag: IdTag,
-            meterStart: 1000,
+            meterStart: energyDelivered,
             timestamp: new Date().toISOString()
         });
     }else{
         res = await cli.call('StartTransaction', {
             connectorId: parseInt(ConnectorId),
             idTag: IdTag,
-            meterStart: 1000,
+            meterStart: energyDelivered,
             timestamp: new Date().toISOString(),
             reservationId: ReservationId
         });
@@ -133,13 +137,13 @@ async function StopTransaction(TransactionId, reasonCode){
 
         console.log("Chiamando StopTransaction in server\n");
         res = await cli.call('StopTransaction', {
-            meterStop: 1000,
+            meterStop: energyDelivered,
             timestamp: new Date().toISOString(),
             transactionId: TransactionId,
         });
     }else{
         res = await cli.call('StopTransaction', {
-            meterStop: 1000,
+            meterStop: energyDelivered,
             timestamp: new Date().toISOString(),
             transactionId: TransactionId,
             reason: reasonCode
@@ -148,6 +152,7 @@ async function StopTransaction(TransactionId, reasonCode){
     }
     console.log("Risposta StopTransaction\n");
     console.log(res);
+    energyDelivered = 0;
     transactionId = undefined;
 }
 
@@ -226,7 +231,12 @@ async function connect(){
             //TODO: Handle heartbeat response
         }, (res.interval !== undefined ? res.interval : DEFAULT_INTERVAL) * 1000);
     
-    
+        meterValuesInterval = setInterval(async () => {
+            if(status === possibleStatus.Charging){
+                await MeterValues();
+                energyDelivered += 500;
+            }
+        }, INTERVAL_METER_VALUE * 1000);
         //rl.question('Enter input: ', processInput);
     });
 }

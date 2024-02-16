@@ -165,17 +165,6 @@ class StationService {
         return await StationUsage.getLastUsageByStationId(id);
     }
 
-    static async terminateTransaction(transactionId) {
-        const lastStationUsage = await StationUsage.getLastUsageByTransactionId(transactionId);
-    
-        console.log(`lastStationUsage`);
-        console.log(lastStationUsage);
-
-        lastStationUsage.end_time = new Date();
-    
-        await lastStationUsage.save();
-    }
-
     static async add(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors){
         console.log(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors);
         const newStation = new Station(

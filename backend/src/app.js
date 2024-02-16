@@ -56,8 +56,16 @@ server.on('client', async (client) => {
         return {};
     });
 
-    client.handle('MeterValues', ({params}) => {
-        console.log(`Server got MeterValues from ${client.identity}:`, params);
+    client.handle('MeterValues', async ({params}) => {
+        console.log(`Server got MeterValues from ${client.identity}:`, params.meterValue[0].sampledValue[0].value);
+        const valueEnergy = params.meterValue[0].sampledValue[0].value;
+        
+        console.log(`\nvalueEnergy: ${valueEnergy}`);
+
+        const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
+        lastStationUsage.kw = parseFloat(valueEnergy)/1000;
+        await lastStationUsage.save();
+
         return {};
     });
 
@@ -93,10 +101,16 @@ server.on('client', async (client) => {
         //TODO chiamare servizio che cerca di fermare la transazione
 
         console.log(`\nServer got StopTransaction from ${client.identity}:`, params);
+        const valueEnergy = params.meterStop;
 
-        await StationService.terminateTransaction(params.transactionId);
+        const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
 
-        console.log(`\nFinito StationService.terminateTransaction`);
+        lastStationUsage.kw = valueEnergy/1000;
+        lastStationUsage.end_time = new Date();
+
+        await lastStationUsage.save();
+
+        console.log(`\nFinito StopTransaction`);
 
         let cancellazione = true;
         if(cancellazione){

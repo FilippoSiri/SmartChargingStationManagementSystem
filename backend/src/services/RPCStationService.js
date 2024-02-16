@@ -38,7 +38,6 @@ class RPCStationService{
                 connectorId: 0,
                 expiryDate: new Date().toISOString(),
                 idTag: userId,
-                parentIdTag: "1234",
                 reservationId: transactionId+""
             });
             return response.status === 'Accepted';

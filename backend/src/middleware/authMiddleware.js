@@ -41,7 +41,6 @@ async function verifyTokenResetPassword(req, res, next) {
     if (!token) return res.status(400).render('resetPasswordFail');
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        console.log(decoded);
         if(!decoded.email)
             return res.status(400).render('resetPasswordFail');
                

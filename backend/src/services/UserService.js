@@ -59,10 +59,8 @@ class UserService {
             throw new Error("Email already registered");
 
         const user = new User(null, name, surname, email, password, 0, new Date(), is_admin);
-
-        console.log(user);
-
         const newUser = await user.save();
+        
         if(newUser !== null) {
             const token = generateAccessToken({ userId: newUser.id, isAdmin: newUser.is_admin }, null);
             return { token: token };

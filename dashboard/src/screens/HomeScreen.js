@@ -81,8 +81,6 @@ const HomeScreen = () => {
                     `http://localhost:${process.env.REACT_APP_API_PORT}/station`
                 );
 
-                console.log(data[0]);
-
                 data = data.map((station) => {
                     return {
                         id: station.id,

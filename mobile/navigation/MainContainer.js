@@ -65,10 +65,6 @@ const MainContainer = () => {
         fetchToken();
     }, [authToken, setAuthToken]);
 
-    const test = () => {
-        console.log('test');
-    }
-
     return (
         <>    
         <GestureHandlerRootView style={{ flex: 1 }}>

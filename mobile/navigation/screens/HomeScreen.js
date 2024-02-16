@@ -154,7 +154,6 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${data.id}`,
                 { headers: { 'Content-Type': 'application/json' } });
                 
-            console.log(res.data);
             setStationInfo(res.data);
             setStationId(data.id);
 
@@ -213,7 +212,6 @@ const HomeScreen = () => {
                 },
             );
 
-            console.log(res.data);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 1});
             getLastStationReservation(stationId);
@@ -235,7 +233,6 @@ const HomeScreen = () => {
                 },
             );
 
-            console.log(res.data);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
         } catch (error) {
@@ -256,7 +253,6 @@ const HomeScreen = () => {
                 },
             );
 
-            console.log(res.data);
             getLastStationUsage(stationId);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 2});
@@ -281,7 +277,6 @@ const HomeScreen = () => {
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
             getLastStationUsage(stationId);
-            console.log(res.data);
         } catch (error) {
             Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error('Error:', error);

@@ -29,7 +29,6 @@ function getCorrectError(error, res) {
 
 router.get("/report", verifyTokenAdmin, async (req, res) => {
     const result = await StationService.getReport();
-    console.log(result);
     res.json(result);
 });
 
@@ -77,7 +76,6 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
     try {
         const stationId = req.params.id;
         const userId = req.userId;
-        console.log(stationId, userId);
 
         const savedStationUsage = await StationService.startCharging(stationId, userId);
         res.status(201).json(savedStationUsage);
@@ -88,13 +86,11 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
 
 router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
     try {
-        console.log(req.params.id)
         const stationId = req.params.id;
         const userId = req.userId;
         const savedStationUsage = await StationService.stopCharging(stationId, userId);
         res.status(201).json(savedStationUsage);
     } catch (error) {
-        console.log(error);
         return getCorrectError(error, res);
     }
 });
@@ -102,7 +98,6 @@ router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
 //TODO: Check status code
 router.post("/", verifyTokenAdmin, async (req, res) => {
     try {
-        console.log(req.body);
         const newStation = await StationService.add(
             req.body.name,
             req.body.lat,

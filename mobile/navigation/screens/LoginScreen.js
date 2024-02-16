@@ -21,9 +21,8 @@ const LoginScreen = ({ navigation }) => {
     const { setAuthToken } = useContext(AuthContext);
 
     const login = async () => {
-        console.log(`http://${API_URL}:${API_PORT}/auth/login`);
-        try {
 
+        try {
             const res = await axios.post(`http://${API_URL}:${API_PORT}/auth/login`,
                 JSON.stringify({ email, password }),
                 { headers: { 'Content-Type': 'application/json' } },
@@ -45,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
             Alert.alert('Error', 'Invalid email address');
             return;
         }
-        console.log(`http://${API_URL}:${API_PORT}/auth/resetPasswordToken`);
+
         try{
             const res = await axios.post(`http://${API_URL}:${API_PORT}/auth/resetPasswordToken`,
                 JSON.stringify({ email }),

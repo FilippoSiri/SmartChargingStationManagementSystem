@@ -92,24 +92,6 @@ class StationService {
     }
 
     static async startCharging(id, userId){
-        
-    
-        /*if (savedStationUsage !== null) {
-            if(await RPCStationService.remoteStartTransaction(id, userId)){
-                return savedStationUsage;
-            }else{
-                if(savedStationUsage.reservation_time !== null)
-                    savedStationUsage.start_time = null;
-                else
-                    savedStationUsage.deleted = true;
-                savedStationUsage.save();
-                console.log("RemoteStartTransaction Declined");
-                throw new Error("RemoteStartTransaction Declined");
-            }
-        } else {
-            throw new Error("Error starting charging");
-        }*/
-
         if (!await RPCStationService.remoteStartTransaction(id, userId))
             throw new Error("Error starting charging");
     }
@@ -144,7 +126,6 @@ class StationService {
         return savedStationUsage;
     }
 
-    // TODO: passare in input anche il transactionId e usare quello per fermare la transazione
     static async stopCharging(id, userId){
         const station = await Station.getById(id);
 
@@ -166,7 +147,6 @@ class StationService {
     }
 
     static async add(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors){
-        console.log(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors);
         const newStation = new Station(
             null,
             name,
@@ -183,8 +163,6 @@ class StationService {
         const addedStation = await newStation.save();
         if (addedStation !== null) {
             const addedConnectors = new Array();
-            console.log("Connectors:");
-            console.log(connectors);
             await connectors.forEach(async connector => {
                 const connectorModel = await ConnectorService.getById(connector.id);
                 if(connectorModel === null)

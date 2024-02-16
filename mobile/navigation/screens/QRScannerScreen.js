@@ -86,8 +86,7 @@ const QRScannerScreen = () => {
                     } 
                 },
             );
-            console.log(res.status);
-            return res.status === 201;
+            return true;
         } catch (error) {
             Alert.alert("Request failed", "The request to start charging failed");
             console.error('Error:', error);
@@ -96,7 +95,6 @@ const QRScannerScreen = () => {
     }
 
     const handleStopCharging = async (stationId) => {
-        console.log('stop charging');
         try {
             const res = await axios.post(
                 `http://${API_URL}:${API_PORT}/station/${stationId}/stop_charging/`,
@@ -107,7 +105,7 @@ const QRScannerScreen = () => {
                     } 
                 },
             );
-            return res.status === 201;
+            return true;
         } catch (error) {
             Alert.alert("Request failed", "The request to stop charging failed");
             console.error('Error:', error);

@@ -3,7 +3,6 @@ class RPCStationService{
 
     static addStation(station) {
         this.stations.set(station.identity, station);
-        console.log(this.stations);
     }
     
     //deve prendere in ingresso idTag (id Utente)

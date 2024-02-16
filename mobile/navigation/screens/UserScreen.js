@@ -30,8 +30,6 @@ const UserScreen = ({ navigation }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(authToken);
-                console.log(`http://${API_URL}:${API_PORT}/user/`);
                 const response = await axios.get(`http://${API_URL}:${API_PORT}/user/`, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -39,7 +37,6 @@ const UserScreen = ({ navigation }) => {
                     },
                 });
 
-                console.log(response.data);
                 setUserData(response.data);
             } catch (error) {
                 Alert.alert('Error', 'Error fetching user data');
@@ -52,7 +49,6 @@ const UserScreen = ({ navigation }) => {
     }, []);
 
     const handleChangeData = (field, value) => {
-        console.log(value);
         setUserData({ ...userData, [field]: value });
     }
 
@@ -98,8 +94,6 @@ const UserScreen = ({ navigation }) => {
                 },
             });
 
-
-            console.log(response.data);
             if (confirmPassword !== '') {
                 setConfirmPassword("");
                 setUserData({...userData, password: ""});

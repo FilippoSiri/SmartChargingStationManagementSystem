@@ -18,19 +18,15 @@ const server = new RPCServer({
 
 server.auth((accept, reject, handshake) => {
     // accept the incoming client
-    accept({
-        // anything passed to accept() will be attached as a 'session' property of the client.
-        sessionId: 'XYZ123'
-    });
+    accept();
 });
 
 server.on('client', async (client) => {
-    console.log(`${client.session.sessionId} connected!`); // `XYZ123 connected!`
+    console.log(`Station ${client.identity} connected!`);
     RPCStation.addStation(client);
-    console.log('Id:', client.identity);
 
     client.handle('BootNotification', ({params}) => {
-        console.log(`Server got BootNotification from ${client.identity}:`, params);
+        console.log(`Handling BootNotification from ${client.identity}...`);
 
         // respond to accept the client
         return {
@@ -41,7 +37,7 @@ server.on('client', async (client) => {
     });
     
     client.handle('Heartbeat', async ({params}) => {
-        console.log(`Server got Heartbeat from ${client.identity}:`, params);
+        console.log(`Handling Heartbeat from ${client.identity}...`);
         const station = await StationService.getById(client.identity);
         station.last_heartbeat = new Date();
         await station.save();
@@ -52,25 +48,21 @@ server.on('client', async (client) => {
     });
     
     client.handle('StatusNotification', ({params}) => {
-        console.log(`Server got StatusNotification from ${client.identity}:`, params);
+        console.log(`Handling StatusNotification from ${client.identity}...`);
         return {};
     });
 
     client.handle('MeterValues', async ({params}) => {
-        console.log(`Server got MeterValues from ${client.identity}:`, params.meterValue[0].sampledValue[0].value);
+        console.log(`Handling MeterValues from ${client.identity}...`);
         const valueEnergy = params.meterValue[0].sampledValue[0].value;
-        
-        console.log(`\nvalueEnergy: ${valueEnergy}`);
-
         const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
         lastStationUsage.kw = parseFloat(valueEnergy)/1000;
         await lastStationUsage.save();
-
         return {};
     });
 
     client.handle('Authorize', ({params}) => {
-        console.log(`Server got Authorize from ${client.identity}:`, params);
+        console.log(`Handling Authorize from ${client.identity}...`);
         return {
             idTagInfo: {
                 status: "Accepted"
@@ -79,14 +71,8 @@ server.on('client', async (client) => {
     });
 
     client.handle('StartTransaction', async ({params}) => {
-        //Chiamare funzioni di controllo
-        //Creare transazione sul db e restituire transactionId
-        
+        console.log(`Handling StartTransaction from ${client.identity}...`);        
         const newUsage = await StationService.createTransaction(client.identity, params.idTag);
-
-        console.log(`newUsage: ${newUsage}`);
-
-        console.log(`\nServer got StartTransaction from ${client.identity}:`, params);
         return {
             transactionId: newUsage.id,
             idTagInfo: {
@@ -96,11 +82,7 @@ server.on('client', async (client) => {
     });
 
     client.handle('StopTransaction', async ({params}) => {
-        console.log(`Server got StopTransaction from ${client.identity}:`, params);
-        //params contiene transactionId e meterStop e timestamp
-        //TODO chiamare servizio che cerca di fermare la transazione
-
-        console.log(`\nServer got StopTransaction from ${client.identity}:`, params);
+        console.log(`Handling StopTransaction from ${client.identity}...`);
         const valueEnergy = params.meterStop;
 
         const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
@@ -109,33 +91,19 @@ server.on('client', async (client) => {
         lastStationUsage.end_time = new Date();
 
         await lastStationUsage.save();
-
-        console.log(`\nFinito StopTransaction`);
-
-        let cancellazione = true;
-        if(cancellazione){
-            return {
-                idTagInfo: {
-                    status: "Accepted"
-                }
+        return {
+            idTagInfo: {
+                status: "Accepted"
             }
-        }else{
-            return {
-                idTagInfo: {
-                    status: "Rejected"
-                }
-            }
-        }
+        }  
     });
 
     client.handle(({method, params}) => {
         // This handler will be called if the incoming method cannot be handled elsewhere.
-        console.log(`Server got ${method} from ${client.identity}:`, params);
-
         // throw an RPC error to inform the server that we don't understand the request.
+        console.log(`Handling not implemented method from ${client.identity}...`)
         throw createRPCError("NotImplemented");
     });
-
 });
 
 const rpcPort = process.env.RPC_PORT || 3001;

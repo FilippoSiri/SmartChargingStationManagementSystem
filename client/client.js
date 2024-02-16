@@ -133,7 +133,7 @@ async function stopTransaction(transactionId, reasonCode){
 
 
 cli.handle('RemoteStartTransaction', async ({params}) => {
-    console.log("Handling RemoteStartTransactions");
+    console.log("Handling RemoteStartTransactions...");
     if(status === possibleStatus.Reserved && idTagReserved !== params.idTag){return {status: "Rejected"};}
 
     if((await authorize(params.idTag)) && (await startTransaction(0, params.idTag))){
@@ -147,13 +147,13 @@ cli.handle('RemoteStartTransaction', async ({params}) => {
 
 
 cli.handle('RemoteStopTransaction', async ({params}) => {
-    console.log("Handling RemoteStopTransactions");
+    console.log("Handling RemoteStopTransactions...");
     await stopTransaction(params.transactionId); // The server cannot block a RemoteStartTransaction
     return {status: 'Accepted'};
 });
 
 cli.handle('ReserveNow', ({params}) => {
-    console.log("Handling ReserveNow");
+    console.log("Handling ReserveNow...");
     if(status !== possibleStatus.Available) return {status: 'Rejected'};
     idTagReserved = params.idTag;
     reservationId = params.reservationId;
@@ -162,7 +162,7 @@ cli.handle('ReserveNow', ({params}) => {
 });
 
 cli.handle('CancelReservation', ({params}) => {
-    console.log("Handling CancelReservation");
+    console.log("Handling CancelReservation...");
     if(status !== possibleStatus.Reserved) return {status: 'Rejected'};
     if(params.reservationId !== reservationId) return {status: 'Rejected'};
     idTagReserved = undefined;

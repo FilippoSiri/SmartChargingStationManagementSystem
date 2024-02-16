@@ -47,11 +47,6 @@ const UserScreen = () => {
                 headers: {Authorization: localStorage.getItem("token")}
             })
 
-            if (res.status !== 201) {
-                alert("Something went wrong updating user admin");
-                return;
-            }
-
             setUserAdminValue({...userAdminValue, [id]: e.target.value});
         } catch (error) {
             alert("Something went wrong updating user admin");
@@ -63,11 +58,6 @@ const UserScreen = () => {
 
             try {
                 const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/all`);
-                
-                if (res.status !== 200) {
-                    alert("Error fetching users");
-                    return;
-                }
 
                 setUsers(res.data);
                 setUserAdminValue(res.data.reduce((acc, user) => {

@@ -32,11 +32,6 @@ const LoginScreen = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            if (res.status !== 200) {
-                alert("Something went wrong!");
-                return;
-            }
-
             let decoded = jwtDecode(res.data.token);
 
             if (!decoded.isAdmin)

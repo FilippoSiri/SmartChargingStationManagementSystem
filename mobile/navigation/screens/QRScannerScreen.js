@@ -35,11 +35,6 @@ const QRScannerScreen = () => {
                 }
             );
 
-            if (res.status !== 200) {
-                Alert.alert("Request failed", "Something went wrong. Please try again later");
-                return;
-            }
-
             const res_last_usage = await axios.get(
                 `http://${API_URL}:${API_PORT}/station/${id}/last_usage/`,
                 {
@@ -49,11 +44,6 @@ const QRScannerScreen = () => {
                     },
                 }
             );
-
-            if (res_last_usage.status !== 200) {
-                Alert.alert("Request failed", "Something went wrong. Please try again later");
-                return;
-            }
 
             if (res.data.status === 0 && (await handleStartCharging(id))) {
                 Alert.alert("Success activation", "Station is activated for charging");
@@ -99,6 +89,7 @@ const QRScannerScreen = () => {
             console.log(res.status);
             return res.status === 201;
         } catch (error) {
+            Alert.alert("Request failed", "The request to start charging failed");
             console.error('Error:', error);
             return false;
         }
@@ -118,6 +109,7 @@ const QRScannerScreen = () => {
             );
             return res.status === 201;
         } catch (error) {
+            Alert.alert("Request failed", "The request to stop charging failed");
             console.error('Error:', error);
             return false;
         }

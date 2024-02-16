@@ -49,15 +49,11 @@ const RegistrationScreen = ({ navigation }) => {
                 { headers: { 'Content-Type': 'application/json' } },
             );
 
-            if (res.status !== 201) {
-                Alert.alert('Error', 'Something went wrong');
-                return;
-            }
-
             const data = res.data;
             await Keychain.setGenericPassword('jwtToken', data.token);
             setAuthToken(data.token);
         } catch (error) {
+            Alert.alert('Error', 'Something went wrong');
             console.error('Error:', error);
         }
     };

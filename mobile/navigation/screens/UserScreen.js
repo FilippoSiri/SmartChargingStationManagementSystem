@@ -39,16 +39,10 @@ const UserScreen = ({ navigation }) => {
                     },
                 });
 
-                if (response.status !== 200) {
-                    Alert.alert('Error', 'Error fetching user data');
-                    return;
-                }
-
                 console.log(response.data);
-
                 setUserData(response.data);
-
             } catch (error) {
+                Alert.alert('Error', 'Error fetching user data');
                 console.error(error);
             }
         }
@@ -104,20 +98,17 @@ const UserScreen = ({ navigation }) => {
                 },
             });
 
-            if (response.status === 201) {
-                console.log(response.data);
-                if (confirmPassword !== '') {
-                    setConfirmPassword("");
-                    setUserData({...userData, password: ""});
-                    await Keychain.setGenericPassword('jwtToken', response.data.token);
-                    setAuthToken(response.data.token);
-                }
-                Alert.alert('Success', 'User updated');
-            } else {
-                Alert.alert('Error', 'User not updated');
-            }
 
+            console.log(response.data);
+            if (confirmPassword !== '') {
+                setConfirmPassword("");
+                setUserData({...userData, password: ""});
+                await Keychain.setGenericPassword('jwtToken', response.data.token);
+                setAuthToken(response.data.token);
+            }
+            Alert.alert('Success', 'User updated');
         } catch (error) {
+            Alert.alert('Error', 'User not updated');
             console.error(error);
         }
     };

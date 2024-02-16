@@ -122,13 +122,9 @@ const HomeScreen = () => {
                 { headers: { 'Content-Type': 'application/json' } },
                 );
 
-            if (response.status !== 200) {
-                Alert.alert('Error', "Error reriving information about the station");
-                return;
-            }
-
             setLastStationReservation(response.data);
         } catch (error) {
+            Alert.alert('Error', "Error reriving information about the station");
             console.error('Error:', error);
         }
         
@@ -141,13 +137,9 @@ const HomeScreen = () => {
                 { headers: { 'Content-Type': 'application/json' } },
                 );
 
-                if (response.status !== 200) {
-                    Alert.alert('Error', "Error reriving information about the station");
-                    return;
-                }
-
             setLastStationUsage(response.data);
         } catch (error) {
+            Alert.alert('Error', "Error reriving information about the station");
             console.error('Error:', error);
         }
     }
@@ -162,11 +154,6 @@ const HomeScreen = () => {
                 `http://${API_URL}:${API_PORT}/station/${data.id}`,
                 { headers: { 'Content-Type': 'application/json' } });
                 
-            if (res.status !== 200) {
-                Alert.alert('Error', "Error retriving information about the station");
-                return;
-            }
-
             console.log(res.data);
             setStationInfo(res.data);
             setStationId(data.id);
@@ -177,6 +164,7 @@ const HomeScreen = () => {
                 getLastStationUsage(data.id);
             }
         } catch (error) {
+            Alert.alert('Error', "Error retriving information about the station");
             console.error('Error:', error);
         }
     }
@@ -198,16 +186,12 @@ const HomeScreen = () => {
                 { headers: { 'Content-Type': 'application/json' } },
             );
 
-            if (response.status !== 200) {
-                Alert.alert('Error', "Error reriving information about the stations");
-                return;
-            }
-
             response.data.forEach(station => {
                 if (!station.dismissed)
                     addMarker(station.lon, station.lat, station.id, stationStatusColor[station.status]);
             });
         } catch (error) {
+            Alert.alert('Error', "Error reriving information about the stations");
             console.error('Error:', error);
         }
     }
@@ -229,16 +213,12 @@ const HomeScreen = () => {
                 },
             );
 
-            if (res.status !== 201) {
-                Alert.alert('Error', "Something went wrong. Please try again later.");
-                return;
-            }
-
             console.log(res.data);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 1});
             getLastStationReservation(stationId);
         } catch (error) {
+            Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error('Error:', error);
         }
     }
@@ -255,15 +235,11 @@ const HomeScreen = () => {
                 },
             );
 
-            if (res.status !== 201) {
-                Alert.alert('Error', "Something went wrong. Please try again later.");
-                return;
-            }
-
             console.log(res.data);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
         } catch (error) {
+            Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error(error.message);
         }
     }
@@ -280,16 +256,12 @@ const HomeScreen = () => {
                 },
             );
 
-            if (res.status !== 201) {
-                Alert.alert('Error', "Something went wrong. Please try again later.");
-                return;
-            }
-
             console.log(res.data);
             getLastStationUsage(stationId);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 2});
         } catch (error) {
+            Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error('Error:', error);
         }
     }
@@ -306,16 +278,12 @@ const HomeScreen = () => {
                 },
             );
 
-            if (res.status !== 201) {
-                Alert.alert('Error', "Something went wrong. Please try again later.");
-                return;
-            }
-
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
             getLastStationUsage(stationId);
             console.log(res.data);
         } catch (error) {
+            Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error('Error:', error);
         }
     }

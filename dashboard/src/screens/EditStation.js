@@ -39,12 +39,7 @@ const EditStation = () => {
                 let { status, data } = await axios.get(
                     `http://localhost:${process.env.REACT_APP_API_PORT}/station/${id}`
                     );
-                    
-                    if (status !== 200) {
-                        alert("Error getting station info");
-                        return;
-                    }
-
+       
                     // Convert price from cents to euros
                     // need to be here, because if we do inside placeholder error occurs
                     data.price = data.price / 100;
@@ -67,15 +62,10 @@ const EditStation = () => {
                     `http://localhost:${process.env.REACT_APP_API_PORT}/connector`
                 );
                 
-                if (status !== 200) {
-                    alert("Error getting connector types");
-                    return;
-                }
-
                 console.log(data);
                 setConnectorTypes(data);
-            
             } catch (error) {
+                alert("Error getting connector types");
                 console.log(error);
             }
         }
@@ -122,19 +112,15 @@ const EditStation = () => {
                 }}
             );
 
-            if (res.status === 201) {
-                if (id) {
-                    setDialogMessage("Station updated successfully");
-                } else {
-                    setDialogMessage("Station added successfully");
-                }
-            } else {
-                setDialogMessage("Error updating station");
-            }
+            if (id) 
+                setDialogMessage("Station updated successfully");
+            else 
+                setDialogMessage("Station added successfully");
+            
             setOpenPostApi(true);
         } catch (error) {
             console.log(error);
-            alert("Error updating station");
+            setDialogMessage("Error updating station");
         }
     };
 

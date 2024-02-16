@@ -91,36 +91,29 @@ async function Authorize(IdTag){
         idTag: IdTag,
     })
     console.log(res); //result sarà sempre "approved"
-    if(res.idTagInfo.status != "Accepted") return false;
+    if(res.idTagInfo.status !== "Accepted") return false;
     else return true;
     //rl.question('Enter input: ', processInput);
 }
 
 //
-async function StartTransaction(ConnectorId, IdTag, ReservationId){
-    if(status !== possibleStatus.Available) return false;
+async function StartTransaction(ConnectorId, IdTag){
+    if(status !== possibleStatus.Available && status !== possibleStatus.Reserved) 
+        return false;
 
-    let res;
-    if(ReservationId == undefined){
-        console.log("Chiamando StartTransaction\n");
-        res = await cli.call('StartTransaction', {
-            connectorId: parseInt(ConnectorId),
-            idTag: IdTag,
-            meterStart: energyDelivered,
-            timestamp: new Date().toISOString()
-        });
-    }else{
-        res = await cli.call('StartTransaction', {
-            connectorId: parseInt(ConnectorId),
-            idTag: IdTag,
-            meterStart: energyDelivered,
-            timestamp: new Date().toISOString(),
-            reservationId: ReservationId
-        });
-    }
+    console.log("Chiamando StartTransaction\n");
+    const res = await cli.call('StartTransaction', {
+        connectorId: parseInt(ConnectorId),
+        idTag: IdTag,
+        meterStart: energyDelivered,
+        timestamp: new Date().toISOString()
+    });
+
     console.log("Risposta StartTransaction\n");
     console.log(res);
-    if(res.idTagInfo.status != "Accepted") return false;
+    if(res.idTagInfo.status !== "Accepted") 
+        return false;
+
     transactionId = res.transactionId;
     return true;   
 }
@@ -133,7 +126,7 @@ async function StopTransaction(TransactionId, reasonCode){
 
     console.log("Dentro StopTransaction client\n");
 
-    if(reasonCode == undefined){
+    if(reasonCode === undefined){
 
         console.log("Chiamando StopTransaction in server\n");
         res = await cli.call('StopTransaction', {
@@ -150,6 +143,7 @@ async function StopTransaction(TransactionId, reasonCode){
         });
     
     }
+    status = possibleStatus.Available;
     console.log("Risposta StopTransaction\n");
     console.log(res);
     energyDelivered = 0;
@@ -161,7 +155,8 @@ cli.handle('RemoteStartTransaction', async ({params}) => {
     console.log("Inizio remote start transaction\n")
     console.log('Server requested RemoteStartTransaction:', params);
 
-    if(status == possibleStatus.Reserved && idTagReserved != params.idTag){return {status: "Rejected"};}
+
+    if(status === possibleStatus.Reserved && idTagReserved !== params.idTag){return {status: "Rejected"};}
     if(Authorize(params.idTag)){
         console.log("Authorize accettato\n");
         console.log("StartTransaction\n");
@@ -196,7 +191,7 @@ cli.handle('RemoteStopTransaction', async ({params}) => {
 });
 
 cli.handle('ReserveNow', ({params}) => {
-    if(status != possibleStatus.Available) return {status: 'Rejected'};
+    if(status !== possibleStatus.Available) return {status: 'Rejected'};
     idTagReserved = params.idTag;
     reservationId = params.reservationId;
     status = possibleStatus.Reserved;
@@ -205,8 +200,8 @@ cli.handle('ReserveNow', ({params}) => {
 });
 
 cli.handle('CancelReservation', ({params}) => {
-    if(status != possibleStatus.Reserved) return {status: 'Rejected'};
-    if(params.reservationId != reservationId) return {status: 'Rejected'};
+    if(status !== possibleStatus.Reserved) return {status: 'Rejected'};
+    if(params.reservationId !== reservationId) return {status: 'Rejected'};
     idTagReserved = undefined;
     reservationId = undefined;
     status = possibleStatus.Available;

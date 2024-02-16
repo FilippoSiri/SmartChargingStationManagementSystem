@@ -29,15 +29,11 @@ const LoginScreen = ({ navigation }) => {
                 { headers: { 'Content-Type': 'application/json' } },
             );
 
-            if (res.status !== 200) {
-                Alert.alert('Error', 'Login failed');
-                return;
-            }
-
             const data = res.data;
             await Keychain.setGenericPassword('jwtToken', data.token);
             setAuthToken(data.token);
         } catch (error) {
+            Alert.alert('Error', 'Login failed');
             console.error('Error:', error);
         }
     };
@@ -56,15 +52,10 @@ const LoginScreen = ({ navigation }) => {
                 { headers: { 'Content-Type': 'application/json' } },
             );
 
-            if (res.status !== 200) {
-                Alert.alert('Error', 'Error resetting password. Please try again later.');
-                return;
-            }
-
             Alert.alert('Success', 'Password reset link sent to your email');
         }catch (error) {
-            console.error('Error:', error);
             Alert.alert('Error', "Error resetting password. Please try again later.");
+            console.error('Error:', error);
         }
     };
 

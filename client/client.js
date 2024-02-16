@@ -117,7 +117,7 @@ async function StartTransaction(ConnectorId, IdTag, ReservationId){
     console.log("Risposta StartTransaction\n");
     console.log(res);
     if(res.idTagInfo.status != "Accepted") return false;
-    this.transactionId = res.transactionId;
+    transactionId = res.transactionId;
     return true;   
 }
 //
@@ -125,7 +125,7 @@ async function StopTransaction(TransactionId, reasonCode){
     let res;
 
     console.log("Status: " + status);
-    //if(this.status !== possibleStatus.Charging) return false;
+    //if(status !== possibleStatus.Charging) return false;
 
     console.log("Dentro StopTransaction client\n");
 
@@ -148,30 +148,32 @@ async function StopTransaction(TransactionId, reasonCode){
     }
     console.log("Risposta StopTransaction\n");
     console.log(res);
-    this.transactionId = undefined;
+    transactionId = undefined;
 }
 
 
 cli.handle('RemoteStartTransaction', async ({params}) => {
     console.log("Inizio remote start transaction\n")
     console.log('Server requested RemoteStartTransaction:', params);
-    if(this.status == possibleStatus.Reserved && this.idTagReserved != params.idTag){return {status: "Rejected"};}
+
+    if(status == possibleStatus.Reserved && idTagReserved != params.idTag){return {status: "Rejected"};}
     if(Authorize(params.idTag)){
         console.log("Authorize accettato\n");
         console.log("StartTransaction\n");
+
         if(await StartTransaction(0, params.idTag)){
             console.log("StartTransaction accettato\n");
 
             console.log("Cambiando lo stato in charging\n");
-            this.status = possibleStatus.Charging;
-            console.log("Stato cambiato: " + this.status +"\n");
+            status = possibleStatus.Charging;
+            console.log("Stato cambiato: " + status +"\n");
             return {status: "Accepted"};
         }else{
-            this.status = possibleStatus.Available;
+            status = possibleStatus.Available;
             return {status: "Rejected"};
         }
     }else{
-        this.status = possibleStatus.Available;
+        status = possibleStatus.Available;
         return {
             status: "Rejected"
         };
@@ -182,7 +184,7 @@ cli.handle('RemoteStartTransaction', async ({params}) => {
 cli.handle('RemoteStopTransaction', async ({params}) => {
     console.log('Server requested RemoteStopTransaction:', params);
     await StopTransaction(params.transactionId);
-    //this.status = possibleStatus.Available; //Il server non può impedire di fermare una transazione
+    //status = possibleStatus.Available; //Il server non può impedire di fermare una transazione
 
     console.log("RemoteStopTransaction accettato\n");
     return {status: 'Accepted'};
@@ -190,19 +192,19 @@ cli.handle('RemoteStopTransaction', async ({params}) => {
 
 cli.handle('ReserveNow', ({params}) => {
     if(status != possibleStatus.Available) return {status: 'Rejected'};
-    this.idTagReserved = params.idTag;
-    this.reservationId = params.reservationId;
-    this.status = possibleStatus.Reserved;
+    idTagReserved = params.idTag;
+    reservationId = params.reservationId;
+    status = possibleStatus.Reserved;
     console.log('Server requested ReserveNow:', params);
     return {status: 'Accepted'};
 });
 
 cli.handle('CancelReservation', ({params}) => {
     if(status != possibleStatus.Reserved) return {status: 'Rejected'};
-    if(params.reservationId != this.reservationId) return {status: 'Rejected'};
-    this.idTagReserved = undefined;
-    this.reservationId = undefined;
-    this.status = possibleStatus.Available;
+    if(params.reservationId != reservationId) return {status: 'Rejected'};
+    idTagReserved = undefined;
+    reservationId = undefined;
+    status = possibleStatus.Available;
     console.log('Server requested CancelReservation:', params);
     return {status: 'Accepted'};
 });

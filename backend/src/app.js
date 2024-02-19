@@ -83,6 +83,7 @@ server.on('client', async (client) => {
 
     client.handle('StopTransaction', async ({params}) => {
         console.log(`Handling StopTransaction from ${client.identity}...`);
+
         const valueEnergy = params.meterStop;
 
         const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
@@ -90,7 +91,12 @@ server.on('client', async (client) => {
         lastStationUsage.kw = valueEnergy/1000;
         lastStationUsage.end_time = new Date();
 
+        const user = await UserService.getById(lastStationUsage.user_id);
+        user.balance -= lastStationUsage.price * lastStationUsage.kw;
+
+        await user.save();
         await lastStationUsage.save();
+
         return {
             idTagInfo: {
                 status: "Accepted"
@@ -113,6 +119,7 @@ console.log(`Listening RPC Server on port ${rpcPort}...`)
 const cors = require("cors");
 var path = require('path');
 const e = require("express");
+const UserService = require("./services/UserService");
 
 const app = express();
 

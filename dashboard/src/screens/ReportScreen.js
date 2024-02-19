@@ -20,7 +20,6 @@ const ReportScreen = () => {
                 });
 
                 setReportData(data.data);
-                //setReportData({"january": {revenue: 1000 * Math.random(), usedPower: 1000 * Math.random()}, "february": {revenue: 2000 * Math.random(), usedPower: 2000 * Math.random()}, "march": {revenue: 3000 * Math.random(), usedPower: 3000 * Math.random()}, "april": {revenue: 4000 * Math.random(), usedPower: 4000 * Math.random()}, "may": {revenue: 5000 * Math.random(), usedPower: 5000 * Math.random()}, "june": {revenue: 6000 * Math.random(), usedPower: 6000 * Math.random()}, "july": {revenue: 7000 * Math.random(), usedPower: 7000 * Math.random()}, "august": {revenue: 8000 * Math.random(), usedPower: 8000 * Math.random()}, "september": {revenue: 9000 * Math.random(), usedPower: 9000 * Math.random()}, "october": {revenue: 10000 * Math.random(), usedPower: 10000 * Math.random()}, "november": {revenue: 11000 * Math.random(), usedPower: 11000 * Math.random()}, "december": {revenue: 12000 * Math.random(), usedPower: 12000 * Math.random()}});
             } catch (error) {
                 alert("Error getting report data");
                 console.error(error);

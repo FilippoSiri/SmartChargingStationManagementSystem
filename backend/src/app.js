@@ -55,7 +55,7 @@ server.on('client', async (client) => {
     client.handle('MeterValues', async ({params}) => {
         console.log(`Handling MeterValues from ${client.identity}...`);
         const valueEnergy = params.meterValue[0].sampledValue[0].value;
-        const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
+        const lastStationUsage = await StationService.getLastChargeByStationId(client.identity);
         lastStationUsage.kw = parseFloat(valueEnergy)/1000;
         await lastStationUsage.save();
         return {};
@@ -86,7 +86,7 @@ server.on('client', async (client) => {
 
         const valueEnergy = params.meterStop;
 
-        const lastStationUsage = await StationService.getLastUsageByStationId(client.identity);
+        const lastStationUsage = await StationService.getLastChargeByStationId(client.identity);
 
         lastStationUsage.kw = valueEnergy/1000;
         lastStationUsage.end_time = new Date();

@@ -33,6 +33,7 @@ const ChargingStatusScreen = () => {
                 return;
             }
             
+            data.kw = data.kw.substr(0, 4);
 
             if (data.reservation_time && !data.start_time) 
                 setStatusType('reservation');
@@ -84,7 +85,7 @@ const ChargingStatusScreen = () => {
                             </View>
                             <View style={style.marginBottomStyle}>
                                 <Text style={style.info_bold}>Energy: </Text>
-                                <Text style={style.info}>{chargingInfo.kw.substr(0, 4) ?? "0.0"} Kwh</Text>
+                                <Text style={style.info}>{chargingInfo.kw ?? "0.0"} Kwh</Text>
                             </View>
                             <View style={style.marginBottomStyle}>
                                 <Text style={style.info_bold}>Price: </Text>
@@ -103,7 +104,7 @@ const ChargingStatusScreen = () => {
                                 </View>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>Energy: </Text>
-                                    <Text style={style.info}>{chargingInfo.kw.substr(0, 4) ?? "0.0"} Kwh</Text>
+                                    <Text style={style.info}>{chargingInfo.kw ?? "0.0"} Kwh</Text>
                                 </View>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>Price: </Text>

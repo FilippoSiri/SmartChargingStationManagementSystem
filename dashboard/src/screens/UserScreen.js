@@ -57,7 +57,9 @@ const UserScreen = () => {
         const fetchUsers = async () => {
 
             try {
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/all`);
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/user/all`, {
+                    headers: {Authorization: localStorage.getItem("token")}
+                });
 
                 setUsers(res.data);
                 setUserAdminValue(res.data.reduce((acc, user) => {

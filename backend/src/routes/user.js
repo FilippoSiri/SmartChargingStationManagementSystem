@@ -22,7 +22,7 @@ function getCorrectError(error) {
     }
 }
 
-router.get("/all", async (req, res) => {
+router.get("/all", verifyTokenAdmin, async (req, res) => {
     res.json(await UserService.getAll());
 });
 

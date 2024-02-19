@@ -48,7 +48,8 @@ class StationService {
         stationUsage.reservation_time = new Date();
         stationUsage.price = station.price;
         stationUsage.deleted = false;
-    
+        stationUsage.kw = 0;
+        
         const savedStationUsage = await stationUsage.save();
     
         if (savedStationUsage !== null) {
@@ -98,7 +99,8 @@ class StationService {
 
     static async startCharging(id, userId){
         const lastUsage = await UserService.getLastUsageByUserId(userId);
-        if(lastUsage !== null && lastUsage.end_time === null)
+        
+        if (lastUsage !== null && lastUsage.station_id !== id && lastUsage.end_time === null)
             throw new Error("You can't use a station while using another one");
 
         if (!await RPCStationService.remoteStartTransaction(id, userId))
@@ -128,7 +130,8 @@ class StationService {
             stationUsage.start_time = new Date();
             stationUsage.price = station.price;
             stationUsage.deleted = false;
-    
+            stationUsage.kw = 0;
+
             savedStationUsage = await stationUsage.save();
         }
 

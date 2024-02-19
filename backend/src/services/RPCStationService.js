@@ -2,7 +2,7 @@ class RPCStationService{
     static stations = new Map();
 
     static addStation(station) {
-        this.stations.set(station.identity, station);
+        this.stations.set(parseInt(station.identity), station);
     }
     
     //deve prendere in ingresso idTag (id Utente)

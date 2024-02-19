@@ -88,7 +88,7 @@ server.on('client', async (client) => {
 
         const lastStationUsage = await StationService.getLastChargeByStationId(client.identity);
 
-        lastStationUsage.kw = valueEnergy/1000;
+        lastStationUsage.kw = valueEnergy / 1000;
         lastStationUsage.end_time = new Date();
 
         const user = await UserService.getById(lastStationUsage.user_id);

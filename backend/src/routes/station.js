@@ -35,7 +35,7 @@ router.get("/report", verifyTokenAdmin, async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const stationId = req.params.id;
+        const stationId = parseInt(req.params.id);
         const station = await StationService.getById(stationId);
         res.json(station);
     } catch (error) {
@@ -44,16 +44,16 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("/:id/last_charge", async (req, res) => {
-    res.json(await StationService.getLastChargeByStationId(req.params.id));
+    res.json(await StationService.getLastChargeByStationId(parseInt(req.params.id)));
 });
 
 router.get("/:id/last_reservation", async (req, res) => {
-    res.json(await StationService.getLastReservationByStationId(req.params.id));
+    res.json(await StationService.getLastReservationByStationId(parseInt(req.params.id)));
 });
 
 router.post("/:id/reserve", verifyToken, async (req, res) => {
     try {
-        const stationId = req.params.id;
+        const stationId = parseInt(req.params.id);
         const userId = req.userId;
         const savedStationUsage = await StationService.reserve(stationId, userId);
         res.status(201).json(savedStationUsage);
@@ -64,7 +64,7 @@ router.post("/:id/reserve", verifyToken, async (req, res) => {
 
 router.post("/:id/cancel_reservation", verifyToken, async (req, res) => {
     try {
-        const stationId = req.params.id;
+        const stationId = parseInt(req.params.id);
         const userId = req.userId;
         const savedStationUsage = await StationService.cancelReservation(stationId, userId);
         res.status(201).json(savedStationUsage);
@@ -75,7 +75,7 @@ router.post("/:id/cancel_reservation", verifyToken, async (req, res) => {
 
 router.post("/:id/start_charging/", verifyToken, async (req, res) => {
     try {
-        const stationId = req.params.id;
+        const stationId = parseInt(req.params.id);
         const userId = req.userId;
 
         const savedStationUsage = await StationService.startCharging(stationId, userId);
@@ -87,7 +87,7 @@ router.post("/:id/start_charging/", verifyToken, async (req, res) => {
 
 router.post("/:id/stop_charging/", verifyToken, async (req, res) => {
     try {
-        const stationId = req.params.id;
+        const stationId = parseInt(req.params.id);
         const userId = req.userId;
         const savedStationUsage = await StationService.stopCharging(stationId, userId);
         res.status(201).json(savedStationUsage);

@@ -148,8 +148,22 @@ class UserService {
     }
 
     static async getLastUsageByUserId(id){
-        const user = await User.getById(id);
-        return await StationUsage.getLastUsageByUserId(id);
+        await User.getById(id);
+        const last_charge = await StationUsage.getLastChargeByUserId(id);
+        const last_reservation = await StationUsage.getLastReservationByUserId(id);
+
+        if (last_charge === null && last_reservation === null)
+            return null;
+
+        if (last_charge === null)
+            return last_reservation;
+        if (last_reservation === null)
+            return last_charge;
+
+        if (last_charge.start_time > last_reservation.reservation_time)
+            return last_charge;
+        else
+            return last_reservation;
     }
 }
 

@@ -35,8 +35,8 @@ const QRScannerScreen = () => {
                 }
             );
 
-            const res_last_usage = await axios.get(
-                `http://${API_URL}:${API_PORT}/station/${id}/last_usage/`,
+            const res_last_charge = await axios.get(
+                `http://${API_URL}:${API_PORT}/station/${id}/last_charge/`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -50,16 +50,16 @@ const QRScannerScreen = () => {
             } else if(res.data.status === 0)
                 Alert.alert("Request failed", "The request to start charging failed");
             else if (res.data.status === 1) {
-                if (res_last_usage.data.user_id === decodedToken.userId && (await handleStartCharging(id))) 
+                if (res_last_charge.data.user_id === decodedToken.userId && (await handleStartCharging(id))) 
                     Alert.alert("Success activation", "Station is activated for charging");
-                else if (res_last_usage.data.user_id !== decodedToken.userId)
+                else if (res_last_charge.data.user_id !== decodedToken.userId)
                     Alert.alert("Station is reserved", "This station is reserved by another user");              
                 else
                     Alert.alert("Request failed", "The request to start charging failed");
             } else if (res.data.status === 2) {
-                if (res_last_usage.data.user_id === decodedToken.userId && (await handleStopCharging(id)))
+                if (res_last_charge.data.user_id === decodedToken.userId && (await handleStopCharging(id)))
                     Alert.alert("Success deactivation", "Station is deactivated from charging");
-                else if (res_last_usage.data.user_id !== decodedToken.userId)
+                else if (res_last_charge.data.user_id !== decodedToken.userId)
                     Alert.alert("Station is in use", "You cannot stop charging of this station");
                 else
                     Alert.alert("Request failed", "The request to stop charging failed");

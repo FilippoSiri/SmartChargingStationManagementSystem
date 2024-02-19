@@ -45,7 +45,7 @@ CREATE TABLE StationUsage (
     start_time DATETIME,
     end_time DATETIME,
     reservation_time DATETIME,
-    kw DECIMAL(11, 8),
+    kw DECIMAL(11, 8) default 0,
     price int,
     deleted BOOLEAN default 0,
     FOREIGN KEY (user_id) REFERENCES User(id),

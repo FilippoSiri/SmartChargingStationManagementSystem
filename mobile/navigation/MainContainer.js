@@ -17,6 +17,7 @@ import { API_URL, API_PORT } from '@env';
 import global_style from '../style';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import ChargingStatusScreen from './screens/ChargingStatusScreen';
 
 // Screens name
 const homeName = 'Home';
@@ -24,6 +25,7 @@ const searchName = 'Search';
 const userName = 'User';
 const profileName = 'Profile';
 const QRScanner = 'QRScanner';
+const ChargingStatus = 'ChargingStatus';
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
 
@@ -87,6 +89,8 @@ const MainContainer = () => {
                                         iconName = focused ? 'person' : 'person-outline';
                                     else if (routeName === QRScanner)
                                         iconName = focused ? 'qr-code' : 'qr-code-outline';
+                                    else if (routeName === ChargingStatus)
+                                        iconName = focused ? 'battery-charging' : 'battery-charging-outline';
 
                                     return <Ionicons name={iconName} size={size} color={color} />;
                                 },
@@ -98,6 +102,7 @@ const MainContainer = () => {
                             })}>
                             <Tab.Screen name={homeName} component={HomeScreen} />
                             <Tab.Screen name={QRScanner} component={QRScannerScreen} />
+                            <Tab.Screen name={ChargingStatus} component={ChargingStatusScreen} />
                             <Tab.Screen name={profileName} component={UserScreen}/>
                         </Tab.Navigator>
                     }       

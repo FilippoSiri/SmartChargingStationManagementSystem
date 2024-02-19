@@ -133,7 +133,7 @@ const HomeScreen = () => {
     const getLastStationUsage = async (id) => {
         try {
             const response = await axios.get(
-                `http://${API_URL}:${API_PORT}/station/${id}/last_usage`,
+                `http://${API_URL}:${API_PORT}/station/${id}/last_charge`,
                 { headers: { 'Content-Type': 'application/json' } },
                 );
 

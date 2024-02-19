@@ -37,7 +37,7 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
-router.get("/getLastUsage", verifyToken, async (req, res) => {
+router.get("/last_usage", verifyToken, async (req, res) => {
     try {
         const userId = req.userId;
         const user = await UserService.getLastUsageByUserId(userId);

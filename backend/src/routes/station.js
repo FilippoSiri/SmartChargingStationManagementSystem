@@ -21,6 +21,7 @@ function getCorrectError(error, res) {
         case "Station is currently not available for charging":
         case "Station is currently not available for stopping charging":
         case "You can't stop charging for another user":
+        case "You can't use a station while using another one":
             return res.status(409).json({ message: error.message });
         default:
             return res.status(500).json({ message: error.message });
@@ -42,8 +43,8 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.get("/:id/last_usage", async (req, res) => {
-    res.json(await StationService.getLastUsageByStationId(req.params.id));
+router.get("/:id/last_charge", async (req, res) => {
+    res.json(await StationService.getLastChargeByStationId(req.params.id));
 });
 
 router.get("/:id/last_reservation", async (req, res) => {

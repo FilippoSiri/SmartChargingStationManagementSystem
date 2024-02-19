@@ -74,7 +74,7 @@ class Station {
             const lastReservation = await StationUsage.getLastReservationByStationId(
                 this.id
             );
-            const lastUsage = await StationUsage.getLastUsageByStationId(this.id);
+            const lastUsage = await StationUsage.getLastChargeByStationId(this.id);
             this.status = await getStatus(this, lastReservation, lastUsage);
         } else {
             // insert new station
@@ -136,7 +136,7 @@ class Station {
         if (rows.length == 0) return null;
         const row = rows[0];
         const lastReservation = await StationUsage.getLastReservationByStationId(row.id);
-        const lastUsage = await StationUsage.getLastUsageByStationId(row.id);
+        const lastUsage = await StationUsage.getLastChargeByStationId(row.id);
         const status = await getStatus(row, lastReservation, lastUsage);
 
         return new Station(

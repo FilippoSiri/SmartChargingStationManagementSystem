@@ -75,7 +75,7 @@ class StationUsage {
         return new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price, row.deleted);
     }
 
-    static async getLastUsageByStationId(station_id) { 
+    static async getLastChargeByStationId(station_id) { 
         const sql = 'SELECT * FROM StationUsage WHERE station_id = ? and start_time is not null and deleted=false ORDER BY start_time DESC LIMIT 1';
         const [rows, _] = await conn.query(sql, [station_id]);
         if(rows.length == 0)
@@ -87,6 +87,15 @@ class StationUsage {
     static async getLastUsageByTransactionId(transaction_id) {
         const sql = 'SELECT * FROM StationUsage WHERE id = ?';
         const [rows, _] = await conn.query(sql, [transaction_id]);
+        if(rows.length == 0)
+            return null;
+        const row = rows[0];
+        return new StationUsage(row.id, row.user_id, row.station_id, row.start_time, row.end_time, row.reservation_time, row.kw, row.price, row.deleted);
+    }
+
+    static async getLastUsageByUserId(user_id) {
+        const sql = 'SELECT * FROM StationUsage WHERE user_id = ? and deleted=false ORDER BY start_time DESC LIMIT 1';
+        const [rows, _] = await conn.query(sql, [user_id]);
         if(rows.length == 0)
             return null;
         const row = rows[0];

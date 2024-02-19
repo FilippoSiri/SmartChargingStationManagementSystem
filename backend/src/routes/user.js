@@ -37,6 +37,16 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
+router.get("/getLastUsage", verifyToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await UserService.getLastUsageByUserId(userId);
+        res.json(user);
+    } catch (error) {
+        getCorrectError(error);
+    }
+});
+
 //TODO: Check status code
 router.patch("/", verifyToken, async (req, res) => {
     try {

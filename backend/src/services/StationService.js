@@ -3,6 +3,7 @@ const Station = require("../models/Station");
 const StationUsage = require("../models/StationUsage");
 const RPCStationService = require("./RPCStationService");
 const ConnectorService = require("./ConnectorService");
+const UserService = require("./UserService");
 
 class StationService {
     static async getAll(){
@@ -21,8 +22,8 @@ class StationService {
         return station;
     }
     
-    static async getLastUsageByStationId(id){
-        return await StationUsage.getLastUsageByStationId(id);
+    static async getLastChargeByStationId(id){
+        return await StationUsage.getLastChargeByStationId(id);
     }
     
     static async getLastReservationByStationId(id){
@@ -36,7 +37,11 @@ class StationService {
     
         if (station.status !== Station.STATUS.FREE)
             throw new Error("Station is currently not available for reservation");
-    
+
+        const lastUsage = await UserService.getLastUsageByUserId(userId);
+        if(lastUsage !== null && lastUsage.end_time === null)
+            throw new Error("You can't reserve a station while using another one");
+
         const stationUsage = new StationUsage();
         stationUsage.station_id = id;
         stationUsage.user_id = userId;
@@ -92,6 +97,10 @@ class StationService {
     }
 
     static async startCharging(id, userId){
+        const lastUsage = await UserService.getLastUsageByUserId(userId);
+        if(lastUsage !== null && lastUsage.end_time === null)
+            throw new Error("You can't use a station while using another one");
+
         if (!await RPCStationService.remoteStartTransaction(id, userId))
             throw new Error("Error starting charging");
     }
@@ -135,15 +144,15 @@ class StationService {
         if (station.status !== Station.STATUS.USED)
             throw new Error("Station is currently not available for stopping charging");
 
-        const lastStationUsage = await StationUsage.getLastUsageByStationId(id);
+        const lastStationCharge = await StationUsage.getLastChargeByStationId(id);
 
-        if (lastStationUsage.user_id != userId)
+        if (lastStationCharge.user_id != userId)
             throw new Error("You can't stop charging for another user");
 
-        if (!await RPCStationService.remoteStopTransaction(id, lastStationUsage.id))
+        if (!await RPCStationService.remoteStopTransaction(id, lastStationCharge.id))
             throw new Error("Error stopping charging");
 
-        return await StationUsage.getLastUsageByStationId(id);
+        return await StationUsage.getLastChargeByStationId(id);
     }
 
     static async add(name, lat, lon, price, dismissed, last_heartbeat, notes, description, connectors){

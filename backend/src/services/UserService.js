@@ -3,6 +3,7 @@ const User = require("../models/User");
 const ResetPasswordToken = require("../models/ResetPasswordToken");
 const { emailValidRegex, strongPasswordRegex } = require("../utils/constants");
 const jwt = require("jsonwebtoken");
+const StationUsage = require("../models/StationUsage");
 
 
 function generateAccessToken(data, expirationTime) {
@@ -144,6 +145,11 @@ class UserService {
         } else {
             throw new Error("Email not registered");
         }
+    }
+
+    static async getLastUsageByUserId(id){
+        const user = await User.getById(id);
+        return await StationUsage.getLastUsageByUserId(id);
     }
 }
 

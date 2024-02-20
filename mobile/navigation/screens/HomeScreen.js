@@ -257,7 +257,10 @@ const HomeScreen = () => {
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 2});
         } catch (error) {
-            Alert.alert('Error', "Something went wrong. Please try again later.");
+            if (error.response.data.message === "Insufficient funds")
+                Alert.alert('Error', "Insufficient funds. Please recharge your account.");
+            else 
+                Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error('Error:', error);
         }
     }

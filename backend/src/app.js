@@ -56,6 +56,16 @@ server.on('client', async (client) => {
         console.log(`Handling MeterValues from ${client.identity}...`);
         const valueEnergy = params.meterValue[0].sampledValue[0].value;
         const lastStationUsage = await StationService.getLastChargeByStationId(client.identity);
+
+        const user = await UserService.getById(lastStationUsage.user_id);
+
+        if (user.balance < lastStationUsage.price * parseFloat(valueEnergy)/1000 || user.balance <= 0) {
+            await RPCStationService.remoteStopTransaction(parseInt(client.identity), lastStationUsage.id);
+
+            lastStationUsage.end_time = new Date();
+            await lastStationUsage.save();
+        }
+
         lastStationUsage.kw = parseFloat(valueEnergy)/1000;
         await lastStationUsage.save();
         return {};
@@ -120,6 +130,7 @@ const cors = require("cors");
 var path = require('path');
 const e = require("express");
 const UserService = require("./services/UserService");
+const RPCStationService = require("./services/RPCStationService");
 
 const app = express();
 

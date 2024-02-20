@@ -22,6 +22,7 @@ function getCorrectError(error, res) {
         case "Station is currently not available for stopping charging":
         case "You can't stop charging for another user":
         case "You can't use a station while using another one":
+        case "Insufficient funds":
             return res.status(409).json({ message: error.message });
         default:
             return res.status(500).json({ message: error.message });

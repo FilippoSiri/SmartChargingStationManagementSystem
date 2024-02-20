@@ -16,37 +16,42 @@ import axios from 'axios';
 import { API_URL, API_PORT } from '@env';
 
 import gloabl_style from '../../style';
+import { useIsFocused } from '@react-navigation/native';
 
 const UserScreen = ({ navigation }) => {
     const { authToken, setAuthToken } = useContext(AuthContext);
     const [userData, setUserData] = useState({});
     const [confirmPassword, setConfirmPassword] = useState('');
+    const isFocused = useIsFocused();
 
     const logout = async () => {
         await Keychain.resetGenericPassword();
         setAuthToken(null);
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`http://${API_URL}:${API_PORT}/user/`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `${authToken}`,
-                    },
-                });
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://${API_URL}:${API_PORT}/user/`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `${authToken}`,
+                },
+            });
 
-                setUserData(response.data);
-            } catch (error) {
-                Alert.alert('Error', 'Error fetching user data');
-                console.error(error);
-            }
+            setUserData(response.data);
+        } catch (error) {
+            Alert.alert('Error', 'Error fetching user data');
+            console.error(error);
         }
+    }
 
+    useEffect(() => {
         fetchData();
-
     }, []);
+
+    useEffect(() => {
+        fetchData();
+    }, [isFocused]);
 
     const handleChangeData = (field, value) => {
         setUserData({ ...userData, [field]: value });

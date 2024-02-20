@@ -98,7 +98,12 @@ class StationService {
     }
 
     static async startCharging(id, userId){
+        const station = await Station.getById(id);
         const lastUsage = await UserService.getLastUsageByUserId(userId);
+        const user = await UserService.getById(userId);
+
+        if (user.balance <= 0 || user.balance < station.price)
+            throw new Error("Insufficient funds");
         
         if (lastUsage !== null && lastUsage.station_id !== id && lastUsage.end_time === null)
             throw new Error("You can't use a station while using another one");

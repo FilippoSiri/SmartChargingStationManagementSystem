@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from 'axios';
@@ -6,7 +6,6 @@ import axios from 'axios';
 const UserScreen = () => {
     const [users, setUsers] = useState([]);
     const [userAdminValue, setUserAdminValue] = useState({});
-    const selectRef = useRef();
 
     const columns = [
         { field: "id", headerName: "ID", width: 120 },

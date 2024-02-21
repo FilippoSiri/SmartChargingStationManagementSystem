@@ -72,7 +72,7 @@ const EditStation = () => {
             }
         }
         getValues();
-    },[])
+    },[id])
 
     // Clean station info when opening add station from edit station
     useEffect(() => {

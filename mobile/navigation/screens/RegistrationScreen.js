@@ -55,8 +55,8 @@ const RegistrationScreen = ({ navigation }) => {
             await Keychain.setGenericPassword('jwtToken', data.token);
             setAuthToken(data.token);
         } catch (error) {
-            Alert.alert('Error', 'Something went wrong');
-            console.error('Error:', error);
+            Alert.alert('Error', error.response.data.message);
+            console.error('Error:', error.response.data);
         }
     };
 

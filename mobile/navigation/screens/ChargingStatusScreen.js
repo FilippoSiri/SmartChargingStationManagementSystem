@@ -73,7 +73,7 @@ const ChargingStatusScreen = () => {
                                 </View>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>Reservation time: </Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.start_time).toDateString()} </Text>
+                                    <Text style={style.info}>{new Date(chargingInfo.reservation_time).toLocaleString()} </Text>
                                 </View>
                             </View>
                         </>
@@ -81,7 +81,7 @@ const ChargingStatusScreen = () => {
                         <View style={style.info_container}>
                             <View style={style.marginBottomStyle}>
                                 <Text style={style.info_bold}>Start time: </Text>
-                                <Text style={style.info}>{new Date(chargingInfo.start_time).toDateString()} </Text>
+                                <Text style={style.info}>{new Date(chargingInfo.start_time).toLocaleString()} </Text>
                             </View>
                             <View style={style.marginBottomStyle}>
                                 <Text style={style.info_bold}>Energy: </Text>
@@ -96,11 +96,11 @@ const ChargingStatusScreen = () => {
                             <View style={style.info_container}>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>Start time:</Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.start_time).toDateString()} </Text>
+                                    <Text style={style.info}>{new Date(chargingInfo.start_time).toLocaleString()} </Text>
                                 </View>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>End time: </Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.end_time).toDateString() ?? "Not finish yet"} </Text>
+                                    <Text style={style.info}>{new Date(chargingInfo.end_time).toLocaleString() ?? "Not finish yet"} </Text>
                                 </View>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>Energy: </Text>

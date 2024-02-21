@@ -35,7 +35,7 @@ const HomeScreen = () => {
     const webRef = useRef();
     const [stationId, setStationId] = useState(null);
     const [stationInfo, setStationInfo] = useState({});
-    const [lastStationUsage, setLastStationUsage] = useState({});
+    const [lastStationCharge, setLastStationCharge] = useState({});
     const [lastStationReservation, setLastStationReservation] = useState({});
     const [isActionPerformed, setIsActionPerformed] = useState(false);
     const snapPoints = useMemo(() => ['70%', '40%'], []);
@@ -130,14 +130,14 @@ const HomeScreen = () => {
         
     }
 
-    const getLastStationUsage = async (id) => {
+    const getLastStationCharge = async (id) => {
         try {
             const response = await axios.get(
                 `http://${API_URL}:${API_PORT}/station/${id}/last_charge`,
                 { headers: { 'Content-Type': 'application/json' } },
                 );
 
-            setLastStationUsage(response.data);
+            setLastStationCharge(response.data);
         } catch (error) {
             Alert.alert('Error', "Error reriving information about the station");
             console.error('Error:', error);
@@ -160,7 +160,7 @@ const HomeScreen = () => {
             if (res.data.status === 1) {
                 getLastStationReservation(data.id);
             } else if (res.data.status === 2) {
-                getLastStationUsage(data.id);
+                getLastStationCharge(data.id);
             }
         } catch (error) {
             Alert.alert('Error', "Error retriving information about the station");
@@ -216,7 +216,7 @@ const HomeScreen = () => {
             setStationInfo({...stationInfo, status: 1});
             getLastStationReservation(stationId);
         } catch (error) {
-            Alert.alert('Error', "Something went wrong. Please try again later.");
+            Alert.alert('Error', error.response.data.message);
             console.error('Error:', error);
         }
     }
@@ -253,7 +253,7 @@ const HomeScreen = () => {
                 },
             );
 
-            getLastStationUsage(stationId);
+            getLastStationCharge(stationId);
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 2});
         } catch (error) {
@@ -279,7 +279,7 @@ const HomeScreen = () => {
 
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
-            getLastStationUsage(stationId);
+            getLastStationCharge(stationId);
         } catch (error) {
             Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error('Error:', error);
@@ -377,7 +377,7 @@ const HomeScreen = () => {
                 )}
 
                 {
-                    stationInfo.status == 2 && lastStationUsage !== null && lastStationUsage.user_id == decodedToken.userId && (
+                    stationInfo.status == 2 && lastStationCharge !== null && lastStationCharge.user_id == decodedToken.userId && (
                         <View style={style.buttonsContainer}>
                             <View style={style.displayGridBtns}>
                                 <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns}>

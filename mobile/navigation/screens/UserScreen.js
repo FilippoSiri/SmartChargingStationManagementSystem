@@ -8,6 +8,7 @@ import {
     TextInput,
     TouchableOpacity,
     Alert,
+    KeyboardAvoidingView,
 } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { AuthContext } from '../AuthContext';
@@ -122,55 +123,56 @@ const UserScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View style={style.form_container}>
-                    <View style={style.field_container}>
-                        <Text>Name</Text>
-                        <TextInput style={style.text_input} value={userData.name} onChangeText={(text) => handleChangeData("name", text)} />
+                <KeyboardAvoidingView style={style.form_container}>
+                    <View style={style.form_container}>
+                        <View style={style.field_container}>
+                            <Text>Name</Text>
+                            <TextInput style={style.text_input} value={userData.name} onChangeText={(text) => handleChangeData("name", text)} />
+                        </View>
                     </View>
-                </View>
-                
-                <View style={style.form_container}>
-                    <View style={style.field_container}>
-                        <Text>Surname</Text>
-                        <TextInput style={style.text_input} value={userData.surname} onChangeText={text => handleChangeData("surname", text)} />
+                    
+                    <View style={style.form_container}>
+                        <View style={style.field_container}>
+                            <Text>Surname</Text>
+                            <TextInput style={style.text_input} value={userData.surname} onChangeText={text => handleChangeData("surname", text)} />
+                        </View>
                     </View>
-                </View>
-                
-                <View style={style.form_container}>
-                    <View style={style.field_container}>
-                        <Text>Email</Text>
-                        <TextInput style={style.text_input} value={userData.email} onChangeText={text => handleChangeData("email", text)} />
-                    </View>
-                </View>
-
-                <View style={style.form_container}>
-                    <View style={style.field_container}>
-                        <Text>Password</Text>
-                        <TextInput secureTextEntry style={style.text_input} value={userData.password ?? ""} onChangeText={text => handleChangeData("password", text)}/>
-                    </View>
-                </View>
-
-                <View style={style.form_container}>
-                    <View style={style.field_container}>
-                        <Text>Password confirm  </Text>
-                        <TextInput style={style.text_input} secureTextEntry value={confirmPassword} onChangeText={text => setConfirmPassword(text)} />
-                    </View>
-                </View>
-
-                <View style={style.rows_btns}>  
-                    <View style={style.btns}>
-                        <TouchableOpacity onPress={() => handleSave()} style={style.btn}>
-                            <Text style={{ color: gloabl_style.text_color_in_btn }}>Save</Text>
-                        </TouchableOpacity>
+                    
+                    <View style={style.form_container}>
+                        <View style={style.field_container}>
+                            <Text>Email</Text>
+                            <TextInput style={style.text_input} value={userData.email} onChangeText={text => handleChangeData("email", text)} />
+                        </View>
                     </View>
 
-                    <View style={style.btns}>
-                        <TouchableOpacity onPress={() => logout()} style={style.btn}>
-                            <Text style={{ color: gloabl_style.text_color_in_btn }}>Logout</Text>
-                        </TouchableOpacity>
+                    <View style={style.form_container}>
+                        <View style={style.field_container}>
+                            <Text>Password</Text>
+                            <TextInput secureTextEntry style={style.text_input} value={userData.password ?? ""} onChangeText={text => handleChangeData("password", text)}/>
+                        </View>
                     </View>
-                </View>
 
+                    <View style={style.form_container}>
+                        <View style={style.field_container}>
+                            <Text>Password confirm  </Text>
+                            <TextInput style={style.text_input} secureTextEntry value={confirmPassword} onChangeText={text => setConfirmPassword(text)} />
+                        </View>
+                    </View>
+
+                    <View style={style.rows_btns}>  
+                        <View style={style.btns}>
+                            <TouchableOpacity onPress={() => handleSave()} style={style.btn}>
+                                <Text style={{ color: gloabl_style.text_color_in_btn }}>Save</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={style.btns}>
+                            <TouchableOpacity onPress={() => logout()} style={style.btn}>
+                                <Text style={{ color: gloabl_style.text_color_in_btn }}>Logout</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
             </ScrollView>
         </SafeAreaView>
     );

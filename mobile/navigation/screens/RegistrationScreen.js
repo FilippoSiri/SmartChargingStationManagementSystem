@@ -7,6 +7,8 @@ import {
     Alert,
     SafeAreaView,
     TouchableOpacity,
+    ScrollView,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import global_style from '../../style';
@@ -60,44 +62,49 @@ const RegistrationScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={gloabl_style.main_view}>
-            <View style={style.form_container}>
-                <View style={style.field_container}>
-                    <Text>Name</Text>
-                    <TextInput style={style.text_input} onChangeText={text => setName(text)} value={name} />
-                </View>
-                <View style={style.field_container}>
-                    <Text>Surname</Text>
-                    <TextInput style={style.text_input} onChangeText={text => setSurname(text)} value={surname} />
-                </View>
-                <View style={style.field_container}>
-                    <Text>Email</Text>
-                    <TextInput style={style.text_input} onChangeText={text => setEmail(text)} value={email} />
-                </View>
-                <View style={style.field_container}>
-                    <Text>Password</Text>
-                    <TextInput secureTextEntry={true} style={style.text_input} onChangeText={text => setPassword(text)} value={password} />
-                </View>
-                <View style={style.field_container}>
-                    <Text>Confirm Password</Text>
-                    <TextInput secureTextEntry={true} style={style.text_input} onChangeText={text => setConfirmPassword(text)} value={confirmPassword} />
-                </View>
+            <ScrollView>
+                <View>
+                    <KeyboardAvoidingView style={style.form_container}>
+                        <View style={style.field_container}>
+                            <Text>Name</Text>
+                            <TextInput style={style.text_input} onChangeText={text => setName(text)} value={name} />
+                        </View>
+                        <View style={style.field_container}>
+                            <Text>Surname</Text>
+                            <TextInput style={style.text_input} onChangeText={text => setSurname(text)} value={surname} />
+                        </View>
+                        <View style={style.field_container}>
+                            <Text>Email</Text>
+                            <TextInput style={style.text_input} onChangeText={text => setEmail(text)} value={email} />
+                        </View>
+                        <View style={style.field_container}>
+                            <Text>Password</Text>
+                            <TextInput secureTextEntry={true} style={style.text_input} onChangeText={text => setPassword(text)} value={password} />
+                        </View>
+                        <View style={style.field_container}>
+                            <Text>Confirm Password</Text>
+                            <TextInput secureTextEntry={true} style={style.text_input} onChangeText={text => setConfirmPassword(text)} value={confirmPassword} />
+                        </View>
 
-                <View style={style.texts_container}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                        <Text style={{ color: global_style.main_color }}>
-                            I have already an account
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                        <View style={style.texts_container}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                                <Text style={{ color: global_style.main_color }}>
+                                    I have already an account
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
 
-                <TouchableOpacity
-                    onPress={() => register()}
-                    style={style.btn}>
-                    <Text style={{ color: global_style.text_color_in_btn }}>
-                        Register now
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                        <TouchableOpacity
+                            onPress={() => register()}
+                            style={style.btn}>
+                            <Text style={{ color: global_style.text_color_in_btn }}>
+                                Register now
+                            </Text>
+                        </TouchableOpacity>
+                    </KeyboardAvoidingView>
+                </View>
+            </ScrollView>
+
         </SafeAreaView>
     );
 };

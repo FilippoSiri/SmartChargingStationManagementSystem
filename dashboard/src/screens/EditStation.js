@@ -182,7 +182,7 @@ const EditStation = () => {
                                 field="name"
                                 onChange={handleChangeStationInfo}
                                 required
-                                style={{ "font-size": "1em" }}
+                                style={{ fontSize: "1em" }}
                             />
                         </Grid>
 
@@ -198,7 +198,7 @@ const EditStation = () => {
                                 value={stationInfo.price ?? ""}
                                 onChange={handleChangeStationInfo}
                                 required
-                                style={{ "font-size": "1em" }}
+                                style={{ fontSize: "1em" }}
                             />
                         </Grid>
 
@@ -206,7 +206,7 @@ const EditStation = () => {
                             <Typography variant="body1">
                                 Connectors
                             </Typography>
-                            <Select style={{width: "50%", height: "37.5px", "font-size": "1em"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
+                            <Select style={{width: "50%", height: "37.5px", fontSize: "1em"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
                                 {
                                     connectorTypes.map((connectorType, index) => {
                                         return (
@@ -226,7 +226,7 @@ const EditStation = () => {
                                 field="lon"
                                 onChange={handleChangeStationInfo}
                                 required
-                                style={{ "font-size": "1em" }}
+                                style={{ fontSize: "1em" }}
                             />
                         </Grid>
 
@@ -239,7 +239,7 @@ const EditStation = () => {
                                 field="lat"
                                 onChange={handleChangeStationInfo}
                                 required
-                                style={{ "font-size": "1em" }}
+                                style={{ fontSize: "1em" }}
                             />
                         </Grid>
 
@@ -252,7 +252,7 @@ const EditStation = () => {
                                 type="text"
                                 value={id && stationInfo.last_heartbeat !== null ? new Date(stationInfo.last_heartbeat).toLocaleString() : "--"}
                                 disabled
-                                style={{ cursor: "not-allowed", "font-size": "1em" }}
+                                style={{ cursor: "not-allowed", fontSize: "1em" }}
                             />
                         </Grid>
 
@@ -266,7 +266,7 @@ const EditStation = () => {
                                 className="input-edit-station textarea"
                                 placeholder="Insert note"
                                 value={stationInfo.notes ?? ""}
-                                style={{ height: "100px", width: "100%", "font-size": "1em" }}
+                                style={{ height: "100px", width: "100%", fontSize: "1em" }}
                                 field="notes"
                                 onChange={handleChangeStationInfo}
                             />
@@ -278,7 +278,7 @@ const EditStation = () => {
                                 className="input-edit-station textarea"
                                 placeholder="Insert description"
                                 value={stationInfo.description ?? ""}
-                                style={{ height: "100px", width: "100%", "font-size": "1em"}}
+                                style={{ height: "100px", width: "100%", fontSize: "1em"}}
                                 field="description"
                                 onChange={handleChangeStationInfo}
                                 rows="10"

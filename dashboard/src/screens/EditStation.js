@@ -30,10 +30,24 @@ const EditStation = () => {
     const [openCancel, setOpenCancel] = useState(false);
     const [stationInfo, setStationinfo] = useState({});
     const [dialogMessage, setDialogMessage] = useState("");
-    const [multipleSelectValue, setmultipleSelectValue] = useState([]);
+    const [multipleSelectValue, setMultipleSelectValue] = useState([]);
     const [connectorTypes, setConnectorTypes] = useState([]);
 
     useEffect(() => {
+        const getConnectors = async () => {
+            try {
+                const { data } = await axios.get(
+                    `http://localhost:${process.env.REACT_APP_API_PORT}/connector`
+                );
+                setConnectorTypes(data);
+                return true;
+            } catch (error) {
+                alert("Error getting connector types");
+                console.log(error);
+                return false;
+            }
+        }
+
         const getStationInfo = async () => {
             try {
                 const {data} = await axios.get(
@@ -42,31 +56,23 @@ const EditStation = () => {
                 // Convert price from cents to euros
                 // need to be here, because if we do inside placeholder error occurs
                 data.price = data.price / 100;
-                setStationinfo(data);
+                setStationinfo(data);             
+                setMultipleSelectValue(data.connectors.map(connector => connector.name));
+                return true;
             } catch (error) {
                 alert("Error getting station info");
                 console.log(error);
-            }
-        };
-
-        if (id) getStationInfo();
-    }, [id]);
-
-    useEffect(() => {
-        const getConnectorTypes = async () => {
-            try {
-                const { data } = await axios.get(
-                    `http://localhost:${process.env.REACT_APP_API_PORT}/connector`
-                );
-                setConnectorTypes(data);
-            } catch (error) {
-                alert("Error getting connector types");
-                console.log(error);
+                return false;
             }
         }
 
-        getConnectorTypes();
-    }, []);
+        const getValues = async () => {
+            if(await getConnectors() && id){
+                await getStationInfo();
+            }
+        }
+        getValues();
+    },[])
 
     const handleChangeStationInfo = (e) => {
         let fieldToUpdate = e.target.getAttribute("field");
@@ -130,7 +136,7 @@ const EditStation = () => {
 
     const handleSelectChange = (e) => {
         const {target: { value }} = e;
-        setmultipleSelectValue(typeof value === "string" ? value.split(",") : value);
+        setMultipleSelectValue(typeof value === "string" ? value.split(",") : value);
     }
 
     return (
@@ -170,6 +176,7 @@ const EditStation = () => {
                                 field="name"
                                 onChange={handleChangeStationInfo}
                                 required
+                                style={{ "font-size": "1em" }}
                             />
                         </Grid>
 
@@ -185,6 +192,7 @@ const EditStation = () => {
                                 value={stationInfo.price ?? ""}
                                 onChange={handleChangeStationInfo}
                                 required
+                                style={{ "font-size": "1em" }}
                             />
                         </Grid>
 
@@ -192,11 +200,11 @@ const EditStation = () => {
                             <Typography variant="body1">
                                 Connectors
                             </Typography>
-                            <Select style={{width: "50%", height: "37.5px"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
+                            <Select style={{width: "50%", height: "37.5px", "font-size": "1em"}} multiple={true} value={multipleSelectValue} onChange={handleSelectChange}>
                                 {
                                     connectorTypes.map((connectorType, index) => {
                                         return (
-                                            <MenuItem key={index} value={connectorType.name}>{connectorType.name}</MenuItem>
+                                            <MenuItem key={index} value={connectorType.name} selected={true}>{connectorType.name}</MenuItem>
                                         );
                                     })
                                 }
@@ -212,6 +220,7 @@ const EditStation = () => {
                                 field="lon"
                                 onChange={handleChangeStationInfo}
                                 required
+                                style={{ "font-size": "1em" }}
                             />
                         </Grid>
 
@@ -224,6 +233,7 @@ const EditStation = () => {
                                 field="lat"
                                 onChange={handleChangeStationInfo}
                                 required
+                                style={{ "font-size": "1em" }}
                             />
                         </Grid>
 
@@ -236,7 +246,7 @@ const EditStation = () => {
                                 type="text"
                                 value={id && stationInfo.last_heartbeat !== null ? new Date(stationInfo.last_heartbeat).toLocaleString() : "--"}
                                 disabled
-                                style={{ cursor: "not-allowed" }}
+                                style={{ cursor: "not-allowed", "font-size": "1em" }}
                             />
                         </Grid>
 
@@ -250,7 +260,7 @@ const EditStation = () => {
                                 className="input-edit-station textarea"
                                 placeholder="Insert note"
                                 value={stationInfo.notes ?? ""}
-                                style={{ height: "100px", width: "100%" }}
+                                style={{ height: "100px", width: "100%", "font-size": "1em" }}
                                 field="notes"
                                 onChange={handleChangeStationInfo}
                             />
@@ -262,7 +272,7 @@ const EditStation = () => {
                                 className="input-edit-station textarea"
                                 placeholder="Insert description"
                                 value={stationInfo.description ?? ""}
-                                style={{ height: "100px", width: "100%"}}
+                                style={{ height: "100px", width: "100%", "font-size": "1em"}}
                                 field="description"
                                 onChange={handleChangeStationInfo}
                                 rows="10"

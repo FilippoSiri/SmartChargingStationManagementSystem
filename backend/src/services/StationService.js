@@ -222,9 +222,10 @@ class StationService {
                     const addedConnectors = new Array();
                     await connectors.forEach(async connector => {
                         const connectorModel = await ConnectorService.getById(connector.id);
+                        console.log(connectorModel)
                         if(connectorModel === null)
                             console.log(`Connector ${connector.id} not found`);
-                        if(await connectorModel.addToStation(addedStation.id))
+                        if(await connectorModel.addToStation(updatedStation.id))
                             addedConnectors.push(connectorModel);
                         else
                             console.log(`Error adding connector ${connector.id} to station ${addedStation.id}`);

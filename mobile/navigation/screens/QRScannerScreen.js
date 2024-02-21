@@ -35,49 +35,22 @@ const QRScannerScreen = () => {
                 }
             );
 
-            const res_last_charge = await axios.get(
-                `http://${API_URL}:${API_PORT}/station/${id}/last_charge/`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: authToken,
-                    },
-                }
-            );
-
-            if (res.data.status === 0 && (await handleStartCharging(id))) {
+            if (res.data.status === 0 && await handleStartCharging(id))
                 Alert.alert("Success activation", "Station is activated for charging");
-            } else if(res.data.status === 0)
-                Alert.alert("Request failed", "The request to start charging failed");
-            else if (res.data.status === 1) {
-                if (res_last_charge.data.user_id === decodedToken.userId && (await handleStartCharging(id))) 
-                    Alert.alert("Success activation", "Station is activated for charging");
-                else if (res_last_charge.data.user_id !== decodedToken.userId)
-                    Alert.alert("Station is reserved", "This station is reserved by another user");              
-                else
-                    Alert.alert("Request failed", "The request to start charging failed");
-            } else if (res.data.status === 2) {
-                if (res_last_charge.data.user_id === decodedToken.userId && (await handleStopCharging(id)))
-                    Alert.alert("Success deactivation", "Station is deactivated from charging");
-                else if (res_last_charge.data.user_id !== decodedToken.userId)
-                    Alert.alert("Station is in use", "You cannot stop charging of this station");
-                else
-                    Alert.alert("Request failed", "The request to stop charging failed");
-            } else {
-                Alert.alert("Station is not available", "Station is not available for charging");
-            }
+            else if (res.data.status === 2 && await handleStopCharging(id))
+                Alert.alert("Success deactivation", "Station is deactivated from charging");
 
             navigate.navigate("Home");
 
         } catch (error) {
-            Alert.alert("Request failed", "The request to start charging failed");
+            Alert.alert("Error", "Something went wrong");
             console.error("Error:", error);
         }
     }
 
     const handleStartCharging = async (stationId) => {
         try {
-            const res = await axios.post(
+            await axios.post(
                 `http://${API_URL}:${API_PORT}/station/${stationId}/start_charging/`,
                 { }, { 
                     headers: { 

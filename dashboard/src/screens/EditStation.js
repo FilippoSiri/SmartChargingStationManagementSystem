@@ -74,6 +74,12 @@ const EditStation = () => {
         getValues();
     },[])
 
+    // Clean station info when opening add station from edit station
+    useEffect(() => {
+        setStationinfo({})
+        setMultipleSelectValue([]);
+    },[id])
+
     const handleChangeStationInfo = (e) => {
         let fieldToUpdate = e.target.getAttribute("field");
         let newValue = e.target.value;

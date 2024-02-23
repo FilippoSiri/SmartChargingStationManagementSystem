@@ -35,7 +35,7 @@ class RPCStationService{
     
     static async reserveNow(stationId, transactionId, userId){
         var expiryDate = new Date();
-        expiryDate = expiryDate.getTime() + (RESERVATION_TIME * 1000);
+        expiryDate = new Date(expiryDate.getTime() + (RESERVATION_TIME * 1000));
 
         try{
             const response = await this.stations.get(stationId).call('ReserveNow', {

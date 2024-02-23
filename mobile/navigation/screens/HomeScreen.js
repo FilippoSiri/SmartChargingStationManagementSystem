@@ -154,6 +154,8 @@ const HomeScreen = () => {
         setStationId(data.id);
         bottomSheetRef.current?.present();
         bottomSheetRef.current.snapToIndex(0);
+        setLastStationCharge({});
+        setLastStationReservation({});
 
         try {
             const res = await axios.get(

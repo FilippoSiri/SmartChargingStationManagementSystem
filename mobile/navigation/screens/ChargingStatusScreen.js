@@ -15,6 +15,7 @@ const ChargingStatusScreen = () => {
     const { authToken, setAuthToken } = useContext(AuthContext);
     const [chargingInfo, setChargingInfo] = useState({});
     const [statusType, setStatusType] = useState('');
+    const [station, setStation] = useState({});
     const isFocused = useIsFocused();
 
     const fetchData = async () => {
@@ -50,6 +51,23 @@ const ChargingStatusScreen = () => {
     }
 
     useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                console.log(chargingInfo.station_id);
+                const res = await axios.get(`http://${API_URL}:${API_PORT}/station/${chargingInfo.station_id}`)
+
+                setStation(res.data);
+            } catch (error) {
+                Alert.alert('Error', error.response.data.message);
+            }
+        }
+
+        if (chargingInfo.id)
+            fetchData();
+    }, [chargingInfo]);
+
+    useEffect(() => {
         fetchData();
     }, [isFocused]);
 
@@ -64,8 +82,8 @@ const ChargingStatusScreen = () => {
                         <>
                             <View style={style.info_container}>
                                 <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Station id: </Text>
-                                    <Text style={style.info}>{chargingInfo.station_id} </Text>
+                                    <Text style={style.info_bold}>Station: </Text>
+                                    <Text style={style.info}>{station.name} </Text>
                                 </View>
                                 <View style={style.marginBottomStyle}>
                                     <Text style={style.info_bold}>Reservation time: </Text>

@@ -43,11 +43,16 @@ const HomeScreen = () => {
     const isFocused = useIsFocused();
 
     const updatePosition = (position) => {
-        webRef.current.injectJavaScript(
-            `  
-                setCenter(${position.coords.longitude}, ${position.coords.latitude});                
-            `
-        );
+        try {
+
+            webRef.current.injectJavaScript(
+                `  
+                    setCenter(${position.coords.longitude}, ${position.coords.latitude});                
+                `
+            );
+        } catch (error) {
+            console.warn(error);
+        }
     }
 
     const loadPosition = () => {

@@ -178,8 +178,8 @@ cli.handle('CancelReservation', ({params}) => {
     console.log("Handling CancelReservation...");
     if(status !== possibleStatus.Reserved) return {status: 'Rejected'};
     if(params.reservationId !== reservationId) return {status: 'Rejected'};
-    cancelReservation();
     clearTimeout(expiryDateTimeout);
+    cancelReservation();
     return {status: 'Accepted'};
 });
 

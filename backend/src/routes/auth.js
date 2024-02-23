@@ -19,6 +19,9 @@ function getCorrectError(error, res) {
             return res.status(404).json({ message: error.message });     
         case "Email already registered":
             return res.status(409).json({ message: error.message });     
+        case "Missing email":
+        case "Missing password":
+            return res.status(400).json({ message: error.message });
         default:
             return res.status(500).json({ message: error.message });
     }
@@ -41,6 +44,9 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+    if (!req.body.email) return getCorrectError({message: "Missing email"}, res);
+    if (!req.body.password) return getCorrectError({message: "Missing password"}, res);
+
     try{
         const value = await UserService.login(req.body.email, req.body.password);
         res.json(value);

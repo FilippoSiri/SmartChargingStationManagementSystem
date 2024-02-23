@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
     View,
     Text,
@@ -21,7 +21,6 @@ const LoginScreen = ({ navigation }) => {
     const { setAuthToken } = useContext(AuthContext);
 
     const login = async () => {
-
         try {
             const res = await axios.post(`http://${API_URL}:${API_PORT}/auth/login`,
                 JSON.stringify({ email, password }),
@@ -32,8 +31,7 @@ const LoginScreen = ({ navigation }) => {
             await Keychain.setGenericPassword('jwtToken', data.token);
             setAuthToken(data.token);
         } catch (error) {
-            Alert.alert('Error', 'Login failed');
-            console.error('Error:', error);
+            Alert.alert('Error', error.response.data.message);
         }
     };
     

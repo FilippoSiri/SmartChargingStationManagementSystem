@@ -75,6 +75,18 @@ const ChargingStatusScreen = () => {
                                     <Text style={style.info_bold}>Reservation time: </Text>
                                     <Text style={style.info}>{new Date(chargingInfo.reservation_time).toLocaleString()} </Text>
                                 </View>
+                                <View style={style.marginBottomStyle}>
+                                    <Text style={style.info_bold}>Expiration time: </Text>
+                                    <Text style={style.info}>{new Date(chargingInfo.expiration_time).toLocaleString()} </Text>
+                                </View>
+
+                                {
+                                    new Date(chargingInfo.expiration_time) < new Date() &&
+                                    <View style={style.expiration_text_container}>
+                                        <Text style={style.expiration_text}>Reservation expired</Text>
+                                    </View>
+                                }
+
                             </View>
                         </>
                     ) : statusType === 'charging' ? (
@@ -146,6 +158,18 @@ const style = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         marginBottom: 20
+    },
+    expiration_text_container: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 20
+    },
+    expiration_text: {
+        color: "red",
+        fontSize: 24,
+        fontWeight: "bold"
     }
 });
 

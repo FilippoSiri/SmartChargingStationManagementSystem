@@ -122,6 +122,7 @@ const HomeScreen = () => {
                 { headers: { 'Content-Type': 'application/json' } },
                 );
 
+            console.log(response.data)
             setLastStationReservation(response.data);
         } catch (error) {
             Alert.alert('Error', "Error reriving information about the station");
@@ -235,6 +236,7 @@ const HomeScreen = () => {
 
             setIsActionPerformed(true);
             setStationInfo({...stationInfo, status: 0});
+            setLastStationReservation({});
         } catch (error) {
             Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error(error.message);
@@ -349,13 +351,22 @@ const HomeScreen = () => {
                                     }
                                 </View>
                             </View>
+                            
                             <View style={{marginTop: 32, height: 100}}>
                                 <View style={style.itemGridContainer}>  
                                     <Text style={style.itemGridTextTitle}>Description</Text>
                                     <Text style={style.itemGridText}>{stationInfo.description}</Text>
                                 </View>
                             </View>
-                            
+                            {
+                                
+                                lastStationReservation.expiration_time && 
+                                    new Date(lastStationReservation.expiration_time) > new Date() &&
+                                    <View style={style.itemGridContainer}>
+                                        <Text style={style.itemGridTextTitle}>Expiration time</Text>
+                                        <Text style={style.itemGridText}>{new Date(lastStationReservation.expiration_time).toLocaleString()}</Text>
+                                    </View>
+                            }
                         </View>
                 </View>
 

@@ -44,14 +44,10 @@ const ChargingStatusScreen = () => {
 
             setChargingInfo(data);
         } catch (error) {
-            Alert.alert('Error', 'Error fetching user data');
+            Alert.alert('Error', error.response.data.message);
             console.error(error);
         }
     }
-
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     useEffect(() => {
         fetchData();

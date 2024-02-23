@@ -43,7 +43,7 @@ const QRScannerScreen = () => {
             navigate.navigate("Home");
 
         } catch (error) {
-            Alert.alert("Error", "Something went wrong");
+            Alert.alert('Error', error.response.data.message);
             console.error("Error:", error);
         }
     }
@@ -61,7 +61,7 @@ const QRScannerScreen = () => {
             );
             return true;
         } catch (error) {
-            Alert.alert("Request failed", "The request to start charging failed");
+            Alert.alert('Error', error.response.data.message);
             console.error('Error:', error);
             return false;
         }
@@ -80,7 +80,7 @@ const QRScannerScreen = () => {
             );
             return true;
         } catch (error) {
-            Alert.alert("Request failed", "The request to stop charging failed");
+            Alert.alert('Error', error.response.data.message);
             console.error('Error:', error);
             return false;
         }

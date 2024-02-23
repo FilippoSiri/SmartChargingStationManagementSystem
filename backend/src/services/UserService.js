@@ -4,6 +4,8 @@ const ResetPasswordToken = require("../models/ResetPasswordToken");
 const { emailValidRegex, strongPasswordRegex } = require("../utils/constants");
 const jwt = require("jsonwebtoken");
 const StationUsage = require("../models/StationUsage");
+const nodeMailer = require("nodemailer");
+
 
 
 function generateAccessToken(data, expirationTime) {
@@ -96,24 +98,24 @@ class UserService {
         });
     
         const token = generateAccessToken({
-            email: req.body.email
+            email: email
         }, 900);;
     
-        const resetPasswordToken = new ResetPasswordToken(null, req.body.email, token, new Date(), false);
+        const resetPasswordToken = new ResetPasswordToken(null, email, token, new Date(), false);
         resetPasswordToken.save();
     
         const mailOptions = {
             from: process.env.EMAIL_FROM,
-            to: req.body.email,
+            to: email,
             subject: 'Reset your password',
             text: `Hello, you can reset your password here: http://${process.env.API_URL}:${process.env.PORT}/auth/resetPasswordPage?token=${token}`
         };
     
         try{
             await transporter.sendMail(mailOptions);
-            return { message: "Email sent" };
+            return { message: "Password reset link sent to your email" };
         }catch(error){
-            throw new Error("Error sending email");
+            throw new Error("Error resetting password. Please try again later.");
         }
     }
 

@@ -98,7 +98,7 @@ class StationService {
         if (user.balance <= 0 || user.balance < station.price)
             throw new Error("Insufficient funds");
         
-        if (lastUsage !== null && lastUsage.station_id !== id && lastUsage.end_time === null && lastUsage.expiration_time && lastUsage.expiration_time.getTime() > Date.now())
+        if (lastUsage !== null && lastUsage.station_id !== id && lastUsage.end_time === null && (!lastUsage.expiration_time || lastUsage.expiration_time.getTime() > Date.now()))
             throw new Error("You can't use a station while using another one");
 
         if (!await RPCStationService.remoteStartTransaction(id, userId))

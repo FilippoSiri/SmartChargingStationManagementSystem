@@ -119,7 +119,7 @@ class UserService {
         }
     }
 
-    static async resetPassword(email, password){
+    static async resetPassword(email, password, token){
         if(!email)
             throw new Error("Missing email ");
         if(!password)
@@ -127,15 +127,15 @@ class UserService {
         if(!password.match(strongPasswordRegex))
             throw new Error("Invalid password");
 
-        let token = await ResetPasswordToken.getByToken(req.query.token);
-        if(token === null || token.used)
+        let tokenModal = await ResetPasswordToken.getByToken(token);
+        if(token === null || tokenModal.used)
             throw new Error("Invalid token");
         
     
-        const user = await User.getByEmail(req.body.email);
+        const user = await User.getByEmail(email);
         if (user !== null) {
-            token.used = true;
-            token.save();
+            tokenModal.used = true;
+            tokenModal.save();
             user.password = password;
             user.token_reset_time = new Date();
             const updatedUser = await user.save();

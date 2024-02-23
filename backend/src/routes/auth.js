@@ -77,7 +77,7 @@ router.get("/resetPasswordPage", verifyTokenResetPassword, async (req, res) => {
 // API that changes the password
 router.post("/resetPassword", verifyTokenResetPassword, async (req, res) => {
     try{
-        const value = await UserService.resetPassword(req.email, req.body.password);
+        const value = await UserService.resetPassword(req.email, req.body.password, req.query.token);
         res.json(value);
     }catch(error){
         return getCorrectError(error, res);

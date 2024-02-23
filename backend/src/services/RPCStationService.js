@@ -1,5 +1,3 @@
-const { RESERVATION_TIME } = require("../utils/constants");
-
 class RPCStationService{
     static stations = new Map();
 
@@ -33,10 +31,7 @@ class RPCStationService{
         
     }
     
-    static async reserveNow(stationId, transactionId, userId){
-        var expiryDate = new Date();
-        expiryDate = new Date(expiryDate.getTime() + (RESERVATION_TIME * 1000));
-
+    static async reserveNow(stationId, transactionId, userId, expiryDate){
         try{
             const response = await this.stations.get(stationId).call('ReserveNow', {
                 connectorId: 0,

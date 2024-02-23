@@ -39,21 +39,14 @@ class StationService {
             throw new Error("Station is currently not available for reservation");
 
         const lastUsage = await UserService.getLastUsageByUserId(userId);
-        if(lastUsage !== null && lastUsage.end_time === null)
+        if(lastUsage !== null && lastUsage.end_time === null && lastUsage.expiration_time && lastUsage.expiration_time.getTime() > Date.now())
             throw new Error("You can't reserve a station while using another one");
 
-        const stationUsage = new StationUsage();
-        stationUsage.station_id = id;
-        stationUsage.user_id = userId;
-        stationUsage.reservation_time = new Date();
-        stationUsage.price = station.price;
-        stationUsage.deleted = false;
-        stationUsage.kw = 0;
-        
+        const stationUsage = new StationUsage(undefined, userId, id, undefined, undefined, new Date(), 0, station.price, false);        
         const savedStationUsage = await stationUsage.save();
     
         if (savedStationUsage !== null) {
-            if(await RPCStationService.reserveNow(id, savedStationUsage.id, stationUsage.user_id)){
+            if(await RPCStationService.reserveNow(id, savedStationUsage.id, stationUsage.user_id, stationUsage.expiration_time)){
                 return savedStationUsage;
             }else{
                 console.log("ReserveNow Declined");
@@ -73,9 +66,9 @@ class StationService {
     
         if (station.status !== Station.STATUS.RESERVED)
             throw new Error("Station is currently not available for cancelling reservation");
-    
+
         const lastStationReservation = await StationUsage.getLastReservationByStationId(id);
-    
+
         if (lastStationReservation.user_id != userId)
             throw new Error("You can't cancel reservation for another user");
     
@@ -105,7 +98,7 @@ class StationService {
         if (user.balance <= 0 || user.balance < station.price)
             throw new Error("Insufficient funds");
         
-        if (lastUsage !== null && lastUsage.station_id !== id && lastUsage.end_time === null)
+        if (lastUsage !== null && lastUsage.station_id !== id && lastUsage.end_time === null && lastUsage.expiration_time && lastUsage.expiration_time.getTime() > Date.now())
             throw new Error("You can't use a station while using another one");
 
         if (!await RPCStationService.remoteStartTransaction(id, userId))

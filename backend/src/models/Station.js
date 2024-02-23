@@ -1,7 +1,7 @@
 "use strict";
 const conn = require("../utils/db-connection");
 const StationUsage = require("./StationUsage");
-const { RESERVATION_TIME, HEARTBEAT_TIME } = require("../utils/constants");
+const { HEARTBEAT_TIME } = require("../utils/constants");
 
 const STATUS = {
     FREE: 0,
@@ -21,8 +21,8 @@ async function getStatus(station, lastReservation, lastUsage) {
     if (station.last_heartbeat === null || station.last_heartbeat.getTime() + (HEARTBEAT_TIME * 3 * 1000) < Date.now())
         return STATUS.BROKEN;
     if (lastUsage && lastUsage.end_time === null)
-        return STATUS.USED;
-    if (lastReservation && lastReservation.reservation_time.getTime() + (RESERVATION_TIME * 1000) > Date.now())
+        return STATUS.USED;    
+    if (lastReservation && lastReservation.expiration_time && lastReservation.expiration_time.getTime() > Date.now())
         return STATUS.RESERVED;
     return STATUS.FREE;
 }

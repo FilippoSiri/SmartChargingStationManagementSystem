@@ -1,5 +1,6 @@
 'use strict';
 const conn = require('../utils/db-connection');
+const { RESERVATION_TIME } = require("../utils/constants");
 
 class StationUsage {
     constructor(id, user_id, station_id, start_time, end_time, reservation_time, kw, price, deleted) {
@@ -12,6 +13,7 @@ class StationUsage {
         this.kw = kw;
         this.price = price;
         this.deleted = deleted;
+        this.expiration_time = !this.start_time && this.reservation_time ? new Date(this.reservation_time.getTime() + (RESERVATION_TIME * 1000)) : undefined;
     }
 
     async save() {

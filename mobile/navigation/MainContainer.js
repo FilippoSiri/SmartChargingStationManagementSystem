@@ -38,6 +38,7 @@ const AuthNavigator = () => (
         <AuthStack.Screen name="User" component={UserScreen} />
         <AuthStack.Screen name="Login" component={LoginScreen} />
         <AuthStack.Screen name="Registration" component={RegistrationScreen} />
+        <AuthStack.Screen name="Home" component={HomeScreen} />
     </AuthStack.Navigator>
 );
 

@@ -54,6 +54,7 @@ const RegistrationScreen = ({ navigation }) => {
             const data = res.data;
             await Keychain.setGenericPassword('jwtToken', data.token);
             setAuthToken(data.token);
+            navigation.navigate('Home');
         } catch (error) {
             Alert.alert('Error', error.response.data.message);
             console.error('Error:', error.response.data);

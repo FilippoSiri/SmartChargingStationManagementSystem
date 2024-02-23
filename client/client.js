@@ -33,6 +33,8 @@ var idTagReserved;
 var timerHeartbeat;
 var meterValuesInterval;
 var energyDelivered = 0;
+var expiraryDate;
+var expiraryDateTimeout;
 var status = possibleStatus.Available;
 
 const rl = readline.createInterface({
@@ -98,7 +100,6 @@ async function authorize(idTag){
 async function startTransaction(connectorId, idTag){
     if(status !== possibleStatus.Available && status !== possibleStatus.Reserved) 
         return false;
-
     console.log("Sending StartTransaction...");
     const res = await cli.call('StartTransaction', {
         connectorId: parseInt(connectorId),
@@ -137,6 +138,11 @@ cli.handle('RemoteStartTransaction', async ({params}) => {
     if(status === possibleStatus.Reserved && idTagReserved !== params.idTag){return {status: "Rejected"};}
 
     if((await authorize(params.idTag)) && (await startTransaction(0, params.idTag))){
+        if(expiraryDate){
+            clearTimeout(expiraryDateTimeout);
+            expiraryDateTimeout = undefined;
+            expiraryDate = undefined;
+        } 
         status = possibleStatus.Charging;
         return {status: "Accepted"};
     }
@@ -155,9 +161,16 @@ cli.handle('RemoteStopTransaction', async ({params}) => {
 cli.handle('ReserveNow', ({params}) => {
     console.log("Handling ReserveNow...");
     if(status !== possibleStatus.Available) return {status: 'Rejected'};
+    expiraryDate = new Date(params.expiraryDate);
     idTagReserved = params.idTag;
     reservationId = params.reservationId;
     status = possibleStatus.Reserved;
+
+    expiraryDateTimeout = setTimeout(async () => {
+        cancelReservation();
+        await statusNotification();
+    }, expiraryDate.getTime() - new Date().getTime());
+
     return {status: 'Accepted'};
 });
 
@@ -165,9 +178,8 @@ cli.handle('CancelReservation', ({params}) => {
     console.log("Handling CancelReservation...");
     if(status !== possibleStatus.Reserved) return {status: 'Rejected'};
     if(params.reservationId !== reservationId) return {status: 'Rejected'};
-    idTagReserved = undefined;
-    reservationId = undefined;
-    status = possibleStatus.Available;
+    cancelReservation();
+    clearTimeout(expiraryDateTimeout);
     return {status: 'Accepted'};
 });
 
@@ -197,3 +209,10 @@ async function connect(){
 }
 connect();
 
+function cancelReservation(){
+    expiraryDate = undefined;
+    idTagReserved = undefined;
+    reservationId = undefined;
+    status = possibleStatus.Available;
+    expiraryDateTimeout = undefined;
+}

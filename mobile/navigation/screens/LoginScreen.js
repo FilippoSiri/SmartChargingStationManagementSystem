@@ -51,9 +51,9 @@ const LoginScreen = ({ navigation }) => {
                 { headers: { 'Content-Type': 'application/json' } },
             );
 
-            Alert.alert('Success', 'Password reset link sent to your email');
+            Alert.alert('Success', res.data.message);
         }catch (error) {
-            Alert.alert('Error', "Error resetting password. Please try again later.");
+            Alert.alert('Error', error.response.data.message);
             console.error('Error:', error);
         }
     };

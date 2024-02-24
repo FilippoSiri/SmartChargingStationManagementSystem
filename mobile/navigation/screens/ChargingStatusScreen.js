@@ -64,7 +64,6 @@ const ChargingStatusScreen = () => {
             );
 
             setIsActionPerformed(true);
-            setLastStationReservation({});
         } catch (error) {
             Alert.alert('Error', "Something went wrong. Please try again later.");
             console.error(error.message);
@@ -161,13 +160,23 @@ const ChargingStatusScreen = () => {
                                             <Text style={style.expiration_text}>Reservation expired</Text>
                                         </View>
                                     ) : (
-                                        <View>
-                                            <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
-                                                <View>  
-                                                    <Text style={{color: "#fff"}}>Avvia</Text>
-                                                </View>
-                                            </TouchableOpacity>
+                                        <View style={style.flex_btns_container}>
+                                            <View style={{width: "40%"}}>
+                                                <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
+                                                    <View>  
+                                                        <Text style={{color: "#fff"}}>Avvia</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={{width: "40%"}}>
+                                                <TouchableOpacity onPress={handleCancelReservationClick} style={style.modalBtns}>
+                                                    <View>  
+                                                        <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
+
                                     )
                                 }
                             </View>
@@ -264,7 +273,7 @@ const style = StyleSheet.create({
         fontWeight: "bold"
     },
     modalBtns: {
-        width: '40%',
+        width: '80%',
         height: 50,
         backgroundColor: gloabl_style.main_color,
         display: 'flex',
@@ -272,7 +281,13 @@ const style = StyleSheet.create({
         alignItems: 'center',
         fontSize: 18,
         borderRadius: 5,
-        marginTop: 20
+        marginTop: 20,
+    },
+    flex_btns_container: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
     }
 });
 

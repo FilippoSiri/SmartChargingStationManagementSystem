@@ -120,7 +120,7 @@ async function stopTransaction(transactionId, reasonCode){
         return false;
 
     console.log("Sending StopTransaction...");
-    cli.call('StopTransaction',{
+    await cli.call('StopTransaction',{
         ...(reasonCode!==undefined && {reason: reasonCode}),
         meterStop: energyDelivered,
         timestamp: new Date().toISOString(),

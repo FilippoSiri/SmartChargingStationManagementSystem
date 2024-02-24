@@ -196,7 +196,7 @@ const ChargingStatusScreen = () => {
                                 <Text style={style.info}>{(chargingInfo.kw ?? 0) * chargingInfo.price / 100} €</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns}>
+                                <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns_termina}>
                                     <View >  
                                         <Text style={{color: "#fff"}}>Termina</Text>
                                     </View>
@@ -274,6 +274,17 @@ const style = StyleSheet.create({
     },
     modalBtns: {
         width: '80%',
+        height: 50,
+        backgroundColor: gloabl_style.main_color,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 18,
+        borderRadius: 5,
+        marginTop: 20,
+    },
+    modalBtns_termina: {
+        width: '40%',
         height: 50,
         backgroundColor: gloabl_style.main_color,
         display: 'flex',

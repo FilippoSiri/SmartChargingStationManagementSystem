@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Alert } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Alert, Touchable, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { AuthContext } from '../AuthContext';
 
@@ -17,6 +17,7 @@ const ChargingStatusScreen = () => {
     const [statusType, setStatusType] = useState('');
     const [station, setStation] = useState({});
     const isFocused = useIsFocused();
+    const [isActionPerformed, setIsActionPerformed] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -50,9 +51,67 @@ const ChargingStatusScreen = () => {
         }
     }
 
+    const handleCancelReservationClick = async () => {
+        try {
+            const res = await axios.post(
+                `http://${API_URL}:${API_PORT}/station/${station.id}/cancel_reservation/`,
+                { }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    }
+                },
+            );
+
+            setIsActionPerformed(true);
+            setLastStationReservation({});
+        } catch (error) {
+            Alert.alert('Error', "Something went wrong. Please try again later.");
+            console.error(error.message);
+        }
+    }
+
+    const handleStartCharging = async () => {
+        try {
+            await axios.post(
+                `http://${API_URL}:${API_PORT}/station/${station.id}/start_charging/`,
+                { }, { 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    } 
+                },
+            );
+
+            setIsActionPerformed(true);
+        } catch (error) {
+            Alert.alert('Error', error.response.data.message);
+            console.error('Error:', error);
+        }
+    }
+
+    const handleStopCharging = async () => {
+        try {
+            await axios.post(
+                `http://${API_URL}:${API_PORT}/station/${station.id}/stop_charging/`,
+                { }, { 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        Authorization: authToken,
+                    } 
+                },
+            );
+
+            setIsActionPerformed(true);
+        } catch (error) {
+            Alert.alert('Error', error.response.data.message);
+            console.error('Error:', error);
+        }
+    }
+
     useEffect(() => {
 
-        const fetchData = async () => {
+        const fetchDataStation = async () => {
             try {
                 console.log(chargingInfo.station_id);
                 const res = await axios.get(`http://${API_URL}:${API_PORT}/station/${chargingInfo.station_id}`)
@@ -63,13 +122,15 @@ const ChargingStatusScreen = () => {
             }
         }
 
-        if (chargingInfo.id)
-            fetchData();
+        if (chargingInfo.id || isActionPerformed) {
+            fetchDataStation();
+            setIsActionPerformed(false);
+        }
     }, [chargingInfo]);
 
     useEffect(() => {
         fetchData();
-    }, [isFocused]);
+    }, [isFocused, isActionPerformed]);
 
     return (
         <SafeAreaView style={gloabl_style.main_view}>
@@ -95,12 +156,20 @@ const ChargingStatusScreen = () => {
                                 </View>
 
                                 {
-                                    new Date(chargingInfo.expiration_time) < new Date() &&
-                                    <View style={style.expiration_text_container}>
-                                        <Text style={style.expiration_text}>Reservation expired</Text>
-                                    </View>
+                                    new Date(chargingInfo.expiration_time) < new Date() ? (
+                                        <View style={style.expiration_text_container}>
+                                            <Text style={style.expiration_text}>Reservation expired</Text>
+                                        </View>
+                                    ) : (
+                                        <View>
+                                            <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
+                                                <View>  
+                                                    <Text style={{color: "#fff"}}>Avvia</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
                                 }
-
                             </View>
                         </>
                     ) : statusType === 'charging' ? (
@@ -116,6 +185,13 @@ const ChargingStatusScreen = () => {
                             <View style={style.marginBottomStyle}>
                                 <Text style={style.info_bold}>Price: </Text>
                                 <Text style={style.info}>{(chargingInfo.kw ?? 0) * chargingInfo.price / 100} €</Text>
+                            </View>
+                            <View>
+                                <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns}>
+                                    <View >  
+                                        <Text style={{color: "#fff"}}>Termina</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ) : statusType === "last" ? (
@@ -143,6 +219,8 @@ const ChargingStatusScreen = () => {
                         </View>
                     ))
                 }
+
+                
             </ScrollView>
         </SafeAreaView>
     )
@@ -184,6 +262,17 @@ const style = StyleSheet.create({
         color: "red",
         fontSize: 24,
         fontWeight: "bold"
+    },
+    modalBtns: {
+        width: '40%',
+        height: 50,
+        backgroundColor: gloabl_style.main_color,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 18,
+        borderRadius: 5,
+        marginTop: 20
     }
 });
 

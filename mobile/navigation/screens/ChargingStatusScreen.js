@@ -133,118 +133,127 @@ const ChargingStatusScreen = () => {
 
     return (
         <SafeAreaView style={gloabl_style.main_view}>
-            <ScrollView style={{width: "100%"}}>
-                <View style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
+            <View style={style.info_container}>
+                <View style={style.field_container}>
                     <Text style={style.title}>Charging info</Text>
                 </View>
-                {
-                    chargingInfo &&  (statusType === 'reservation' ? (
-                        <>
-                            <View style={style.info_container}>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Station: </Text>
-                                    <Text style={style.info}>{station.name} </Text>
-                                </View>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Reservation time: </Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.reservation_time).toLocaleString()} </Text>
-                                </View>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Expiration time: </Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.expiration_time).toLocaleString()} </Text>
-                                </View>
-
-                                {
-                                    new Date(chargingInfo.expiration_time) < new Date() ? (
-                                        <View style={style.expiration_text_container}>
-                                            <Text style={style.expiration_text}>Reservation expired</Text>
-                                        </View>
-                                    ) : (
-                                        <View style={style.flex_btns_container}>
-                                            <View style={{width: "40%"}}>
-                                                <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
-                                                    <View>  
-                                                        <Text style={{color: "#fff"}}>Avvia</Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View style={{width: "40%"}}>
-                                                <TouchableOpacity onPress={handleCancelReservationClick} style={style.modalBtns}>
-                                                    <View>  
-                                                        <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-
-                                    )
-                                }
-                            </View>
-                        </>
-                    ) : statusType === 'charging' ? (
+            </View>
+            {
+                chargingInfo &&  (statusType === 'reservation' ? (
+                    <>
                         <View style={style.info_container}>
-                            <View style={style.marginBottomStyle}>
-                                <Text style={style.info_bold}>Start time: </Text>
-                                <Text style={style.info}>{new Date(chargingInfo.start_time).toLocaleString()} </Text>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>Station: </Text>
+                                <Text style={style.info}>{station.name} </Text>
                             </View>
-                            <View style={style.marginBottomStyle}>
-                                <Text style={style.info_bold}>Energy: </Text>
-                                <Text style={style.info}>{chargingInfo.kw ?? "0.0"} Kwh</Text>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>Reservation time: </Text>
+                                <Text style={style.info}>{new Date(chargingInfo.reservation_time).toLocaleString()} </Text>
                             </View>
-                            <View style={style.marginBottomStyle}>
-                                <Text style={style.info_bold}>Price: </Text>
-                                <Text style={style.info}>{(chargingInfo.kw ?? 0) * chargingInfo.price / 100} €</Text>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>Expiration time: </Text>
+                                <Text style={style.info}>{new Date(chargingInfo.expiration_time).toLocaleString()} </Text>
                             </View>
-                            <View>
-                                <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns_termina}>
+
+                            {
+                                new Date(chargingInfo.expiration_time) < new Date() ? (
+                                    <View style={style.expiration_text_container}>
+                                        <Text style={style.expiration_text}>Reservation expired</Text>
+                                    </View>
+                                ) : (
+                                    <View style={style.buttonsContainer}>
+                                        <View style={style.displayGridBtns}>
+                                            <TouchableOpacity onPress={handleStartCharging} style={style.modalBtns}>
+                                                <View >  
+                                                    <Text style={{color: "#fff"}}>Avvia</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={handleCancelReservationClick} style={style.modalBtns}>
+                                                <View >  
+                                                    <Text style={{color: "#fff"}}>Annulla prenotazione</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+
+                                )
+                            }
+                        </View>
+                    </>
+                ) : statusType === 'charging' ? (
+                    <View style={style.info_container}>
+                        <View style={style.field_container}>
+                            <Text style={style.info_bold}>Start time: </Text>
+                            <Text style={style.info}>{new Date(chargingInfo.start_time).toLocaleString()} </Text>
+                        </View>
+                        <View style={style.field_container}>
+                            <Text style={style.info_bold}>Energy: </Text>
+                            <Text style={style.info}>{chargingInfo.kw ?? "0.0"} Kwh</Text>
+                        </View>
+                        <View style={style.field_container}>
+                            <Text style={style.info_bold}>Price: </Text>
+                            <Text style={style.info}>{(chargingInfo.kw ?? 0) * chargingInfo.price / 100} €</Text>
+                        </View>
+                        <View style={style.buttonsContainer}>
+                            <View style={style.displayGridBtns}>
+                                <TouchableOpacity onPress={handleStopCharging} style={style.modalBtns}>
                                     <View >  
                                         <Text style={{color: "#fff"}}>Termina</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    ) : statusType === "last" ? (
-                            <View style={style.info_container}>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Start time:</Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.start_time).toLocaleString()} </Text>
-                                </View>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>End time: </Text>
-                                    <Text style={style.info}>{new Date(chargingInfo.end_time).toLocaleString() ?? "Not finish yet"} </Text>
-                                </View>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Energy: </Text>
-                                    <Text style={style.info}>{chargingInfo.kw ?? "0.0"} Kwh</Text>
-                                </View>
-                                <View style={style.marginBottomStyle}>
-                                    <Text style={style.info_bold}>Price: </Text>
-                                    <Text style={style.info}>{(chargingInfo.kw ?? 0) * chargingInfo.price / 100} €</Text>
-                                </View>
+                    </View>
+                ) : statusType === "last" ? (
+                        <View style={style.info_container}>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>Start time:</Text>
+                                <Text style={style.info}>{new Date(chargingInfo.start_time).toLocaleString()} </Text>
                             </View>
-                    ) : (
-                        <View>
-                            <Text>No charging info</Text>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>End time: </Text>
+                                <Text style={style.info}>{new Date(chargingInfo.end_time).toLocaleString() ?? "Not finish yet"} </Text>
+                            </View>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>Energy: </Text>
+                                <Text style={style.info}>{chargingInfo.kw ?? "0.0"} Kwh</Text>
+                            </View>
+                            <View style={style.field_container}>
+                                <Text style={style.info_bold}>Price: </Text>
+                                <Text style={style.info}>{(chargingInfo.kw ?? 0) * chargingInfo.price / 100} €</Text>
+                            </View>
                         </View>
-                    ))
-                }
-
-                
-            </ScrollView>
+                ) : (
+                    <View>
+                        <Text>No charging info</Text>
+                    </View>
+                ))
+            }
         </SafeAreaView>
     )
 }
 
 const style = StyleSheet.create({
+    field_container: {
+        width: '92%',
+        marginLeft: 15,
+        marginBottom: 10,
+
+    },
+    buttonsContainer: {
+        width: '92%',
+        margin: 15,
+    },
     title: {
-        fontSize: 20,
+        marginTop:15,
+        marginBottom: 15,
+        fontSize: 25,
         fontWeight: "bold",
         color: gloabl_style.text_color
     },
     info_container: {
         width: "100%",
-        display: "flex",
-        marginTop: "10%"
+
     },
     info: {
         color: gloabl_style.text_color,
@@ -254,11 +263,6 @@ const style = StyleSheet.create({
         color: gloabl_style.text_color,
         fontSize: 18,
         fontWeight: "bold"
-    },
-    marginBottomStyle: {
-        display: "flex",
-        flexDirection: "row",
-        marginBottom: 20
     },
     expiration_text_container: {
         display: "flex",
@@ -273,17 +277,6 @@ const style = StyleSheet.create({
         fontWeight: "bold"
     },
     modalBtns: {
-        width: '80%',
-        height: 50,
-        backgroundColor: gloabl_style.main_color,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 18,
-        borderRadius: 5,
-        marginTop: 20,
-    },
-    modalBtns_termina: {
         width: '40%',
         height: 50,
         backgroundColor: gloabl_style.main_color,
@@ -292,14 +285,12 @@ const style = StyleSheet.create({
         alignItems: 'center',
         fontSize: 18,
         borderRadius: 5,
-        marginTop: 20,
     },
-    flex_btns_container: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
-    }
+    displayGridBtns: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'row',   
+    },
 });
 
 export default ChargingStatusScreen;

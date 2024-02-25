@@ -37,14 +37,15 @@ class UserService {
         if (password !== undefined) {
             user.password = password;
             user.token_reset_time = new Date();
+            user.token_reset_time.setMilliseconds(0);
         }
         if (is_admin !== undefined) user.is_admin = is_admin;
-
+        
         const updatedUser = await user.save();
         if (updatedUser !== null) {
             if (password !== undefined) {
                 const token = generateAccessToken({ userId: updatedUser.id, isAdmin: updatedUser.is_admin }, null);
-                return { token: token };
+                                return { token: token };
             } else {
                 return { message: "User updated" };
             }
@@ -52,8 +53,8 @@ class UserService {
             throw new Error("Error updating user");
         }
     }    
-
-    static async add(name, surname, email, password, is_admin){
+    
+        static async add(name, surname, email, password, is_admin){
         if(!email.match(emailValidRegex))
             throw new Error("Invalid email address");
         if(!password.match(strongPasswordRegex))

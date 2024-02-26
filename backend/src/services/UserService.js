@@ -54,7 +54,7 @@ class UserService {
         }
     }    
     
-        static async add(name, surname, email, password, is_admin){
+    static async add(name, surname, email, password, is_admin){
         if(!email.match(emailValidRegex))
             throw new Error("Invalid email address");
         if(!password.match(strongPasswordRegex))
@@ -87,6 +87,11 @@ class UserService {
     static async resetPasswordToken(email){
         if(!email){
             throw new Error("Missing email");
+        }
+
+        const user = await User.getByEmail(email);
+        if(user === null){
+            throw new Error("Email not registered");
         }
     
         const transporter = nodeMailer.createTransport({

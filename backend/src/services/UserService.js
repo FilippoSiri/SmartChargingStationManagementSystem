@@ -62,7 +62,7 @@ class UserService {
         if(await User.getByEmail(email) !== null)
             throw new Error("Email already registered");
 
-        const user = new User(null, name, surname, email, password, 0, new Date(), is_admin);
+        const user = new User(null, name, surname, email, password, 10000, new Date(), is_admin);
         const newUser = await user.save();
         
         if(newUser !== null) {

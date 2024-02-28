@@ -38,6 +38,10 @@ const LoginScreen = ({ navigation }) => {
     const forgotPassword = async () => {
         var validRegex =
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if(!email){
+            Alert.alert('Error', 'Missing email');
+            return;
+        }
         if (!email.match(validRegex)) {
             Alert.alert('Error', 'Invalid email address');
             return;

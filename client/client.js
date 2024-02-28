@@ -13,20 +13,7 @@ const possibleStatus = {
     Faulted: 'Faulted'
 };
 
-const possibleReasonStopTransaction = {
-    EmergencyStop: 'EmergencyStop',
-    EVDisconnected: 'EVDisconnected',
-    HardReset: 'HardReset',
-    Local: 'Local',
-    Other: 'Other',
-    PowerLoss: 'PowerLoss',
-    Reboot: 'Reboot',
-    Remote: 'Remote',
-    SoftReset: 'SoftReset',
-    UnlockCommand: 'UnlockCommand',
-    DeAuthorized: 'DeAuthorized'
-}
-  
+
 var transactionId;
 var reservationId;
 var idTagReserved;
@@ -120,7 +107,7 @@ async function stopTransaction(transactionId, reasonCode){
         return false;
 
     console.log("Sending StopTransaction...");
-    cli.call('StopTransaction',{
+    await cli.call('StopTransaction',{
         ...(reasonCode!==undefined && {reason: reasonCode}),
         meterStop: energyDelivered,
         timestamp: new Date().toISOString(),

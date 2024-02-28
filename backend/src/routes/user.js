@@ -6,7 +6,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 
-function getCorrectError(error) {
+function getCorrectError(error, res) {
     switch (error.message) {
         case "User not found":
             return res.status(404).json({ message: error.message });
@@ -33,7 +33,7 @@ router.get("/", verifyToken, async (req, res) => {
         const user = await UserService.getById(userId);
         res.json(user);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -43,7 +43,7 @@ router.get("/last_usage", verifyToken, async (req, res) => {
         const user = await UserService.getLastUsageByUserId(userId);
         res.json(user);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -60,7 +60,7 @@ router.patch("/", verifyToken, async (req, res) => {
         );
         res.status(201).json(value);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 
@@ -76,7 +76,7 @@ router.patch("/:id/set_user_admin/", verifyTokenAdmin, async (req, res) => {
         );
         res.status(201).json(value);
     } catch (error) {
-        getCorrectError(error);
+        return getCorrectError(error, res);
     }
 });
 

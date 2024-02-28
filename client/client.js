@@ -13,20 +13,7 @@ const possibleStatus = {
     Faulted: 'Faulted'
 };
 
-const possibleReasonStopTransaction = {
-    EmergencyStop: 'EmergencyStop',
-    EVDisconnected: 'EVDisconnected',
-    HardReset: 'HardReset',
-    Local: 'Local',
-    Other: 'Other',
-    PowerLoss: 'PowerLoss',
-    Reboot: 'Reboot',
-    Remote: 'Remote',
-    SoftReset: 'SoftReset',
-    UnlockCommand: 'UnlockCommand',
-    DeAuthorized: 'DeAuthorized'
-}
-  
+
 var transactionId;
 var reservationId;
 var idTagReserved;

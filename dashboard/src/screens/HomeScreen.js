@@ -4,12 +4,13 @@ import { DataGrid } from "@mui/x-data-grid";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "@tomtom-international/web-sdk-maps/dist/maps.css";
 import tt from "@tomtom-international/web-sdk-maps";
 
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -69,6 +70,7 @@ const stationColors = {
 }
 
 const HomeScreen = () => {
+    const navigate = useNavigate();
     const [stations, setStations] = useState([]);
     const [map, setMap] = useState({});
     const mapElement = useRef();
@@ -98,6 +100,18 @@ const HomeScreen = () => {
             }
         };
 
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            navigate("/login");
+        }
+
+        const decoded = jwtDecode(token);
+
+        if (!decoded.isAdmin) {
+            navigate("/login");
+        }
+
         let map = tt.map({
             key: process.env.REACT_APP_TOMTOM_API_KEY,
             container: mapElement.current,
@@ -114,7 +128,7 @@ const HomeScreen = () => {
             map.remove();
             clearInterval(intervalId);
         }
-    }, []);
+    }, [navigate]);
 
     const addMarker = useCallback((station) => {
         const mymarker = document.createElement('div');

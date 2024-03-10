@@ -104,12 +104,14 @@ const HomeScreen = () => {
 
         if (!token) {
             navigate("/login");
+            return;
         }
 
         const decoded = jwtDecode(token);
 
         if (!decoded.isAdmin) {
             navigate("/login");
+            return;
         }
 
         let map = tt.map({
